@@ -60,6 +60,43 @@ const PRESS_SCRIPT = `
 })()
 `
 
+/**
+ * The install picker. One command, four package managers — clicking a tab
+ * swaps which command is shown, clicking the command copies it. No copy
+ * happens on tab-switch, so tabbing through to read the alternatives never
+ * surprises the clipboard.
+ */
+const INSTALL_SCRIPT = `
+(() => {
+  const install = document.querySelector('.install')
+  if (!install) return
+  const tabs = install.querySelectorAll('.install-tab')
+  const cmdBtn = install.querySelector('.install-cmd')
+  const text = install.querySelector('.install-text')
+  if (!cmdBtn || !text) return
+
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      tabs.forEach((t) => {
+        t.classList.remove('active')
+        t.setAttribute('aria-selected', 'false')
+      })
+      tab.classList.add('active')
+      tab.setAttribute('aria-selected', 'true')
+      text.textContent = tab.dataset.cmd || text.textContent
+    })
+  })
+
+  let copiedTimer
+  cmdBtn.addEventListener('click', () => {
+    navigator.clipboard?.writeText(text.textContent || '')
+    cmdBtn.classList.add('copied')
+    clearTimeout(copiedTimer)
+    copiedTimer = setTimeout(() => cmdBtn.classList.remove('copied'), 1300)
+  })
+})()
+`
+
 export function homePage(): string {
   const body = `
 <section class="hero"><div class="wrap">
@@ -72,7 +109,19 @@ export function homePage(): string {
     </p>
     <div class="cta">
       <a class="button-link primary" href="/examples/button">Play the demo</a>
-      <a class="button-link ghost" href="/docs">bun add kei-transaction</a>
+      <div class="install">
+        <div class="install-tabs" role="tablist" aria-label="Package manager">
+          <button type="button" class="install-tab active" data-cmd="bun add ${SITE.npm}" role="tab" aria-selected="true">bun</button>
+          <button type="button" class="install-tab" data-cmd="npm install ${SITE.npm}" role="tab" aria-selected="false">npm</button>
+          <button type="button" class="install-tab" data-cmd="pnpm add ${SITE.npm}" role="tab" aria-selected="false">pnpm</button>
+          <button type="button" class="install-tab" data-cmd="yarn add ${SITE.npm}" role="tab" aria-selected="false">yarn</button>
+        </div>
+        <button type="button" class="install-cmd" aria-label="Copy install command to clipboard">
+          <code class="install-text">bun add ${escapeHtml(SITE.npm)}</code>
+          <span class="install-copied" aria-hidden="true">Copied to clipboard</span>
+        </button>
+        <a class="install-link" href="/docs">Read the docs →</a>
+      </div>
     </div>
   </div>
 
@@ -197,7 +246,7 @@ export function homePage(): string {
       'A feeless chain with native tokens and an SDK that lets a game developer add real currencies, items, loot drops and a player market to a browser game without running payment infrastructure or a database.',
     asks: USE_CASES.flatMap((useCase) => useCase.asks),
     body,
-    script: PRESS_SCRIPT,
+    script: PRESS_SCRIPT + INSTALL_SCRIPT,
   })
 }
 
