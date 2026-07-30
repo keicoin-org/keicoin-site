@@ -72,18 +72,18 @@ const PRESS_SCRIPT = `
 
 /**
  * The install picker. One command, four package managers — clicking a tab
- * swaps which command is shown, clicking the command copies it. No copy
- * happens on tab-switch, so tabbing through to read the alternatives never
- * surprises the clipboard.
+ * swaps which command is shown, clicking copy copies it. No copy happens on
+ * tab-switch, so tabbing through to read the alternatives never surprises
+ * the clipboard.
  */
 const INSTALL_SCRIPT = `
 (() => {
   const install = document.querySelector('.install')
   if (!install) return
   const tabs = install.querySelectorAll('.install-tab')
-  const cmdBtn = install.querySelector('.install-cmd')
+  const copyBtn = install.querySelector('.install-copy')
   const text = install.querySelector('.install-text')
-  if (!cmdBtn || !text) return
+  if (!copyBtn || !text) return
 
   tabs.forEach((tab) => {
     tab.addEventListener('click', () => {
@@ -98,11 +98,11 @@ const INSTALL_SCRIPT = `
   })
 
   let copiedTimer
-  cmdBtn.addEventListener('click', () => {
+  copyBtn.addEventListener('click', () => {
     navigator.clipboard?.writeText(text.textContent || '')
-    cmdBtn.classList.add('copied')
+    copyBtn.classList.add('copied')
     clearTimeout(copiedTimer)
-    copiedTimer = setTimeout(() => cmdBtn.classList.remove('copied'), 1300)
+    copiedTimer = setTimeout(() => copyBtn.classList.remove('copied'), 1300)
   })
 })()
 `
@@ -126,10 +126,13 @@ export function homePage(): string {
           <button type="button" class="install-tab" data-cmd="pnpm add ${SITE.npm}" role="tab" aria-selected="false">pnpm</button>
           <button type="button" class="install-tab" data-cmd="yarn add ${SITE.npm}" role="tab" aria-selected="false">yarn</button>
         </div>
-        <button type="button" class="install-cmd" aria-label="Copy install command to clipboard">
+        <div class="install-cmd">
           <code class="install-text">bun add ${escapeHtml(SITE.npm)}</code>
-          <span class="install-copied" aria-hidden="true">Copied to clipboard</span>
-        </button>
+          <button type="button" class="install-copy" aria-label="Copy install command to clipboard">
+            <span class="install-copy-label">Copy</span>
+            <span class="install-copied" aria-hidden="true">Copied</span>
+          </button>
+        </div>
         <a class="install-link" href="/docs">Read the docs →</a>
       </div>
     </div>

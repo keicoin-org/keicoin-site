@@ -168,9 +168,16 @@ header.site .home b { color: var(--amber); font-weight: 700; }
 
 /* -------------------------------------------------------------- install picker */
 
-.install { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+.install { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
 
-.install-tabs { display: flex; gap: 4px; }
+.install-tabs {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  background: var(--void);
+  border: 1px solid var(--rule);
+  border-radius: 9px;
+}
 
 .install-tab {
   font: 600 12px/1 var(--mono);
@@ -178,7 +185,7 @@ header.site .home b { color: var(--amber); font-weight: 700; }
   color: var(--ink-faint);
   background: none;
   border: 1px solid transparent;
-  border-radius: 5px;
+  border-radius: 6px;
   padding: 5px 9px;
   cursor: pointer;
 }
@@ -187,50 +194,52 @@ header.site .home b { color: var(--amber); font-weight: 700; }
 .install-tab.active { color: var(--amber); background: var(--raised); border-color: var(--rule); }
 
 .install-cmd {
-  position: relative;
   display: flex;
   align-items: center;
-  gap: 14px;
-  font: 600 14px/1 var(--mono);
-  color: var(--ink);
-  background: var(--raised);
-  border: 1px solid var(--steel-deep);
-  border-radius: 7px;
-  padding: 14px 22px;
-  cursor: pointer;
-  text-align: left;
-  overflow: hidden;
+  gap: 16px;
+  padding: 2px 2px;
 }
 
-.install-cmd:hover { border-color: var(--amber); }
+.install-text {
+  font: 600 14px/1 var(--mono);
+  color: var(--ink);
+  transition: color 0.15s ease;
+}
+
 .install-cmd:hover .install-text { color: var(--amber); }
 
-.install-cmd::after {
-  content: 'copy';
-  margin-left: auto;
+.install-copy {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
   font: 500 10.5px/1 var(--mono);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--ink-faint);
+  background: none;
+  border: none;
+  padding: 2px;
+  cursor: pointer;
 }
 
-.install-cmd:hover::after { color: var(--amber); }
+.install-copy:hover,
+.install-cmd:hover .install-copy { color: var(--amber); }
+
+.install-copy-label { transition: opacity 0.15s ease; }
+.install-copy.copied .install-copy-label { opacity: 0; }
 
 .install-copied {
   position: absolute;
   inset: 0;
   display: flex;
   align-items: center;
-  justify-content: center;
-  background: var(--raised);
   color: var(--green-bright);
-  font: 600 13px/1 var(--mono);
   opacity: 0;
   transition: opacity 0.15s ease;
   pointer-events: none;
 }
 
-.install-cmd.copied .install-copied { opacity: 1; }
+.install-copy.copied .install-copied { opacity: 1; }
 
 .install-link {
   font: 500 12.5px/1 var(--mono);
