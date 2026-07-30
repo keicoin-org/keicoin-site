@@ -38,15 +38,27 @@ const PRESS_SCRIPT = `
   const count = document.querySelector('#press-count')
   if (!cap || !rig || !img || !count) return
 
+  const setHeld = (held) => {
+    cap.classList.toggle('down', held)
+    img.src = held ? img.dataset.pressed : img.dataset.unpressed
+  }
+
+  cap.addEventListener('pointerdown', (e) => {
+    cap.setPointerCapture(e.pointerId)
+    setHeld(true)
+  })
+  cap.addEventListener('pointerup', () => setHeld(false))
+  cap.addEventListener('pointercancel', () => setHeld(false))
+  cap.addEventListener('keydown', (e) => {
+    if (e.key === ' ' || e.key === 'Enter') setHeld(true)
+  })
+  cap.addEventListener('keyup', (e) => {
+    if (e.key === ' ' || e.key === 'Enter') setHeld(false)
+  })
+
   let pressed = 0
-  const press = () => {
+  cap.addEventListener('click', () => {
     count.textContent = String(++pressed)
-    cap.classList.add('down')
-    img.src = img.dataset.pressed
-    setTimeout(() => {
-      cap.classList.remove('down')
-      img.src = img.dataset.unpressed
-    }, 110)
 
     const pop = document.createElement('span')
     pop.className = 'pop'
@@ -54,9 +66,7 @@ const PRESS_SCRIPT = `
     pop.style.left = (44 + Math.random() * 12) + '%'
     rig.appendChild(pop)
     setTimeout(() => pop.remove(), 760)
-  }
-
-  cap.addEventListener('click', press)
+  })
 })()
 `
 
