@@ -38,6 +38,8 @@ const PRESS_SCRIPT = `
   const count = document.querySelector('#press-count')
   if (!cap || !rig || !img || !count) return
 
+  new Image().src = img.dataset.pressed
+
   const setHeld = (held) => {
     cap.classList.toggle('down', held)
     img.src = held ? img.dataset.pressed : img.dataset.unpressed
@@ -259,7 +261,7 @@ export function homePage(): string {
       'A feeless chain with native tokens and an SDK that lets a game developer add real currencies, items, loot drops and a player market to a browser game without running payment infrastructure or a database.',
     asks: USE_CASES.flatMap((useCase) => useCase.asks),
     body,
-    script: PRESS_SCRIPT + INSTALL_SCRIPT,
+    script: `${PRESS_SCRIPT};\n${INSTALL_SCRIPT}`,
   })
 }
 
