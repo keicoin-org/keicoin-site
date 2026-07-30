@@ -171,7 +171,7 @@ export function shell(options: {
 <meta property="og:description" content="${escapeHtml(options.description)}">
 <meta property="og:url" content="${canonical}">
 <meta property="og:type" content="website">
-<meta name="theme-color" content="#0e1413">
+<meta name="theme-color" content="#101113">
 <link rel="stylesheet" href="/styles.css">
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <script type="application/ld+json">${JSON.stringify(jsonLd)}</script>

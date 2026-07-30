@@ -6,11 +6,18 @@
  *   A human gets this — a landing page, and it should be good.
  *   An agent gets /llms.txt and /AGENTS.md, which are the datasheet.
  *
- * The look is built from the one visual thing this project owns: a green button
- * on a pole, in a dark world. So the page is that world, the accent is that
- * green, and the hero is the button itself — pressable, counting up, teaching
- * the entire product in one gesture. Nothing here is a template, because the
- * template does not have a button in it.
+ * The look is built from the one visual thing this project owns: a steel
+ * button with a green dome, on a pole, in a dark room — so the hero is the
+ * photographed object itself, pressable, counting up, teaching the entire
+ * product in one gesture.
+ *
+ * Green is the dome's actual color, not the site's. It is used only where the
+ * copy is literally talking about the chain — the hero's "on a chain," the
+ * live press count, the "on Kei" outcome column. Everywhere else — links,
+ * labels, the primary button, focus states — is the amber of an indicator
+ * lamp on the same button housing, because a page that is green from the logo
+ * to the footer reads as a template with the brand color turned up, not a
+ * product with one.
  *
  * Type is a system stack, deliberately: this is on Cloudflare and the whole page
  * should paint before a webfont could have finished a handshake. Weight and
@@ -18,17 +25,28 @@
  */
 
 :root {
-  --void: #080b0a;
-  --world: #0e1413;
-  --raised: #151d1a;
-  --ink: #e6ede8;
-  --ink-dim: #8ea096;
-  --ink-faint: #5d6d65;
-  --rule: #202a26;
-  --green: #2fbf5e;
-  --green-bright: #4ee07c;
+  --void: #0a0a0b;
+  --world: #101113;
+  --raised: #191b1d;
+  --ink: #ecebe7;
+  --ink-dim: #98999a;
+  --ink-faint: #626466;
+  --rule: #2a2c2e;
+
+  /* The steel of the button's own housing — the site's real primary. */
+  --steel: #9a9d97;
+  --steel-deep: #55585a;
+
+  /* The indicator-lamp amber — the interactive accent. */
+  --amber: #dc9f4d;
+  --amber-bright: #f0c076;
+  --amber-ink: #2b1c08;
+
+  /* The dome's actual green, used only when the copy means the chain. */
+  --green: #1aa851;
+  --green-bright: #3fcf74;
   --green-deep: #0d3f24;
-  --amber: #e0a552;
+
   --shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.85);
 
   --mono: ui-monospace, "SFMono-Regular", "Cascadia Mono", "JetBrains Mono", Consolas, monospace;
@@ -60,7 +78,7 @@ header.site {
   position: sticky;
   top: 0;
   z-index: 20;
-  background: rgba(14, 20, 19, 0.86);
+  background: rgba(16, 17, 19, 0.86);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--rule);
 }
@@ -90,7 +108,7 @@ header.site .home {
   letter-spacing: -0.01em;
 }
 
-header.site .home b { color: var(--green); font-weight: 700; }
+header.site .home b { color: var(--amber); font-weight: 700; }
 
 /* -------------------------------------------------------------------- hero */
 
@@ -99,7 +117,7 @@ header.site .home b { color: var(--green); font-weight: 700; }
   overflow: hidden;
   border-bottom: 1px solid var(--rule);
   background:
-    radial-gradient(120% 90% at 68% 18%, #16211d 0%, var(--world) 58%, var(--void) 100%);
+    radial-gradient(120% 90% at 68% 18%, #1a1712 0%, var(--world) 58%, var(--void) 100%);
 }
 
 .hero .wrap {
@@ -145,10 +163,10 @@ header.site .home b { color: var(--green); font-weight: 700; }
   transition: transform 0.12s ease, background 0.12s ease;
 }
 
-.button-link.primary { background: var(--green); color: #06210f; }
-.button-link.primary:hover { background: var(--green-bright); transform: translateY(-1px); }
-.button-link.ghost { border-color: var(--rule); color: var(--ink); font-family: var(--mono); font-size: 14px; }
-.button-link.ghost:hover { border-color: var(--green); color: var(--green); }
+.button-link.primary { background: var(--amber); color: var(--amber-ink); }
+.button-link.primary:hover { background: var(--amber-bright); transform: translateY(-1px); }
+.button-link.ghost { border-color: var(--steel-deep); color: var(--ink); font-family: var(--mono); font-size: 14px; }
+.button-link.ghost:hover { border-color: var(--amber); color: var(--amber); }
 
 /* --------------------------------------------------------- the real button */
 
@@ -165,83 +183,39 @@ header.site .home b { color: var(--green); font-weight: 700; }
   letter-spacing: 0.02em;
   color: var(--ink-dim);
   background: var(--raised);
-  border: 1px solid var(--rule);
+  border: 1px solid var(--steel-deep);
   border-radius: 6px;
   padding: 12px 18px;
   min-width: 230px;
   text-align: center;
 }
 
-.press-readout b { color: var(--green); font-size: 21px; }
+.press-readout b { color: var(--amber); font-size: 21px; }
 .press-readout span { display: block; margin-top: 6px; font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint); }
 
-/* A pole, a housing, a cap. The same object as in the demo. */
-.press-rig { position: relative; width: 190px; height: 214px; }
+/* The actual photographed button from the demo, not a redrawn one. */
+.press-rig { position: relative; width: 220px; height: 220px; }
 
 .press-cap {
   position: absolute;
-  inset: 0 0 auto;
-  height: 108px;
-  width: 190px;
+  inset: 0;
   border: 0;
   padding: 0;
   cursor: pointer;
   background: none;
+  filter: drop-shadow(0 18px 26px rgba(0, 0, 0, 0.55));
   transition: transform 0.09s ease;
 }
 
-.press-cap:active { transform: translateY(7px); }
-.press-cap.down { transform: translateY(7px); }
+.press-cap:active { transform: translateY(5px); }
+.press-cap.down { transform: translateY(5px); }
 
-.press-cap .top {
-  position: absolute;
-  left: 16px;
-  top: 8px;
-  width: 158px;
-  height: 62px;
-  border-radius: 50%;
-  background: radial-gradient(70% 70% at 42% 32%, var(--green-bright), var(--green) 55%, #1c9247 100%);
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
-}
-
-/* Drawn before the cap, so it reads as the housing the cap sits in. Painting
-   order does this — a negative z-index would put it behind the page itself. */
-.press-cap .rim {
-  position: absolute;
-  left: 0;
-  top: 36px;
-  width: 190px;
-  height: 68px;
-  border-radius: 50%;
-  background: linear-gradient(#b03f42, #7b262e 58%, #4d1720);
-  box-shadow: 0 10px 26px -8px rgba(0, 0, 0, 0.7);
-}
-
-.press-pole {
-  position: absolute;
-  left: 50%;
-  top: 88px;
-  width: 26px;
-  height: 106px;
-  margin-left: -13px;
-  background: linear-gradient(90deg, #303938, #667470 42%, #2b3433);
-}
-
-.press-base {
-  position: absolute;
-  left: 50%;
-  bottom: 0;
-  width: 138px;
-  height: 40px;
-  margin-left: -69px;
-  border-radius: 50%;
-  background: linear-gradient(#3a4441, #232b29);
-}
+.press-img { display: block; width: 100%; height: 100%; object-fit: contain; }
 
 .pop {
   position: absolute;
   left: 50%;
-  top: 4px;
+  top: -6px;
   font: 700 22px/1 var(--mono);
   color: var(--amber);
   pointer-events: none;
@@ -264,7 +238,7 @@ section.tight { padding: 56px 0; }
   font: 600 11.5px/1 var(--mono);
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--green);
+  color: var(--amber);
   margin: 0 0 16px;
 }
 
@@ -279,8 +253,8 @@ h3 { font: 600 18px/1.35 var(--sans); letter-spacing: -0.01em; margin: 32px 0 10
 p { margin: 0 0 18px; max-width: 68ch; }
 .dim { color: var(--ink-dim); }
 
-a { color: var(--green); text-underline-offset: 3px; }
-a:hover { color: var(--green-bright); }
+a { color: var(--amber); text-underline-offset: 3px; }
+a:hover { color: var(--amber-bright); }
 
 ul, ol { margin: 0 0 18px; padding-left: 22px; max-width: 68ch; }
 li { margin-bottom: 8px; }
@@ -313,6 +287,8 @@ code {
 
 .swap-table td:first-child { font-weight: 600; }
 .swap-table td:nth-child(2) { color: var(--ink-dim); }
+/* The "on Kei" column is what actually happens on-chain — the one place
+   outside the button itself where the dome's green earns its keep. */
 .swap-table td:last-child { color: var(--green); font-family: var(--mono); font-size: 14.5px; }
 
 /* ------------------------------------------------------------------- code */
@@ -345,11 +321,11 @@ figure.code pre {
   padding: 16px;
   overflow-x: auto;
   font: 400 13.5px/1.7 var(--mono);
-  color: #cfdad3;
+  color: #d6d5d1;
 }
 
 figure.code code { background: none; border: 0; padding: 0; font-size: inherit; }
-figure.code .c { color: #5d6d65; }
+figure.code .c { color: var(--ink-faint); }
 figure.code .k { color: var(--green); }
 figure.code .s { color: #d8c07a; }
 
@@ -369,13 +345,13 @@ figure.code .s { color: #d8c07a; }
 }
 
 .jobs a:first-child { border-top: 1px solid var(--rule); }
-.jobs a:hover { color: var(--green); }
+.jobs a:hover { color: var(--amber); }
 .jobs a:hover .arrow { transform: translateX(4px); }
 
 .jobs .ask { font: 600 18px/1.35 var(--sans); letter-spacing: -0.015em; }
 .jobs .ask q { quotes: '“' '”'; }
 .jobs .what { display: block; margin-top: 5px; font: 400 15px/1.5 var(--sans); color: var(--ink-dim); }
-.jobs .arrow { color: var(--green); font: 500 15px/1 var(--mono); transition: transform 0.12s ease; }
+.jobs .arrow { color: var(--amber); font: 500 15px/1 var(--mono); transition: transform 0.12s ease; }
 
 /* ----------------------------------------------------------------- limits */
 
@@ -439,8 +415,8 @@ figure.code .s { color: #d8c07a; }
 
 .asks ul { margin: 0; padding: 0; list-style: none; }
 .asks li { font: 500 15px/1.55 var(--sans); color: var(--ink); margin-bottom: 6px; }
-.asks li::before { content: '“'; color: var(--green); }
-.asks li::after { content: '”'; color: var(--green); }
+.asks li::before { content: '“'; color: var(--amber); }
+.asks li::after { content: '”'; color: var(--amber); }
 
 .status-line {
   font: 500 13.5px/1.6 var(--mono);
@@ -486,9 +462,9 @@ table.data td:first-child { font-family: var(--mono); font-size: 14px; }
 }
 
 .next a:first-child { border-top: 1px solid var(--rule); }
-.next a:hover { color: var(--green); }
+.next a:hover { color: var(--amber); }
 .next a span { display: block; margin-top: 4px; font: 400 15px/1.5 var(--sans); color: var(--ink-dim); }
-.next a::before { content: '→ '; color: var(--green); }
+.next a::before { content: '→ '; color: var(--amber); }
 
 /* ----------------------------------------------------------------- footer */
 
@@ -502,7 +478,7 @@ footer.site p {
 }
 
 footer.site a { color: var(--ink-dim); text-decoration-color: var(--rule); }
-footer.site a:hover { color: var(--green); }
+footer.site a:hover { color: var(--amber); }
 
 /* ------------------------------------------------------------------- misc */
 
@@ -511,12 +487,12 @@ footer.site a:hover { color: var(--green); }
 .skip:focus {
   left: 28px;
   top: 12px;
-  background: var(--green);
-  color: #06210f;
+  background: var(--amber);
+  color: var(--amber-ink);
   padding: 9px 14px;
   font: 600 13px var(--mono);
   border-radius: 6px;
   z-index: 30;
 }
 
-:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }

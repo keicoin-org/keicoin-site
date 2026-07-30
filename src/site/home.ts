@@ -26,19 +26,27 @@ function code(caption: string, source: string): string {
  * The hero button's behaviour. Deliberately honest: it counts locally and says
  * so, because the alternative — quietly implying this page is on a chain — is
  * exactly the kind of overstatement §12 warns about.
+ *
+ * The button itself is the real asset from the demo, swapped between its two
+ * photographed states rather than redrawn in CSS.
  */
 const PRESS_SCRIPT = `
 (() => {
   const cap = document.querySelector('.press-cap')
   const rig = document.querySelector('.press-rig')
+  const img = document.querySelector('.press-img')
   const count = document.querySelector('#press-count')
-  if (!cap || !rig || !count) return
+  if (!cap || !rig || !img || !count) return
 
   let pressed = 0
   const press = () => {
     count.textContent = String(++pressed)
     cap.classList.add('down')
-    setTimeout(() => cap.classList.remove('down'), 90)
+    img.src = img.dataset.pressed
+    setTimeout(() => {
+      cap.classList.remove('down')
+      img.src = img.dataset.unpressed
+    }, 110)
 
     const pop = document.createElement('span')
     pop.className = 'pop'
@@ -75,11 +83,16 @@ export function homePage(): string {
     </div>
     <div class="press-rig">
       <button class="press-cap" type="button" aria-label="Press the button">
-        <span class="rim"></span>
-        <span class="top"></span>
+        <img
+          class="press-img"
+          src="/img/button-unpressed.webp"
+          data-unpressed="/img/button-unpressed.webp"
+          data-pressed="/img/button-pressed.webp"
+          alt=""
+          width="640"
+          height="640"
+        >
       </button>
-      <span class="press-pole"></span>
-      <span class="press-base"></span>
     </div>
     <p class="press-hint">In the demo, every press is on-chain →</p>
   </div>

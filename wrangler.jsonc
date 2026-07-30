@@ -3,6 +3,13 @@
   "name": "keicoin-site",
   "compatibility_date": "2026-07-01",
 
+  // The zone lives in the same Cloudflare account; wrangler provisions these
+  // as Custom Domains on deploy.
+  "routes": [
+    { "pattern": "keicoin.org", "custom_domain": true },
+    { "pattern": "www.keicoin.org", "custom_domain": true }
+  ],
+
   // Static assets with no Worker script: the site is text, and there is nothing
   // for a Worker to decide. `/examples/button` is served from the same origin
   // (SPEC §10.4) — a working thing one click from the claim about it.

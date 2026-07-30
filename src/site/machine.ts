@@ -264,14 +264,14 @@ ${paths.map((path) => `  <url><loc>${SITE.origin}${path}</loc></url>`).join('\n'
 `
 }
 
-/** The button, as a favicon. One shape, two colours, no font. */
+/** The button, as a favicon. One shape, a few colours, no font. */
 export function iconSvg(): string {
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-<rect width="32" height="32" rx="7" fill="#0e1413"/>
-<rect x="14" y="17" width="4" height="9" fill="#5b6a66"/>
-<ellipse cx="16" cy="26" rx="9" ry="3" fill="#39433f"/>
-<ellipse cx="16" cy="15" rx="11" ry="5" fill="#8a2f33"/>
-<ellipse cx="16" cy="12" rx="9" ry="4.5" fill="#2fbf5e"/>
+<rect width="32" height="32" rx="7" fill="#101113"/>
+<rect x="14" y="17" width="4" height="9" fill="#55585a"/>
+<ellipse cx="16" cy="26" rx="9" ry="3" fill="#2a2c2e"/>
+<ellipse cx="16" cy="15" rx="11" ry="5" fill="#0a0a0b"/>
+<ellipse cx="16" cy="12" rx="9" ry="4.5" fill="#1aa851"/>
 </svg>
 `
 }

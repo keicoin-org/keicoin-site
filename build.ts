@@ -44,6 +44,10 @@ for (const page of PAGES) await write(fileFor(page.path), render(page))
 
 await write('styles.css', await Bun.file(here('src/site/styles.css')).text())
 await write('icon.svg', iconSvg())
+
+// Static passthrough — anything in public/ lands at the same path in dist/.
+const publicDir = here('public')
+if (existsSync(publicDir)) await copyDir(publicDir, dist)
 await write('llms.txt', llmsTxt())
 await write('AGENTS.md', agentsMd())
 await write('robots.txt', robotsTxt())
