@@ -30,6 +30,31 @@
   --vp-sidebar-width: 280px;
 }
 
+.dark {
+  --vp-c-bg: #141613;
+  --vp-c-bg-alt: #1b1e1a;
+  --vp-c-bg-elv: #20231f;
+  --vp-c-bg-soft: #262925;
+  --vp-c-border: #51554e;
+  --vp-c-divider: #3b3e39;
+  --vp-c-gutter: #2d302b;
+  --vp-c-text-1: #eeede7;
+  --vp-c-text-2: #adb0a7;
+  --vp-c-text-3: #7b8076;
+  --vp-c-brand-1: #72dfa0;
+  --vp-c-brand-2: #8be8ae;
+  --vp-c-brand-3: #45cc78;
+  --vp-c-brand-soft: rgba(69, 204, 120, 0.13);
+  --vp-c-tip-1: #72dfa0;
+  --vp-c-tip-2: #8be8ae;
+  --vp-c-tip-3: #45cc78;
+  --vp-c-tip-soft: rgba(69, 204, 120, 0.11);
+  --vp-c-warning-1: #efb06d;
+  --vp-c-warning-2: #f5c287;
+  --vp-c-warning-3: #d98941;
+  --vp-c-warning-soft: rgba(217, 137, 65, 0.12);
+}
+
 html,
 body {
   background: var(--vp-c-bg);
@@ -42,6 +67,11 @@ body {
 .VPNavBar,
 .VPNavBar.has-sidebar .content {
   background: rgba(233, 230, 218, 0.96) !important;
+}
+
+.dark .VPNavBar,
+.dark .VPNavBar.has-sidebar .content {
+  background: rgba(20, 22, 19, 0.96) !important;
 }
 
 .VPNavBarTitle .title {
@@ -97,6 +127,10 @@ body {
 
 .VPDoc tr:nth-child(2n) {
   background: rgba(23, 25, 22, 0.035);
+}
+
+.dark .VPDoc tr:nth-child(2n) {
+  background: rgba(255, 255, 255, 0.035);
 }
 
 .VPDoc th,

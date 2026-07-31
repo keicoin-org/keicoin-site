@@ -52,7 +52,59 @@ export const SITE = {
  */
 export const COIN_ALT =
   'The Kei coin: an owl pushing a boulder uphill between two olive branches, ' +
-  'reading UNUS KEI — one boulder — above a lyre marked with the Roman numeral one.'
+  'with UNUS KEI above and a lyre marked with the Roman numeral one below.'
+
+const THEME_BOOT = `
+(() => {
+  try {
+    const saved = localStorage.getItem('kei-theme')
+    const theme = saved === 'light' || saved === 'dark'
+      ? saved
+      : matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+    document.documentElement.dataset.theme = theme
+    document.documentElement.style.colorScheme = theme
+  } catch {}
+})()
+`
+
+const THEME_SCRIPT = `
+(() => {
+  const root = document.documentElement
+  const button = document.querySelector('.theme-toggle')
+  const label = button?.querySelector('.theme-toggle-label')
+  const media = matchMedia('(prefers-color-scheme: dark)')
+
+  const savedTheme = () => {
+    try { return localStorage.getItem('kei-theme') } catch { return null }
+  }
+
+  const applyTheme = (theme, save = false) => {
+    root.dataset.theme = theme
+    root.style.colorScheme = theme
+    document.querySelector('meta[name="theme-color"]')?.setAttribute(
+      'content',
+      theme === 'dark' ? '#141613' : '#e9e6da',
+    )
+    if (button && label) {
+      const next = theme === 'dark' ? 'light' : 'dark'
+      label.textContent = next[0].toUpperCase() + next.slice(1)
+      button.setAttribute('aria-label', 'Use ' + next + ' theme')
+      button.setAttribute('title', 'Use ' + next + ' theme')
+    }
+    if (save) {
+      try { localStorage.setItem('kei-theme', theme) } catch {}
+    }
+  }
+
+  applyTheme(root.dataset.theme === 'dark' ? 'dark' : 'light')
+  button?.addEventListener('click', () => {
+    applyTheme(root.dataset.theme === 'dark' ? 'light' : 'dark', true)
+  })
+  media.addEventListener?.('change', (event) => {
+    if (!savedTheme()) applyTheme(event.matches ? 'dark' : 'light')
+  })
+})()
+`
 
 const NAV: Array<[string, string]> = [
   ['/use-cases', 'use cases'],
@@ -186,7 +238,9 @@ export function shell(options: {
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="${escapeHtml(COIN_ALT)}">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#101113">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#e9e6da">
+<script>${THEME_BOOT}</script>
 <link rel="stylesheet" href="/styles.css">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/img/kei-coin-192.png" type="image/png" sizes="192x192">
@@ -198,6 +252,10 @@ export function shell(options: {
 <header class="site"><div class="wrap">
 <a class="home" href="/"><img src="/img/kei-coin-64.png" alt="" width="26" height="26" decoding="async">kei<b>coin</b>.org</a>
 ${NAV.map(([href, label]) => `<a href="${href}">${label}</a>`).join('\n')}
+<button class="theme-toggle" type="button" aria-label="Change color theme" title="Change color theme">
+<span class="theme-toggle-mark" aria-hidden="true"></span>
+<span class="theme-toggle-label">Theme</span>
+</button>
 </div></header>
 <main id="main">
 ${options.body}
@@ -207,7 +265,7 @@ ${options.body}
 <strong>keicoin.org is the only domain this project uses.</strong> Anything else claiming to be Kei is not.<br>
 <a href="/llms.txt">llms.txt</a> · <a href="/AGENTS.md">AGENTS.md</a> · <a href="/status">status</a> · <a href="/examples">examples</a> · MIT</p>
 </div></footer>
-${options.script ? `<script>${options.script}</script>` : ''}
+<script>${THEME_SCRIPT}${options.script ? `;\n${options.script}` : ''}</script>
 </body>
 </html>
 `

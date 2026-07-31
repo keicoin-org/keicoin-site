@@ -11,7 +11,7 @@
  */
 
 import { USE_CASES, ISSUER_SNIPPET, PLAYER_SNIPPET } from './content.js'
-import { SITE, escapeHtml, inline, shell } from './layout.js'
+import { COIN_ALT, SITE, escapeHtml, inline, shell } from './layout.js'
 
 /** Same three forms as everywhere else, plus the code panes. */
 function code(caption: string, source: string): string {
@@ -176,6 +176,29 @@ export function homePage(): string {
       </button>
     </div>
     <p class="press-hint">In the demo, every press is on-chain →</p>
+  </div>
+</div></section>
+
+<section class="origin"><div class="wrap">
+  <figure class="origin-coin">
+    <img src="/img/kei-coin-512.png" alt="${escapeHtml(COIN_ALT)}" width="512" height="512" loading="lazy" decoding="async">
+    <figcaption>The Kei emblem / owl and boulder</figcaption>
+  </figure>
+  <div class="origin-copy">
+    <p class="eyebrow">Why Kei</p>
+    <h2>The boulder is the point.</h2>
+    <p class="origin-lede">
+      <strong>Kei is our name for the boulder.</strong> The coin shows an owl
+      driving it uphill — our version of Sisyphus, except the work is not a
+      punishment. It is the work of making a world persist.
+    </p>
+    <p>
+      Game design is a behemoth of a task. State, ownership, settlement,
+      recovery, exploits, and the promise that what a player earned will still
+      be there tomorrow all have to move uphill together. A restart should not
+      send the whole thing rolling back down.
+    </p>
+    <blockquote>The owl keeps pushing. Kei makes the ledger remember how far it got.</blockquote>
   </div>
 </div></section>
 

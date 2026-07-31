@@ -8,14 +8,16 @@ export default defineConfig({
   base: '/docs/',
   outDir: '../dist/docs',
   cleanUrls: true,
-  appearance: false,
+  appearance: true,
   lastUpdated: true,
   sitemap: {
     hostname: 'https://keicoin.org/docs/',
   },
   head: [
     ['link', { rel: 'icon', href: '/favicon.ico', sizes: 'any' }],
-    ['meta', { name: 'theme-color', content: '#e9e6da' }],
+    ['meta', { name: 'color-scheme', content: 'light dark' }],
+    ['meta', { name: 'theme-color', content: '#e9e6da', media: '(prefers-color-scheme: light)' }],
+    ['meta', { name: 'theme-color', content: '#141613', media: '(prefers-color-scheme: dark)' }],
   ],
   markdown: {
     lineNumbers: true,
