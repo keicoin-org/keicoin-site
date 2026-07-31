@@ -1,0 +1,130 @@
+:root {
+  --vp-c-bg: #e9e6da;
+  --vp-c-bg-alt: #dedacd;
+  --vp-c-bg-elv: #f3f0e7;
+  --vp-c-bg-soft: #d8d4c7;
+  --vp-c-border: #9f9f96;
+  --vp-c-divider: #b7b5aa;
+  --vp-c-gutter: #cbc8bc;
+  --vp-c-text-1: #171916;
+  --vp-c-text-2: #4f534c;
+  --vp-c-text-3: #74786f;
+  --vp-c-brand-1: #08763b;
+  --vp-c-brand-2: #065e30;
+  --vp-c-brand-3: #0b8f48;
+  --vp-c-brand-soft: rgba(8, 118, 59, 0.12);
+  --vp-c-tip-1: #08763b;
+  --vp-c-tip-2: #065e30;
+  --vp-c-tip-3: #0b8f48;
+  --vp-c-tip-soft: rgba(8, 118, 59, 0.1);
+  --vp-c-warning-1: #93440f;
+  --vp-c-warning-2: #7b350b;
+  --vp-c-warning-3: #a94e16;
+  --vp-c-warning-soft: rgba(169, 78, 22, 0.1);
+  --vp-code-block-bg: #111310;
+  --vp-code-line-highlight-color: rgba(116, 215, 153, 0.08);
+  --vp-code-tab-divider: #343832;
+  --vp-font-family-base: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --vp-font-family-mono: ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, monospace;
+  --vp-layout-max-width: 1440px;
+  --vp-sidebar-width: 280px;
+}
+
+html,
+body {
+  background: var(--vp-c-bg);
+}
+
+.VPNav {
+  border-top: 6px solid var(--vp-c-text-1);
+}
+
+.VPNavBar,
+.VPNavBar.has-sidebar .content {
+  background: rgba(233, 230, 218, 0.96) !important;
+}
+
+.VPNavBarTitle .title {
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.VPNavBarMenuLink,
+.VPSidebarItem .text,
+.VPDocOutlineItem a,
+.VPDocFooter {
+  font-family: var(--vp-font-family-mono);
+  font-size: 12px;
+}
+
+.VPSidebar {
+  border-right: 1px solid var(--vp-c-divider);
+}
+
+.VPSidebarItem.level-0 > .item > .text {
+  color: var(--vp-c-text-3);
+  font-size: 10px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.VPDoc h1 {
+  max-width: 14ch;
+  font-size: clamp(40px, 6vw, 64px);
+  line-height: 0.98;
+  letter-spacing: -0.05em;
+}
+
+.VPDoc h2 {
+  margin-top: 56px;
+  border-top-color: var(--vp-c-border);
+  font-size: 28px;
+  letter-spacing: -0.03em;
+}
+
+.VPDoc h3 {
+  margin-top: 34px;
+}
+
+.VPDoc a {
+  text-underline-offset: 3px;
+}
+
+.VPDoc table {
+  display: table;
+  width: 100%;
+}
+
+.VPDoc tr:nth-child(2n) {
+  background: rgba(23, 25, 22, 0.035);
+}
+
+.VPDoc th,
+.VPDoc td {
+  border-color: var(--vp-c-border);
+}
+
+.VPDoc div[class*='language-'],
+.VPDoc .custom-block,
+.VPButton,
+.DocSearch-Button,
+.VPLocalSearchBox .shell {
+  border-radius: 0 !important;
+}
+
+.VPDoc .custom-block {
+  border-left-width: 5px;
+}
+
+.VPDoc .custom-block-title {
+  font-family: var(--vp-font-family-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 959px) {
+  .VPSidebar {
+    border-right: 0;
+  }
+}

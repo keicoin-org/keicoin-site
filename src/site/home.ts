@@ -32,43 +32,59 @@ function code(caption: string, source: string): string {
  */
 const PRESS_SCRIPT = `
 (() => {
-  const cap = document.querySelector('.press-cap')
-  const rig = document.querySelector('.press-rig')
-  const img = document.querySelector('.press-img')
-  const count = document.querySelector('#press-count')
-  if (!cap || !rig || !img || !count) return
+  const bindPressButton = () => {
+    const cap = document.querySelector('.press-cap')
+    const rig = document.querySelector('.press-rig')
+    const img = document.querySelector('.press-img')
+    const count = document.querySelector('#press-count')
+    if (!cap || !rig || !img || !count) return
 
-  new Image().src = img.dataset.pressed
+    cap._pressController?.abort()
+    const controller = new AbortController()
+    cap._pressController = controller
+    const listener = { signal: controller.signal }
 
-  const setHeld = (held) => {
-    cap.classList.toggle('down', held)
-    img.src = held ? img.dataset.pressed : img.dataset.unpressed
+    new Image().src = img.dataset.pressed
+
+    const setHeld = (held) => {
+      cap.classList.toggle('down', held)
+      img.src = held ? img.dataset.pressed : img.dataset.unpressed
+    }
+
+    setHeld(false)
+
+    cap.addEventListener('pointerdown', (e) => {
+      if (cap.setPointerCapture) cap.setPointerCapture(e.pointerId)
+      setHeld(true)
+    }, listener)
+    cap.addEventListener('pointerup', () => setHeld(false), listener)
+    cap.addEventListener('pointercancel', () => setHeld(false), listener)
+    cap.addEventListener('lostpointercapture', () => setHeld(false), listener)
+    cap.addEventListener('keydown', (e) => {
+      if (e.key === ' ' || e.key === 'Enter') setHeld(true)
+    }, listener)
+    cap.addEventListener('keyup', (e) => {
+      if (e.key === ' ' || e.key === 'Enter') setHeld(false)
+    }, listener)
+
+    cap.addEventListener('contextmenu', (e) => e.preventDefault(), listener)
+    cap.addEventListener('dragstart', (e) => e.preventDefault(), listener)
+
+    let pressed = Number(count.textContent) || 0
+    cap.addEventListener('click', () => {
+      count.textContent = String(++pressed)
+
+      const pop = document.createElement('span')
+      pop.className = 'pop'
+      pop.textContent = '+1'
+      pop.style.left = (44 + Math.random() * 12) + '%'
+      rig.appendChild(pop)
+      setTimeout(() => pop.remove(), 760)
+    }, listener)
   }
 
-  cap.addEventListener('pointerdown', (e) => {
-    cap.setPointerCapture(e.pointerId)
-    setHeld(true)
-  })
-  cap.addEventListener('pointerup', () => setHeld(false))
-  cap.addEventListener('pointercancel', () => setHeld(false))
-  cap.addEventListener('keydown', (e) => {
-    if (e.key === ' ' || e.key === 'Enter') setHeld(true)
-  })
-  cap.addEventListener('keyup', (e) => {
-    if (e.key === ' ' || e.key === 'Enter') setHeld(false)
-  })
-
-  let pressed = 0
-  cap.addEventListener('click', () => {
-    count.textContent = String(++pressed)
-
-    const pop = document.createElement('span')
-    pop.className = 'pop'
-    pop.textContent = '+1'
-    pop.style.left = (44 + Math.random() * 12) + '%'
-    rig.appendChild(pop)
-    setTimeout(() => pop.remove(), 760)
-  })
+  bindPressButton()
+  window.addEventListener('pageshow', bindPressButton)
 })()
 `
 
@@ -155,6 +171,7 @@ export function homePage(): string {
           alt=""
           width="640"
           height="640"
+          draggable="false"
         >
       </button>
     </div>
