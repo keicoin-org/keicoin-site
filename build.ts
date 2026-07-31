@@ -16,7 +16,7 @@ import { dirname, join } from 'node:path'
 import { PAGES } from './src/site/content.js'
 import { homePage } from './src/site/home.js'
 import { render } from './src/site/layout.js'
-import { agentsMd, iconSvg, llmsTxt, robotsTxt, sitemapXml } from './src/site/machine.js'
+import { agentsMd, llmsTxt, robotsTxt, sitemapXml } from './src/site/machine.js'
 
 const root = new URL('.', import.meta.url)
 const here = (path: string): string => join(Bun.fileURLToPath(root), path)
@@ -43,9 +43,9 @@ await write('index.html', homePage())
 for (const page of PAGES) await write(fileFor(page.path), render(page))
 
 await write('styles.css', await Bun.file(here('src/site/styles.css')).text())
-await write('icon.svg', iconSvg())
 
-// Static passthrough — anything in public/ lands at the same path in dist/.
+// Static passthrough — anything in public/ lands at the same path in dist/,
+// which is where the coin (favicon.ico, the PNG icons, og.png) comes from.
 const publicDir = here('public')
 if (existsSync(publicDir)) await copyDir(publicDir, dist)
 await write('llms.txt', llmsTxt())
@@ -59,6 +59,10 @@ const demo = here('../button/public/build')
 if (existsSync(demo)) {
   await copyDir(demo, join(dist, 'examples/button/build'))
   await copyFile(here('../button/index.html'), join(dist, 'examples/button/index.html'))
+  // The demo's page asks for ./favicon.ico, which at /examples/button/ is not
+  // the one at the site root.
+  const icon = here('../button/public/favicon.ico')
+  if (existsSync(icon)) await copyFile(icon, join(dist, 'examples/button/favicon.ico'))
   console.log('  examples/button  copied')
 } else {
   console.log('  examples/button  SKIPPED — run `bun run build` in ../button first')
