@@ -63,7 +63,7 @@ const NEXT_STEPS = {
 }
 
 const MOCK_CAVEAT =
-  'The chain is an in-memory mock today. The API is real and does not change when the node lands, but **nothing on it holds value** and there is no public network yet.'
+  'The chain the SDK talks to is an in-memory mock today — the node is written and compiles, but it has never been run. The API is real and does not change when the node lands, but **nothing on it holds value** and there is no public network yet.'
 
 export const USE_CASES: UseCase[] = [
   {
@@ -114,7 +114,8 @@ await gems.balanceOf(playerAddress)   // 500 — one call`,
           ],
         },
         { kind: 'heading', text: 'What it costs' },
-        { kind: 'prose', text: '**Issuing burns 1,000 Kei.** It is the one operation that is not free, because an asset record is permanent state on every node forever. Every transaction after that — minting, sending, transferring, claiming — is free, always.' },
+        { kind: 'prose', text: '**Your first token burns 1 Kei.** The nth asset an account issues burns n Kei — the tenth costs 10, the five hundredth costs 500 — and it is the one operation on Kei that is not free, because an asset record is permanent state on every node forever. Every transaction after it — minting, sending, transferring, claiming — is free, always.' },
+        { kind: 'prose', text: 'It escalates per account because that is the only limit consensus can apply without knowing who anybody is. A keypair is free and can be generated offline by the million, so there is nobody to rate-limit — but only an account can extend its own chain, so its issuance count is the one thing it cannot shed. A game issuing a currency and five hundred item types burns 125,751 Kei in total; one account issuing a million junk assets would burn five times the entire circulating supply, which is the point.' },
         { kind: 'prose', text: 'Give the currency a sink. A currency that is only ever minted inflates, and that is a design problem no chain fixes for you.' },
         {
           kind: 'limits',
@@ -175,6 +176,7 @@ await kei.items.ownedBy(address)    // [ item, ... ]`,
             MOCK_CAVEAT,
             'Items are **not** the place for per-instance mutable state. Durability, enchantments, and stack counts that change every minute belong in your game, not on a chain. Model the item; keep the fiddly state local.',
             'An account has a cap on how many distinct assets it can hold, so an item type per player per session is the wrong shape.',
+            'Every item type is an asset, and the nth asset an account issues burns n Kei. A currency plus five hundred item types is 125,751 Kei in total — affordable for a catalogue somebody designed, and deliberately not for one a script generated.',
             'No royalties, no marketplace fees, and no VM to implement them in.',
           ],
         },
@@ -358,7 +360,7 @@ game.onPayment(async ({ from, amount, memo }) => {
           items: [
             MOCK_CAVEAT,
             'Free means no transaction fee. Anti-spam is proof-of-work instead, which is why a **work server** is required infrastructure rather than an optimisation.',
-            '**Issuing an asset burns 1,000 Kei.** Transactions are free; creating permanent state on every node forever is not.',
+            '**Issuing an asset burns Kei — 1 for an account\'s first, n for its nth.** Transactions are free; creating permanent state on every node forever is not.',
             'This is not a way to take money from customers today. There is no mainnet, no exchange, and no liquidity — see [status](/status).',
           ],
         },
@@ -440,18 +442,30 @@ await kei.claims.pending()` },
     summary:
       'Published early and updated as it changes, including the parts that say "not yet". A page that only becomes honest at launch was never honest.',
     blocks: [
-      { kind: 'prose', text: 'Kei is at **M1 of eleven**. The SDK is real, complete against its specification, and runs end to end. The chain underneath it is an in-memory mock.' },
+      { kind: 'prose', text: 'Kei is at **M1 of eleven**, with M2 — the node fork — written but unproven. The SDK is real, complete against its specification, and runs end to end against an in-memory mock. The node is source code that compiles in CI. It has never been executed.' },
       {
         kind: 'table',
         head: ['', 'State'],
         rows: [
           ['The SDK', 'Complete and running. Wallet, send, receive, issue, mint, burn, transfer, balanceOf, items, commit and claim all work, with types published.'],
-          ['The chain', 'A mock, in memory. It enforces the real ledger rules — one chain per account, derived asset ids, receivable arrivals, work tiers, the issuance burn, supply caps, transfer policy, and the double-claim index — so the SDK is written against real semantics.'],
-          ['The network', 'None. There is no public testnet and no mainnet.'],
-          ['The demo', 'Playable. Press a button, bank presses, claim them, buy upgrades that live on the chain.'],
+          ['The mock chain', 'In memory, and the thing the SDK actually talks to. It enforces the real ledger rules — one chain per account, derived asset ids, receivable arrivals, work tiers, the issuance burn, supply caps, transfer policy, and the double-claim index — so the SDK is written against real semantics.'],
+          ['The node', 'Written and merged: a Banano V25.1 fork carrying the asset ledger, per-operation work tiers, the asset RPC, Kei\'s own genesis, and a Kei hash domain. **It compiles in CI and has never been run.** "Compiles" is not "works".'],
+          ['The network', 'None. There is no public testnet, no mainnet, and no node running anywhere.'],
+          ['The demo', 'Playable. Press a button, bank presses, claim them, buy upgrades that live on the ledger instead of in a save file.'],
           ['The market', 'Specified, not built.'],
           ['Wallets', 'The headless summary exists. The in-game panel and the standalone wallet are not built.'],
           ['The MMO template', 'Not started.'],
+        ],
+      },
+      { kind: 'heading', text: 'What M2 has not finished' },
+      { kind: 'prose', text: 'M2 is done when the SDK\'s two conformance test files pass against the node with only the URL changed. That has not happened, and these are the reasons it has not.' },
+      {
+        kind: 'list',
+        items: [
+          '**Nothing has been executed.** There is no C++ toolchain on the machine the node is written on, so every claim about it rests on compiling in CI and on having been written against the mock\'s semantics.',
+          '**The reserve set is empty.** The enumeration and the rules that key off it are in the node, but it has no members until the genesis ceremony produces them — so on the dev network those rules currently hold vacuously.',
+          '**The RPC emits untyped JSON.** Every value comes out as a quoted string, so `decimals` arrives as `"0"` rather than `0`. The response encoder has to be fixed before the conformance suite can pass.',
+          '**The SDK and the node disagree on hashing.** The SDK still hashes blocks the M0 way, so signatures do not verify across the two until it moves to the node\'s format. One change, on the SDK side, not yet made.',
         ],
       },
       { kind: 'heading', text: 'What this means for you' },
@@ -459,7 +473,8 @@ await kei.claims.pending()` },
         kind: 'limits',
         title: 'Do not',
         items: [
-          'Put real value anywhere near this. There is no mainnet, and until the validator set is meaningfully distributed there should not be.',
+          'Put real value anywhere near this. There is no token, no mainnet, and until the validator set is meaningfully distributed there should not be.',
+          'Read "the node is written" as "the node runs". It has compiled and nothing more.',
           'Ship a production economy on it. Build against it, and expect the chain under the API to change.',
           'Assume the market or the wallets exist because the design for them does.',
         ],
@@ -471,7 +486,7 @@ await kei.claims.pending()` },
         items: [
           '**Network security.** A chain with a handful of nodes has weak consensus. Kei is a testnet with real branding until that changes.',
           '**No inherited liquidity.** Kei launches with no users, no exchanges, and no market.',
-          '**Timeline.** The node fork is the long pole and is measured in months.',
+          '**Timeline.** The node fork is the long pole. Its code exists; getting it to run, and to pass the SDK\'s conformance suite, is the rest of M2.',
           '**No smart contract VM**, deliberately. If your design needs one, Kei is the wrong tool and this page would rather you found out here.',
         ],
       },
