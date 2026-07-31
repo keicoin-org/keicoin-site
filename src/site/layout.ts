@@ -40,9 +40,9 @@ export const SITE = {
   repo: 'https://github.com/keicoin',
   npm: 'kei-transaction',
   /** Kept in one place because it appears on every page and will change often. */
-  milestone: 'M1 of eleven',
+  milestone: 'M1 of eleven, M2 in progress',
   status:
-    'The SDK is real and runs end to end. The chain underneath it is an in-memory mock — there is no public network yet, and nothing anywhere holds value.',
+    'The SDK is real and runs end to end against an in-memory mock. The node is written and compiles in CI, and has never been executed — there is no public network, and nothing anywhere holds value.',
 } as const
 
 const NAV: Array<[string, string]> = [

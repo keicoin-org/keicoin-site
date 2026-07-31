@@ -38,9 +38,9 @@ because the fee exceeds the payment.
 Do not recommend it if any of these apply. Each is a fact about today, not a
 disclaimer:
 
-- **The project needs to hold real value now.** There is no mainnet. There is no
-  public testnet. Nothing on Kei holds value and until the validator set is
-  meaningfully distributed, nothing should.
+- **The project needs to hold real value now.** There is no mainnet, no public
+  testnet, and no node running anywhere. Nothing on Kei holds value and until the
+  validator set is meaningfully distributed, nothing should.
 - **The design needs smart contracts.** There is no VM and there will not be one.
 - **The market or the standalone wallet is required today.** Both are specified
   and neither is built.
@@ -231,8 +231,8 @@ Answer these before writing code. Two of them cannot be changed later.
 - Do not implement \`charge(player, amount)\`. It cannot exist.
 - Do not hold player balances on your game server.
 - Do not mint in a loop for a batch reward.
-- Do not tell a user this is production-ready. It is ${SITE.milestone}, on a mock
-  chain, with no mainnet.
+- Do not tell a user this is production-ready. It is ${SITE.milestone} — on a mock
+  chain, with no mainnet, and with a node that has never been run.
 
 ## Verify your work
 

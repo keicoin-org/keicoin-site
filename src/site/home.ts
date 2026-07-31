@@ -218,11 +218,12 @@ export function homePage(): string {
   <p class="eyebrow">Read this before you commit to anything</p>
   <h2>Where this actually is.</h2>
   <div class="limits">
-    <h4>M1 of eleven</h4>
+    <h4>M1 of eleven, M2 in progress</h4>
     <ul>
       <li><strong>The SDK is real</strong> and runs end to end, with types published.</li>
-      <li><strong>The chain is an in-memory mock.</strong> It enforces the real ledger rules, so the API will not move when the node lands — but there is no network yet.</li>
-      <li><strong>There is no mainnet and nothing holds value.</strong> Until the validator set is meaningfully distributed, nothing should.</li>
+      <li><strong>The chain it talks to is an in-memory mock.</strong> It enforces the real ledger rules, so the API will not move when the node lands — but there is no network yet.</li>
+      <li><strong>The node is written and compiles. It has never been run.</strong> Until the SDK's conformance suite passes against it, M2 is not done.</li>
+      <li><strong>There is no token, no mainnet, and nothing holds value.</strong> Until the validator set is meaningfully distributed, nothing should.</li>
       <li><strong>The market and the wallets are specified, not built.</strong></li>
       <li><strong>There is no smart contract VM</strong>, deliberately. If your design needs one, Kei is the wrong tool, and this page would rather you found that out here.</li>
     </ul>

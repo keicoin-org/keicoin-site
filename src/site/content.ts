@@ -63,7 +63,7 @@ const NEXT_STEPS = {
 }
 
 const MOCK_CAVEAT =
-  'The chain is an in-memory mock today. The API is real and does not change when the node lands, but **nothing on it holds value** and there is no public network yet.'
+  'The chain the SDK talks to is an in-memory mock today — the node is written and compiles, but it has never been run. The API is real and does not change when the node lands, but **nothing on it holds value** and there is no public network yet.'
 
 export const USE_CASES: UseCase[] = [
   {
@@ -440,18 +440,30 @@ await kei.claims.pending()` },
     summary:
       'Published early and updated as it changes, including the parts that say "not yet". A page that only becomes honest at launch was never honest.',
     blocks: [
-      { kind: 'prose', text: 'Kei is at **M1 of eleven**. The SDK is real, complete against its specification, and runs end to end. The chain underneath it is an in-memory mock.' },
+      { kind: 'prose', text: 'Kei is at **M1 of eleven**, with M2 — the node fork — written but unproven. The SDK is real, complete against its specification, and runs end to end against an in-memory mock. The node is source code that compiles in CI. It has never been executed.' },
       {
         kind: 'table',
         head: ['', 'State'],
         rows: [
           ['The SDK', 'Complete and running. Wallet, send, receive, issue, mint, burn, transfer, balanceOf, items, commit and claim all work, with types published.'],
-          ['The chain', 'A mock, in memory. It enforces the real ledger rules — one chain per account, derived asset ids, receivable arrivals, work tiers, the issuance burn, supply caps, transfer policy, and the double-claim index — so the SDK is written against real semantics.'],
-          ['The network', 'None. There is no public testnet and no mainnet.'],
-          ['The demo', 'Playable. Press a button, bank presses, claim them, buy upgrades that live on the chain.'],
+          ['The mock chain', 'In memory, and the thing the SDK actually talks to. It enforces the real ledger rules — one chain per account, derived asset ids, receivable arrivals, work tiers, the issuance burn, supply caps, transfer policy, and the double-claim index — so the SDK is written against real semantics.'],
+          ['The node', 'Written and merged: a Banano V25.1 fork carrying the asset ledger, per-operation work tiers, the asset RPC, Kei\'s own genesis, and a Kei hash domain. **It compiles in CI and has never been run.** "Compiles" is not "works".'],
+          ['The network', 'None. There is no public testnet, no mainnet, and no node running anywhere.'],
+          ['The demo', 'Playable. Press a button, bank presses, claim them, buy upgrades that live on the ledger instead of in a save file.'],
           ['The market', 'Specified, not built.'],
           ['Wallets', 'The headless summary exists. The in-game panel and the standalone wallet are not built.'],
           ['The MMO template', 'Not started.'],
+        ],
+      },
+      { kind: 'heading', text: 'What M2 has not finished' },
+      { kind: 'prose', text: 'M2 is done when the SDK\'s two conformance test files pass against the node with only the URL changed. That has not happened, and these are the reasons it has not.' },
+      {
+        kind: 'list',
+        items: [
+          '**Nothing has been executed.** There is no C++ toolchain on the machine the node is written on, so every claim about it rests on compiling in CI and on having been written against the mock\'s semantics.',
+          '**The reserve set is empty.** The enumeration and the rules that key off it are in the node, but it has no members until the genesis ceremony produces them — so on the dev network those rules currently hold vacuously.',
+          '**The RPC emits untyped JSON.** Every value comes out as a quoted string, so `decimals` arrives as `"0"` rather than `0`. The response encoder has to be fixed before the conformance suite can pass.',
+          '**The SDK and the node disagree on hashing.** The SDK still hashes blocks the M0 way, so signatures do not verify across the two until it moves to the node\'s format. One change, on the SDK side, not yet made.',
         ],
       },
       { kind: 'heading', text: 'What this means for you' },
@@ -459,7 +471,8 @@ await kei.claims.pending()` },
         kind: 'limits',
         title: 'Do not',
         items: [
-          'Put real value anywhere near this. There is no mainnet, and until the validator set is meaningfully distributed there should not be.',
+          'Put real value anywhere near this. There is no token, no mainnet, and until the validator set is meaningfully distributed there should not be.',
+          'Read "the node is written" as "the node runs". It has compiled and nothing more.',
           'Ship a production economy on it. Build against it, and expect the chain under the API to change.',
           'Assume the market or the wallets exist because the design for them does.',
         ],
@@ -471,7 +484,7 @@ await kei.claims.pending()` },
         items: [
           '**Network security.** A chain with a handful of nodes has weak consensus. Kei is a testnet with real branding until that changes.',
           '**No inherited liquidity.** Kei launches with no users, no exchanges, and no market.',
-          '**Timeline.** The node fork is the long pole and is measured in months.',
+          '**Timeline.** The node fork is the long pole. Its code exists; getting it to run, and to pass the SDK\'s conformance suite, is the rest of M2.',
           '**No smart contract VM**, deliberately. If your design needs one, Kei is the wrong tool and this page would rather you found out here.',
         ],
       },
