@@ -65,8 +65,12 @@ requirement, a database is simpler and you should say so.
    compromise is an economic event. Balances live on the chain.
 4. **\`transfer\` policy is immutable and set at issuance** —
    \`'open' | 'issuer-only' | 'none'\`. It cannot be changed afterwards.
-5. **Issuing an asset burns 1,000 Kei.** Transactions — send, mint, transfer,
-   claim — are free, always.
+5. **Issuing an asset burns Kei, and the price escalates per issuing account.**
+   The nth asset an account issues burns n Kei: the first 1, the tenth 10, the
+   five hundredth 500. It is linear per asset, so a catalogue's running total is
+   quadratic — a currency plus five hundred item types is 125,751 Kei. It is not
+   a doubling. Transactions — send, mint, transfer, claim, swap settlement — are
+   free, always.
 6. **Do not mint per player for a batch reward.** One account has one chain, so
    that serialises. Use \`commit\` + player-side \`claim\`.
 
@@ -199,10 +203,15 @@ Answer these before writing code. Two of them cannot be changed later.
    environment. Never in the client bundle, never in a repo, never in a log.
 3. **Create the issuer** — \`Kei.server({ seed: process.env.KEI_SEED })\`. It
    throws if it detects a browser. Do not work around that; it is the point.
-4. **Fund it.** Issuing burns 1,000 Kei per asset. On testnet, \`faucet()\`.
+4. **Fund it.** The nth asset this account issues burns n Kei, so a first token
+   costs 1 Kei and a catalogue costs the running total. On testnet, \`faucet()\`.
+   The faucet is testnet-only and aimed at issuers: there is no mainnet seeding
+   and no per-wallet grant, and a player needs no Kei at all unless the game
+   prices something in it.
 5. **Issue the token** with \`game.token.issue(...)\`. Idempotent per
    (issuer, symbol) — calling it again returns the existing token rather than
-   burning another 1,000 Kei, so it is safe on every boot.
+   issuing a second one and paying the next asset's price, so it is safe on
+   every boot.
 6. **Create the player** — \`Kei.start()\` in the browser. It self-provisions:
    generates a seed, persists it to browser storage, and is ready to transact.
 7. **Wire the purchase as two halves.** Player: \`kei.pay({ to, amount, memo })\`.
@@ -219,7 +228,7 @@ Answer these before writing code. Two of them cannot be changed later.
 | Symptom | Cause | Fix |
 |---|---|---|
 | \`Kei.server()\` throws about a browser | The issuer seed reached the client bundle | Move it to a server. This is a total compromise if shipped. |
-| \`Not enough Kei\` on \`issue\` | The issuer holds less than the 1,000 Kei burn | Fund the issuer address; on testnet call \`faucet()\`. |
+| \`Not enough Kei\` on \`issue\` | The issuer holds less than the burn for its next asset — n Kei for its nth, so this grows as it issues more | Fund the issuer address; on testnet call \`faucet()\`. |
 | A mint appears not to arrive | Assets arrive **receivable**; the recipient's own signed block collects them | Nothing — the SDK collects in the background. In a test, \`await kei.sync()\`. |
 | \`Root ... has already been published\` | Two commits produced the same root | Update the SDK; commits are salted so identical batches are distinct drops. |
 | A transfer is rejected | The token was issued \`issuer-only\` or \`none\` | Nothing. That is protocol-enforced and immutable. It was decided at issuance. |
