@@ -101,12 +101,19 @@ header.site a {
 header.site a:hover { color: var(--ink); }
 
 header.site .home {
+  display: flex;
+  align-items: center;
+  gap: 9px;
   margin-right: auto;
   color: var(--ink);
   font-weight: 700;
   font-size: 16px;
   letter-spacing: -0.01em;
 }
+
+/* The one green thing in the chrome, and it is the coin itself rather than a
+   colour borrowed from it. */
+header.site .home img { display: block; width: 26px; height: 26px; }
 
 header.site .home b { color: var(--amber); font-weight: 700; }
 

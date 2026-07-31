@@ -45,6 +45,15 @@ export const SITE = {
     'The SDK is real and runs end to end against an in-memory mock. The node is written and compiles in CI, and has never been executed — there is no public network, and nothing anywhere holds value.',
 } as const
 
+/**
+ * Written once because it is the only place the coin is described, and a
+ * description of an image nobody on the team can see is worth getting right:
+ * an owl rolling a boulder uphill, which is what building a chain is.
+ */
+export const COIN_ALT =
+  'The Kei coin: an owl pushing a boulder uphill between two olive branches, ' +
+  'reading UNUS KEI — one boulder — above a lyre marked with the Roman numeral one.'
+
 const NAV: Array<[string, string]> = [
   ['/use-cases', 'use cases'],
   ['/docs', 'docs'],
@@ -154,6 +163,7 @@ export function shell(options: {
     headline: options.title,
     description: options.description,
     url: canonical,
+    image: `${SITE.origin}/og.png`,
     isPartOf: { '@type': 'WebSite', name: SITE.name, url: SITE.origin },
     about: { '@type': 'SoftwareApplication', name: SITE.npm, applicationCategory: 'DeveloperApplication' },
     ...(options.asks ? { keywords: options.asks.join(', ') } : {}),
@@ -171,15 +181,22 @@ export function shell(options: {
 <meta property="og:description" content="${escapeHtml(options.description)}">
 <meta property="og:url" content="${canonical}">
 <meta property="og:type" content="website">
+<meta property="og:image" content="${SITE.origin}/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="${escapeHtml(COIN_ALT)}">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#101113">
 <link rel="stylesheet" href="/styles.css">
-<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/img/kei-coin-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <script type="application/ld+json">${JSON.stringify(jsonLd)}</script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <header class="site"><div class="wrap">
-<a class="home" href="/">kei<b>coin</b>.org</a>
+<a class="home" href="/"><img src="/img/kei-coin-64.png" alt="" width="26" height="26" decoding="async">kei<b>coin</b>.org</a>
 ${NAV.map(([href, label]) => `<a href="${href}">${label}</a>`).join('\n')}
 </div></header>
 <main id="main">
