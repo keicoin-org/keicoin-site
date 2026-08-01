@@ -472,7 +472,7 @@ await kei.claims.pending()` },
         items: [
           '**[The exact SDK suite](https://github.com/keicoin-org/kei-transaction/pull/9) is shared from a pinned revision.** All 10 M2 tests pass live against the node with only the URL changed.',
           '**[The development reserve ceremony](https://github.com/keicoin-org/kei-node/pull/12) is deterministic and tested.** Dev genesis creates the fixed 900B reserve and four allocations totalling 100B without giving the reserve voting weight.',
-          '**[The node acceptance gate](https://github.com/keicoin-org/kei-node/pull/13) is merged and enforced.** Both final CI runs passed; the native gate covers 46 tests in eight suites, including five reserve tests plus ingress and RPC history.',
+          '**[The node acceptance gate](https://github.com/keicoin-org/kei-node/pull/13) is merged and enforced.** Both final CI runs passed; the native gate covers 46 core tests in eight suites, including five reserve tests and the ingress regression, plus the separate RPC history test.',
           '**M4 remains separate.** `commit`, `claim`, and a payment memo wire representation are not M2 features. The SDK mock can exercise batch claims, but the real node cannot yet.',
           '**There is still no public testnet.** That is M3. A green local-node gate proves compatibility, not network security or distribution.',
         ],
