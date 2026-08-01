@@ -37,12 +37,12 @@ export const SITE = {
   origin: 'https://keicoin.org',
   name: 'Kei',
   tagline: 'Real currencies and items for browser games, on a feeless chain.',
-  repo: 'https://github.com/keicoin',
+  repo: 'https://github.com/keicoin-org',
   npm: 'kei-transaction',
   /** Kept in one place because it appears on every page and will change often. */
-  milestone: 'M1 of eleven, M2 in progress',
+  milestone: 'M1 complete, M2 acceptance in progress',
   status:
-    'The SDK is real and runs end to end against an in-memory mock. The node is written and compiles in CI, and has never been executed — there is no public network, and nothing anywhere holds value.',
+    'The 0.1.0 SDK packages are published. The node builds, starts, serves RPC, and has a populated dev reserve; M2 is not complete until the exact SDK suite is an enforced green node gate. There is no public network, and nothing anywhere holds value.',
 } as const
 
 /**

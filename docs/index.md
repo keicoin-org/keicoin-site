@@ -8,7 +8,7 @@ description: Install the Kei SDK and send a confirmed payment.
 Kei has two entry points: one for a player's browser and one for the game's server. A key signs only for its own account, so those roles never collapse into one.
 
 ::: warning Current network status
-The SDK runs end to end against an in-memory mock. There is no public network, mainnet, or asset with value yet. Build against the API; do not ship a production economy on it.
+The published 0.1.0 SDK runs end to end against an in-memory mock. The real node builds, starts, and serves RPC in CI, but its exact M2 acceptance gate is not on node master. There is no public network, mainnet, or asset with value yet. Build against the API; do not ship a production economy on it.
 :::
 
 ## Install
@@ -68,9 +68,10 @@ The player signs the payment from their own wallet:
 const receipt = await kei.pay({
   to: gameAddress,
   amount: 0.05,
-  memo: 'Sword of Testing',
 })
 ```
+
+Pass `receipt.hash` with the order over your normal server channel. Kei payments have no memo field until M4, and the SDK rejects `pay({ memo })` rather than silently dropping it.
 
 The game observes the confirmed payment on its server and delivers from its own account:
 

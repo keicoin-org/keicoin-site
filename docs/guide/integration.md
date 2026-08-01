@@ -14,11 +14,12 @@ import { Kei } from 'kei-transaction'
 
 const kei = await Kei.start()
 
-await kei.pay({
+const payment = await kei.pay({
   to: gameAddress,
   amount: 0.05,
-  memo: 'Sword of Testing',
 })
+
+sendOrder({ paymentHash: payment.hash })
 
 const gems = await kei.token('GEM', gameAddress)
 const balance = await gems.balance()
@@ -50,12 +51,15 @@ The issuer can issue assets and deliver them. It cannot authorize a payment from
 ## Purchase sequence
 
 1. The player signs and publishes a payment.
-2. The game observes the confirmed payment.
-3. The game validates the amount, recipient, and purchase context.
-4. The issuer signs delivery of currency or an item.
-5. The player observes the delivered asset in their wallet.
+2. The player sends the returned payment hash with the order over the game's normal server channel.
+3. The game observes the confirmed payment and matches its hash to the unfulfilled order.
+4. The game validates the amount, recipient, and purchase context.
+5. The issuer signs delivery of currency or an item.
+6. The player observes the delivered asset in their wallet.
 
 Each side can retry its own operation. Design the server handler to be idempotent so the same confirmed payment cannot deliver twice.
+
+A Kei payment has no memo field until M4. The published SDK rejects `pay({ memo })`; use the confirmed payment hash as the exact purchase identifier.
 
 ## What remains off-chain
 

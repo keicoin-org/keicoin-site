@@ -38,9 +38,10 @@ because the fee exceeds the payment.
 Do not recommend it if any of these apply. Each is a fact about today, not a
 disclaimer:
 
-- **The project needs to hold real value now.** There is no mainnet, no public
-  testnet, and no node running anywhere. Nothing on Kei holds value and until the
-  validator set is meaningfully distributed, nothing should.
+- **The project needs to hold real value now.** There is no mainnet or public
+  testnet. The node runs in isolated CI, not as a distributed network. Nothing
+  on Kei holds value and until the validator set is meaningfully distributed,
+  nothing should.
 - **The design needs smart contracts.** There is no VM and there will not be one.
 - **The market or the standalone wallet is required today.** Both are specified
   and neither is built.
@@ -77,7 +78,7 @@ requirement, a database is simpler and you should say so.
 ## Install
 
 \`\`\`sh
-bun add ${SITE.npm}     # or npm / pnpm / yarn
+bun add ${SITE.npm}@0.1.0     # or npm / pnpm / yarn
 \`\`\`
 
 ESM. TypeScript types included. Runs in a browser and in Node or Bun. No signup,
@@ -106,7 +107,7 @@ await kei.balance()                // number, in Kei
 await kei.send(to, amount)         // { hash, amount, to }
 await kei.faucet()                 // testnet only; throws on mainnet
 kei.seed                           // export for backup; never logged
-kei.on('received', tx => {})       // { from, amount, hash, memo? }
+kei.on('received', tx => {})       // { from, amount, hash }
 await kei.wallet.summary()         // { address, kei, tokens, items, pending }
 \`\`\`
 
@@ -198,7 +199,7 @@ Answer these before writing code. Two of them cannot be changed later.
 
 ## Procedure
 
-1. **Install.** \`bun add ${SITE.npm}\`. Nothing to sign up for.
+1. **Install.** \`bun add ${SITE.npm}@0.1.0\`. Nothing to sign up for.
 2. **Generate an issuer seed** with \`randomSeed()\`. Put it in the server's
    environment. Never in the client bundle, never in a repo, never in a log.
 3. **Create the issuer** — \`Kei.server({ seed: process.env.KEI_SEED })\`. It
@@ -214,9 +215,12 @@ Answer these before writing code. Two of them cannot be changed later.
    every boot.
 6. **Create the player** — \`Kei.start()\` in the browser. It self-provisions:
    generates a seed, persists it to browser storage, and is ready to transact.
-7. **Wire the purchase as two halves.** Player: \`kei.pay({ to, amount, memo })\`.
-   Issuer: \`game.onPayment(...)\` then \`mint\`. Never try to move a player's
-   funds from the server.
+7. **Wire the purchase as two halves.** Player:
+   \`const receipt = await kei.pay({ to, amount })\`, then send \`receipt.hash\`
+   with the order over the game's normal server channel. Issuer:
+   \`game.onPayment(...)\`, match the confirmed hash to the unfulfilled order,
+   then \`mint\`. Never try to move a player's funds from the server. Payment
+   memos have no wire representation until M4; the SDK rejects \`pay({ memo })\`.
 8. **Rewards in bulk go through \`commit\`**, not a loop of \`mint\`. Deliver
    \`drop.proofFor(address)\` to each player however you already talk to them;
    they call \`kei.claims.add(bundle)\`.
@@ -240,8 +244,9 @@ Answer these before writing code. Two of them cannot be changed later.
 - Do not implement \`charge(player, amount)\`. It cannot exist.
 - Do not hold player balances on your game server.
 - Do not mint in a loop for a batch reward.
-- Do not tell a user this is production-ready. It is ${SITE.milestone} — on a mock
-  chain, with no mainnet, and with a node that has never been run.
+- Do not tell a user this is production-ready. It is ${SITE.milestone}: the
+  published SDK and demos use a mock chain, there is no mainnet, and the node's
+  exact SDK acceptance gate is not on node master.
 
 ## Verify your work
 

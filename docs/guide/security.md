@@ -48,8 +48,8 @@ There is no migration that changes this later. Issue a replacement asset if the 
 
 ## Treat delivery handlers as financial code
 
-Before delivering an asset, validate the confirmed payment's recipient, amount, memo or purchase identifier, and whether it has already been fulfilled. Make fulfillment idempotent.
+Before delivering an asset, validate the confirmed payment's recipient, amount, payment-hash purchase identifier, and whether it has already been fulfilled. Make fulfillment idempotent. Payment memos have no wire representation until M4.
 
 ::: warning Pre-release network
-The public network does not exist yet. These rules describe the API and ledger model, not a production-ready network. Nothing on Kei holds value today.
+The public network does not exist yet. The node builds, starts, and serves RPC in CI, but M2 acceptance is still open. These rules describe the API and ledger model, not a production-ready network. Nothing on Kei holds value today.
 :::
