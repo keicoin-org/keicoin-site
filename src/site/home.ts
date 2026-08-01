@@ -188,7 +188,7 @@ export function homePage(): string {
     <p class="eyebrow">Why Kei</p>
     <h2>The boulder is the point.</h2>
     <p class="origin-lede">
-      <strong>Kei is our name for the boulder.</strong> The coin shows an owl
+      <strong>Kei means boulder in Latin.</strong> The coin shows an owl
       driving it uphill — our version of Sisyphus, except the work is not a
       punishment. It is the work of making a world persist.
     </p>
