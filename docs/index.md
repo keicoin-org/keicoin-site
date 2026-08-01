@@ -8,7 +8,7 @@ description: Install the Kei SDK and send a confirmed payment.
 Kei has two entry points: one for a player's browser and one for the game's server. A key signs only for its own account, so those roles never collapse into one.
 
 ::: warning Current network status
-The SDK runs end to end against an in-memory mock. There is no public network, mainnet, or asset with value yet. Build against the API; do not ship a production economy on it.
+M2 is complete: the published 0.1.0 SDK's exact 10-test M2 suite passes against a clean real-node startup in enforced CI. There is still no public network, mainnet, or asset with value; that work starts in M3. Build against the API, but do not ship a production economy on it.
 :::
 
 ## Install
@@ -68,19 +68,26 @@ The player signs the payment from their own wallet:
 const receipt = await kei.pay({
   to: gameAddress,
   amount: 0.05,
-  memo: 'Sword of Testing',
 })
 ```
+
+Persist `receipt.hash` with the order over your normal server channel. This is the player's send-block hash.
 
 The game observes the confirmed payment on its server and delivers from its own account:
 
 ```ts
-game.onPayment(async ({ from, amount }) => {
-  if (amount >= 0.05) await gems.mint(from, 100)
+game.onPayment(async ({ from, amount, hash: receiveHash }) => {
+  const receive = await game.client.node.blockInfo(receiveHash)
+  if (!receive || receive.type !== 'state' || !['open', 'receive'].includes(receive.subtype)) return
+
+  await purchases.recordPayment({ sendHash: receive.link, receiveHash, from, amount })
+  await reconcile(receive.link)
 })
 ```
 
-There is no `charge(someoneElse, amount)`. The player signs payment; the issuer signs delivery.
+`onPayment.hash` is the game's receive-block hash, not `receipt.hash`; the receive block's `link` is the player's send hash. Persist the order and confirmed payment independently by that send hash, then call the same atomic, idempotent reconciliation path after either write. This handles a payment that confirms before the browser attaches it to the order and prevents duplicate delivery.
+
+A Kei payment has no memo field until M4. The SDK rejects `pay({ memo })` rather than silently dropping it. There is also no `charge(someoneElse, amount)`: the player signs payment; the issuer signs delivery.
 
 ## Continue
 

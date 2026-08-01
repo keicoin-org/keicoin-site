@@ -34,7 +34,6 @@ kei.on('received', (transaction) => {
   console.log(transaction.from)
   console.log(transaction.amount)
   console.log(transaction.hash)
-  console.log(transaction.memo)
 })
 ```
 
@@ -46,8 +45,8 @@ The event reports a transaction after the client observes it. Do not treat an un
 await kei.pay({
   to: gameAddress,
   amount: 0.05,
-  memo: 'Sword of Testing',
 })
 ```
 
 A payment is signed by the current wallet. There is intentionally no `from` argument.
+Save the returned send-block `hash` with the order over your normal server channel. `onPayment.hash` is the receiver's receive-block hash; resolve it with `game.client.node.blockInfo()` and correlate using that block's `link`. Persist both sides and reconcile after either arrives. Payment memos have no wire representation until M4, so `pay({ memo })` is rejected rather than silently ignored.

@@ -5,6 +5,7 @@
       "name": "keicoin-site",
       "devDependencies": {
         "@types/bun": "^1.3.14",
+        "kei-transaction": "0.1.0",
         "typescript": "^5.9.0",
         "vitepress": "1.6.4",
         "wrangler": "^4.0.0",
@@ -55,6 +56,8 @@
     "@babel/parser": ["@babel/parser@7.29.8", "", { "dependencies": { "@babel/types": "^7.29.8" }, "bin": "./bin/babel-parser.js" }, "sha512-E8lTAYNB1KW+FH+VGJuZM1ioAx2E6oVlvQFRrf5P8ZZmsiJXYAD9vTFV7yyEURNzgh1dFqMZuO6tUwcARbqFCA=="],
 
     "@babel/types": ["@babel/types@7.29.8", "", { "dependencies": { "@babel/helper-string-parser": "^7.29.7", "@babel/helper-validator-identifier": "^7.29.7" } }, "sha512-Vj1jF3cPfxg7OAfoI7QnVKLoILlm2JF9pnVHrX8qx7AHMiYWT+NDAA7jChlNgRS4WTLc/fD1lXLmPixluj+3Gg=="],
+
+    "@bananocoin/bananojs": ["@bananocoin/bananojs@2.10.10", "", { "dependencies": { "package": "^1.0.1" } }, "sha512-ST6BvZAP2S5Ppwb2o0VfOsIvSKWN/MM9oUgVhHd+7ONoFxvkO2TY+7nHWxuGDksrV/vbbuq055InIK2adNRV9w=="],
 
     "@cloudflare/kv-asset-handler": ["@cloudflare/kv-asset-handler@0.5.0", "", {}, "sha512-jxQYkj8dSIzc0cD6cMMNdOc1UVjqSqu8BZdor5s8cGjW2I8BjODt/kWPVdY+u9zj3ms75Q5qaZgnxUad83+eAg=="],
 
@@ -195,6 +198,16 @@
     "@jridgewell/sourcemap-codec": ["@jridgewell/sourcemap-codec@1.5.5", "", {}, "sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og=="],
 
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.9", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.0.3", "@jridgewell/sourcemap-codec": "^1.4.10" } }, "sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ=="],
+
+    "@keicoin/claims": ["@keicoin/claims@0.1.0", "", { "dependencies": { "@keicoin/core": "^0.1.0" } }, "sha512-ozvf0Gqgzh4U8x24h7gHhkoPPrhiBN7NRCmx2PXmVxl53vEePIuSXXo3qTyMkigPEN+6BoPOl+Ru+MuI98Y0Ug=="],
+
+    "@keicoin/core": ["@keicoin/core@0.1.0", "", { "dependencies": { "@bananocoin/bananojs": "^2.10.10" } }, "sha512-1UUsnSTJBhKVnRfI3h7/Ln7KVC9qEgXzl+Kozu3OSRz6UbzA+m0lb8ZySqyjfVutmMICuKE9bvvK19DV2kK/Xg=="],
+
+    "@keicoin/tokens": ["@keicoin/tokens@0.1.0", "", { "dependencies": { "@keicoin/claims": "^0.1.0", "@keicoin/core": "^0.1.0" } }, "sha512-w2pOQJUySVD3R5qSNkXAYCeBIl3JPsRPJqeRLDjyejwVHGU6WsDeZ7G5cMUG1bwhqdpGnnNudAuMysUh81cpeA=="],
+
+    "@keicoin/wallet": ["@keicoin/wallet@0.1.0", "", { "dependencies": { "@keicoin/claims": "^0.1.0", "@keicoin/core": "^0.1.0", "@keicoin/tokens": "^0.1.0" } }, "sha512-3vMWiMkdyQGtjK3bCgwsHYnsPvs4LrxCezCruIlCEK4bXgIQQUQ8kPxBbIHKCKogxvphA6Zq7IyUHsvsEd+tJQ=="],
+
+    "@keicoin/work": ["@keicoin/work@0.1.0", "", { "dependencies": { "@keicoin/core": "^0.1.0" } }, "sha512-0zwG62/5AoAQoYK2SfmhZm23I5IuU/EaUcMRN7HPUrIrhjk8+LValiqcJdjO5cJrIp/mJ9PIUiTmZm26vptx1w=="],
 
     "@poppinss/colors": ["@poppinss/colors@4.1.6", "", { "dependencies": { "kleur": "^4.1.5" } }, "sha512-H9xkIdFswbS8n1d6vmRd8+c10t2Qe+rZITbbDHHkQixH5+2x1FDGmi/0K+WgWiqQFKPSlIYB7jlH6Kpfn6Fleg=="],
 
@@ -380,6 +393,8 @@
 
     "is-what": ["is-what@5.5.0", "", {}, "sha512-oG7cgbmg5kLYae2N5IVd3jm2s+vldjxJzK1pcu9LfpGuQ93MQSzo0okvRna+7y5ifrD+20FE8FvjusyGaz14fw=="],
 
+    "kei-transaction": ["kei-transaction@0.1.0", "", { "dependencies": { "@keicoin/claims": "^0.1.0", "@keicoin/core": "^0.1.0", "@keicoin/tokens": "^0.1.0", "@keicoin/wallet": "^0.1.0", "@keicoin/work": "^0.1.0" } }, "sha512-ba3JVU9MaDEIw2R5RZfJA319ofkcoOrFfy45xl69/CtUQrPvjOsGK656bcn03o9SQYTeJJF0N7FPx3Yoy+JnxA=="],
+
     "kleur": ["kleur@4.1.5", "", {}, "sha512-o+NO+8WrRiQEE4/7nwRJhN1HWpVmJm511pBHUxPLtp0BUISzlBplORYSmTclCnJvQq2tKu/sgl3xVpkc7ZWuQQ=="],
 
     "magic-string": ["magic-string@0.30.21", "", { "dependencies": { "@jridgewell/sourcemap-codec": "^1.5.5" } }, "sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ=="],
@@ -407,6 +422,8 @@
     "nanoid": ["nanoid@3.3.16", "", { "bin": { "nanoid": "bin/nanoid.cjs" } }, "sha512-bzlKTyNJ7+LdGIIwy8ijFpIqEQIvafahV7eYykJ8Cvh42EdJeODoJ6gUJXpQJvej1BddH8OqTXZNE/KfbWAu8Q=="],
 
     "oniguruma-to-es": ["oniguruma-to-es@3.1.1", "", { "dependencies": { "emoji-regex-xs": "^1.0.0", "regex": "^6.0.1", "regex-recursion": "^6.0.2" } }, "sha512-bUH8SDvPkH3ho3dvwJwfonjlQ4R80vjyvrU8YpxuROddv55vAEJrTuCuCVUhhsHbtlD9tGGbaNApGQckXhS8iQ=="],
+
+    "package": ["package@1.0.1", "", {}, "sha512-g6xZR6CO7okjie83sIRJodgGvaXqymfE5GLhN8N2TmZGShmHc/V23hO/vWbdnuy3D81As3pfovw72gGi42l9qA=="],
 
     "path-to-regexp": ["path-to-regexp@6.3.0", "", {}, "sha512-Yhpw4T9C6hPpgPeA28us07OJeqZ5EzQTkbfwuhsUg0c237RomFoETJgmp2sa3F/41gfLE6G5cqcYwznmeEeOlQ=="],
 
