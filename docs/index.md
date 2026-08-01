@@ -71,17 +71,23 @@ const receipt = await kei.pay({
 })
 ```
 
-Pass `receipt.hash` with the order over your normal server channel. Kei payments have no memo field until M4, and the SDK rejects `pay({ memo })` rather than silently dropping it.
+Persist `receipt.hash` with the order over your normal server channel. This is the player's send-block hash.
 
 The game observes the confirmed payment on its server and delivers from its own account:
 
 ```ts
-game.onPayment(async ({ from, amount }) => {
-  if (amount >= 0.05) await gems.mint(from, 100)
+game.onPayment(async ({ from, amount, hash: receiveHash }) => {
+  const receive = await game.client.node.blockInfo(receiveHash)
+  if (!receive || receive.type !== 'state' || !['open', 'receive'].includes(receive.subtype)) return
+
+  await purchases.recordPayment({ sendHash: receive.link, receiveHash, from, amount })
+  await reconcile(receive.link)
 })
 ```
 
-There is no `charge(someoneElse, amount)`. The player signs payment; the issuer signs delivery.
+`onPayment.hash` is the game's receive-block hash, not `receipt.hash`; the receive block's `link` is the player's send hash. Persist the order and confirmed payment independently by that send hash, then call the same atomic, idempotent reconciliation path after either write. This handles a payment that confirms before the browser attaches it to the order and prevents duplicate delivery.
+
+A Kei payment has no memo field until M4. The SDK rejects `pay({ memo })` rather than silently dropping it. There is also no `charge(someoneElse, amount)`: the player signs payment; the issuer signs delivery.
 
 ## Continue
 

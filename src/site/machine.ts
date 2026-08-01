@@ -217,10 +217,14 @@ Answer these before writing code. Two of them cannot be changed later.
    generates a seed, persists it to browser storage, and is ready to transact.
 7. **Wire the purchase as two halves.** Player:
    \`const receipt = await kei.pay({ to, amount })\`, then send \`receipt.hash\`
-   with the order over the game's normal server channel. Issuer:
-   \`game.onPayment(...)\`, match the confirmed hash to the unfulfilled order,
-   then \`mint\`. Never try to move a player's funds from the server. Payment
-   memos have no wire representation until M4; the SDK rejects \`pay({ memo })\`.
+   with the order over the game's normal server channel. This is the send hash.
+   Issuer: \`game.onPayment(...)\` receives the receive hash; resolve it with
+   \`game.client.node.blockInfo(receiveHash)\` and use that block's \`link\` as
+   the send hash. Persist orders and payments independently, then invoke one
+   atomic, idempotent reconciliation path after either write so payment-before-
+   order is not lost. Never try to move a player's funds from the server.
+   Payment memos have no wire representation until M4; the SDK rejects
+   \`pay({ memo })\`.
 8. **Rewards in bulk go through \`commit\`**, not a loop of \`mint\`. Deliver
    \`drop.proofFor(address)\` to each player however you already talk to them;
    they call \`kei.claims.add(bundle)\`.

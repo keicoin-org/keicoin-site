@@ -22,8 +22,9 @@ import { Kei } from 'kei-transaction'
 // Browser. Wallet created and persisted. No signup, API key, or dashboard.
 const kei = await Kei.start()
 
+const order = await createOrder({ sku: 'sword' })
 const payment = await kei.pay({ to: gameAddress, amount: 0.05 })
-sendOrder({ paymentHash: payment.hash }) // correlate the order out of band
+await attachPayment(order.id, payment.hash) // durable server-side record
 await kei.token('GEM', gameAddress).then(g => g.balance())
 `
 
@@ -349,15 +350,18 @@ send(playerA, drop.proofFor(playerA))   // plain JSON, hand it over however you 
         { kind: 'prose', text: 'Every payment processor has a floor set by its own fees, and the floor is somewhere around fifty cents. Below it, the economics invert and you end up bundling — "buy 500 gems for $4.99" — which is a workaround, not a design.' },
         { kind: 'prose', text: 'Transactions on Kei are free. Not cheap: free. So the floor is gone, and a payment can be worth a tenth of a cent.' },
         { kind: 'code', caption: 'Both halves of a purchase', code: `// Player — one signed transaction
+const order = await createOrder({ sku: 'retry' })
 const payment = await kei.pay({ to: gameAddress, amount: 0.001 })
-sendOrder({ paymentHash: payment.hash }) // your normal server channel
+await attachPayment(order.id, payment.hash) // persists order by send hash
 
-// Game server — react to it and deliver
-game.onPayment(async ({ from, amount, hash }) => {
-  const order = await findUnfulfilledOrder(hash)
-  if (order && amount >= 0.001) await gems.mint(from, 1)
+// Game server — onPayment.hash is the receive hash, not payment.hash
+game.onPayment(async ({ from, amount, hash: receiveHash }) => {
+  const receive = await game.client.node.blockInfo(receiveHash)
+  if (!receive || receive.type !== 'state' || !['open', 'receive'].includes(receive.subtype)) return
+  await purchases.recordPayment({ sendHash: receive.link, receiveHash, from, amount })
+  await reconcile(receive.link)
 })` },
-        { kind: 'prose', text: 'A Kei payment has no memo field until M4. Correlate an order by the confirmed payment hash returned from `pay()`; the published SDK rejects `pay({ memo })` instead of silently dropping it.' },
+        { kind: 'prose', text: '`pay()` returns the player\'s **send** hash. `onPayment.hash` is the game\'s **receive** hash; resolve that block and use its `link` to recover the send hash. Persist payments and orders independently by send hash, then run the same atomic, idempotent `reconcile(sendHash)` after either write — the payment can arrive before the browser attaches it to an order. A Kei payment has no memo field until M4, and the SDK rejects `pay({ memo })` instead of silently dropping it.' },
         { kind: 'prose', text: 'A purchase is **always** two signed transactions. There is no `charge(someoneElse, …)` and there never will be — a game cannot sign for a player\'s wallet. Any API implying otherwise is a bug.' },
         {
           kind: 'limits',
