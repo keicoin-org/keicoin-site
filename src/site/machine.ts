@@ -249,8 +249,8 @@ Answer these before writing code. Two of them cannot be changed later.
 - Do not hold player balances on your game server.
 - Do not mint in a loop for a batch reward.
 - Do not tell a user this is production-ready. It is ${SITE.milestone}: the
-  published SDK and demos use a mock chain, there is no mainnet, and the node's
-  exact SDK acceptance gate is not on node master.
+  exact M2 gate is green, but the published SDK and demos use a mock chain and
+  there is no mainnet or public testnet.
 
 ## Verify your work
 

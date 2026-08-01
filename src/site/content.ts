@@ -65,7 +65,7 @@ const NEXT_STEPS = {
 }
 
 const MOCK_CAVEAT =
-  'The published SDK and demos use an in-memory mock today. The real node now builds, starts, and serves RPC, but its exact M2 acceptance gate is not on node master. The API is real, but **nothing on it holds value** and there is no public network yet.'
+  'The published SDK and demos use an in-memory mock today. M2 is complete: the exact SDK suite passes against a clean real-node startup in enforced CI. The API is real, but **nothing on it holds value** and there is no public network yet.'
 
 export const USE_CASES: UseCase[] = [
   {
@@ -450,7 +450,7 @@ await kei.claims.pending()` },
     summary:
       'Published early and updated as it changes, including the parts that say "not yet". A page that only becomes honest at launch was never honest.',
     blocks: [
-      { kind: 'prose', text: 'Kei has **M1 complete and M2 acceptance in progress**. Version 0.1.0 of the SDK packages is published and runs end to end against an in-memory mock. The node now builds, starts, serves RPC, and executes its asset-ledger tests; M2 is still open until the exact SDK M2 suite is an enforced green node gate.' },
+      { kind: 'prose', text: 'Kei has **M2 complete, with M3 next**. Version 0.1.0 of the SDK packages is published. Its exact 10-test M2 suite passes against a clean real-node startup in enforced CI, while the native node gate covers 46 tests across eight suites.' },
       {
         kind: 'table',
         head: ['', 'State'],
@@ -465,13 +465,15 @@ await kei.claims.pending()` },
           ['The MMO template', 'Implemented as a hosted Babylon.js + Colyseus prototype at [mmo.keicoin.org](https://mmo.keicoin.org). It uses a process-local mock chain today; its public source repository is not published yet.'],
         ],
       },
-      { kind: 'heading', text: 'What M2 has not finished' },
-      { kind: 'prose', text: 'M2 is done when the SDK\'s exact M2 conformance suite passes against the node with only the URL changed and that run is enforced in node CI. The shared suite exists in the SDK; the node-side gate is not on master yet.' },
+      { kind: 'heading', text: 'M2 completion evidence' },
+      { kind: 'prose', text: 'M2 closed only after the shared SDK suite passed unchanged against a clean node startup and the same run became an enforced node CI gate.' },
       {
         kind: 'list',
         items: [
-          '**The final cross-repository gate is not on node master.** The exact M2 suite is shared from a pinned SDK revision and must pass from a clean node startup in both CI jobs before M2 can close.',
-          '**M4 work is deliberately outside this gate.** `commit`, `claim`, and a payment memo wire representation are not M2 features. The SDK mock can exercise batch claims, but the real node cannot yet.',
+          '**[The exact SDK suite](https://github.com/keicoin-org/kei-transaction/pull/9) is shared from a pinned revision.** All 10 M2 tests pass live against the node with only the URL changed.',
+          '**[The development reserve ceremony](https://github.com/keicoin-org/kei-node/pull/12) is deterministic and tested.** Dev genesis creates the fixed 900B reserve and four allocations totalling 100B without giving the reserve voting weight.',
+          '**[The node acceptance gate](https://github.com/keicoin-org/kei-node/pull/13) is merged and enforced.** Both final CI runs passed; the native gate covers 46 tests in eight suites, including five reserve tests plus ingress and RPC history.',
+          '**M4 remains separate.** `commit`, `claim`, and a payment memo wire representation are not M2 features. The SDK mock can exercise batch claims, but the real node cannot yet.',
           '**There is still no public testnet.** That is M3. A green local-node gate proves compatibility, not network security or distribution.',
         ],
       },
@@ -493,7 +495,7 @@ await kei.claims.pending()` },
         items: [
           '**Network security.** A future chain with a handful of nodes would have weak consensus. Today there is only an isolated CI dev node, not a public testnet.',
           '**No inherited liquidity.** Kei launches with no users, no exchanges, and no market.',
-          '**Timeline.** Making the exact SDK M2 suite an enforced green node gate is the remaining M2 acceptance step.',
+          '**Timeline.** M2 is complete. M3 is the next network milestone.',
           '**No smart contract VM**, deliberately. If your design needs one, Kei is the wrong tool and this page would rather you found out here.',
         ],
       },

@@ -258,11 +258,11 @@ export function homePage(): string {
   <p class="eyebrow">Read this before you commit to anything</p>
   <h2>Where this actually is.</h2>
   <div class="limits">
-    <h4>M1 complete, M2 acceptance in progress</h4>
+    <h4>M2 complete, M3 next</h4>
     <ul>
       <li><strong>The SDK is published at 0.1.0</strong> and runs end to end, with TypeScript types.</li>
       <li><strong>The chain it talks to is an in-memory mock.</strong> It enforces the real ledger rules, so the API will not move when the node lands — but there is no network yet.</li>
-      <li><strong>The node builds, starts, serves RPC, and executes its M2 ledger paths in CI.</strong> Until the exact SDK M2 suite is an enforced green node gate, M2 is not done.</li>
+      <li><strong>The exact 10-test SDK M2 suite passes against a clean real-node startup in enforced CI.</strong> Native CI also covers the ledger, reserve, ingress, and RPC history paths.</li>
       <li><strong>The MMO prototype is live over HTTPS.</strong> It still uses a process-local mock chain and is not a public network.</li>
       <li><strong>There is no token, no mainnet, and nothing holds value.</strong> Until the validator set is meaningfully distributed, nothing should.</li>
       <li><strong>The market and the wallets are specified, not built.</strong></li>

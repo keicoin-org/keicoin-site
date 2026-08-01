@@ -8,7 +8,7 @@ description: Install the Kei SDK and send a confirmed payment.
 Kei has two entry points: one for a player's browser and one for the game's server. A key signs only for its own account, so those roles never collapse into one.
 
 ::: warning Current network status
-The published 0.1.0 SDK runs end to end against an in-memory mock. The real node builds, starts, and serves RPC in CI, but its exact M2 acceptance gate is not on node master. There is no public network, mainnet, or asset with value yet. Build against the API; do not ship a production economy on it.
+M2 is complete: the published 0.1.0 SDK's exact 10-test M2 suite passes against a clean real-node startup in enforced CI. There is still no public network, mainnet, or asset with value; that work starts in M3. Build against the API, but do not ship a production economy on it.
 :::
 
 ## Install

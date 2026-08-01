@@ -40,9 +40,9 @@ export const SITE = {
   repo: 'https://github.com/keicoin-org',
   npm: 'kei-transaction',
   /** Kept in one place because it appears on every page and will change often. */
-  milestone: 'M1 complete, M2 acceptance in progress',
+  milestone: 'M2 complete, M3 next',
   status:
-    'The 0.1.0 SDK packages are published. The node builds, starts, serves RPC, and has a populated dev reserve; M2 is not complete until the exact SDK suite is an enforced green node gate. There is no public network, and nothing anywhere holds value.',
+    'The 0.1.0 SDK packages are published, and their exact 10-test M2 suite passes against a clean real-node startup in enforced CI. There is no public network yet, and nothing anywhere holds value.',
 } as const
 
 /**
