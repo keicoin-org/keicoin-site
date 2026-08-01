@@ -22,6 +22,6 @@
     "kei-transaction": "0.1.0",
     "typescript": "^5.9.0",
     "vitepress": "1.6.4",
-    "wrangler": "^4.0.0"
+    "wrangler": "^4.118.0"
   }
 }
