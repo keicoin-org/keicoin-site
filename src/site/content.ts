@@ -455,14 +455,14 @@ await kei.claims.pending()` },
         kind: 'table',
         head: ['', 'State'],
         rows: [
-          ['The SDK', 'Version 0.2.0 is published. Wallet, send, receive, issue, mint, burn, transfer, balanceOf, items, commit and claim ship with TypeScript types. Payment memos are not in the current wire contract; correlate purchases by payment hash.'],
+          ['The SDK', 'Version 0.3.0 is published, and every `@keicoin/*` package with it. Wallet, send, receive, issue, mint, burn, transfer, balanceOf, items, commit, claim, the market, and the in-game wallet panel ship with TypeScript types. Payment memos are not in the current wire contract; correlate purchases by payment hash.'],
           ['The mock chain', 'Available explicitly through `Kei.mock()` for deterministic tests and still used by some hosted demos. It enforces the real ledger rules — one chain per account, derived asset ids, receivable arrivals, work tiers, the issuance burn, supply caps, transfer policy, and the double-claim index.'],
           ['The node', 'Builds, starts, and serves RPC on Linux CI. M2 asset operations and native M4 commit, claim, commit-close, commit-info, and claim-status pass the SDK-owned contracts against a clean startup. Dev genesis has the fixed allocation; beta/live still require their offline ceremonies.'],
           ['The network', 'One rate-limited, best-effort public dev-network node at `https://testnet.keicoin.org/rpc`. It has weak consensus, no uptime promise, published dev keys, and no monetary value. There is no mainnet.'],
           ['The demo', 'Playable. Press a button, bank presses, claim them, buy upgrades that live on the ledger instead of in a save file.'],
-          ['The market', 'In review, not merged. Swap offer/accept/cancel and `@keicoin/market` have open pull requests on the node and the SDK.'],
-          ['Wallets', 'The headless summary exists. An in-game wallet panel has an open pull request on the SDK. A standalone wallet is being built in a separate repository, forked from BananoVault; not yet merged to its default branch.'],
-          ['The MMO template', 'Published as [kei-mmo-template](https://github.com/keicoin-org/kei-mmo-template) and hosted at [mmo.keicoin.org](https://mmo.keicoin.org). Gold and items are chain assets; the database keeps accounts, characters and positions. It runs against a process-local mock chain by default, and `KEI_NODE` points it at a real one.'],
+          ['The market', 'Merged on the node and the SDK, and published as `@keicoin/market@0.1.0`. Swap offer/accept/cancel, atomic settlement, and price history. What is not claimed: a public node deployment carrying the native swap blocks.'],
+          ['Wallets', 'Both merged. The in-game panel ships in `kei-transaction@0.3.0`; the standalone wallet, forked from BananoVault, is on [kei-wallet](https://github.com/keicoin-org/kei-wallet)’s default branch. The standalone wallet’s market panel still reports itself unavailable — it was written while `@keicoin/market` was unpublished, and is simply not wired up yet.'],
+          ['World of Wonder', 'Published as [world-of-wonder](https://github.com/keicoin-org/world-of-wonder) and hosted at [mmo.keicoin.org](https://mmo.keicoin.org). Gold and items are chain assets; the database keeps accounts, characters and positions. It settles on the public testnet by default, and `KEI_NETWORK=mock` runs it against a chain inside its own process.'],
           ['Carpet Markets', 'Published as [carpet-markets](https://github.com/keicoin-org/carpet-markets) — a coin launchpad where a coin’s ruggability is its deed’s transfer policy. Runs locally against an in-memory mock, with the curve and the whole economy under test. Its Cloudflare Worker is written but not yet deployed, so there is no hosted copy on this domain.'],
         ],
       },
@@ -512,7 +512,17 @@ await kei.claims.pending()` },
     blocks: [
       {
         kind: 'prose',
-        text: 'They are ordered by how much they ask of you. **Button** is the SDK in one tab. **Carpet Markets** is what happens when players can issue things. **The MMO template** is a real game with the economy replaced, and the one to fork if you are shipping something.',
+        text: 'They are ordered by how much they ask of you. **Button** is the SDK in one tab. **Carpet Markets** is what happens when players can issue things. **World of Wonder** is a real game with the economy replaced, and the one to fork if you are shipping something.',
+      },
+      {
+        kind: 'prose',
+        text: 'You do not have to clone any of them by hand. Each is a template the scaffolder writes for you, renamed and with your own currency already in it:',
+      },
+      {
+        kind: 'code',
+        code: `npm create kei-game my-game                                    # star-clicker, the default
+npm create kei-game my-mmo -- --template world-of-wonder
+npm create kei-game my-launchpad -- --template carpet-markets`,
       },
       {
         kind: 'next',
@@ -529,7 +539,7 @@ await kei.claims.pending()` },
           },
           {
             href: 'https://mmo.keicoin.org',
-            label: 'The MMO template — a multiplayer RPG whose gold is not in its database',
+            label: 'World of Wonder — a multiplayer RPG whose gold is not in its database',
             note: 'A Babylon.js and Colyseus RPG with movement, combat, quests and a vendor, forked so that gold and items are chain assets instead of rows. Fork it and you have a game where a sword is the player’s.',
           },
         ],
@@ -585,7 +595,7 @@ await kei.claims.pending()` },
         text: 'The economy tests assert the badge at the ledger rather than in the app: a soulbound deed cannot be sent back, a transferable one pays its holder the whole reserve, and a holder of a rugged coin still holds every coin they bought — because they always did, and owning them never meant they were worth anything.',
       },
 
-      { kind: 'heading', text: 'The MMO template' },
+      { kind: 'heading', text: 'World of Wonder' },
       {
         kind: 'prose',
         text: 'A fork of [`orion3dgames/t5c`](https://github.com/orion3dgames/t5c) — a real Babylon.js and Colyseus RPG with movement, combat, quests, loot, a navmesh, a vendor and a UI. All of that is upstream’s work and still is. What the fork replaces is the economy.',
