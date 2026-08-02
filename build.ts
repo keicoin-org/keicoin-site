@@ -5,8 +5,8 @@
  * Cloudflare should be handing out. The one script on the page is the hero
  * button, inlined.
  *
- * If `../button/public/build` exists, the demo is copied to `/examples/button`
- * so a local `wrangler dev` serves the same thing production does.
+ * If a sibling demo checkout in `DEMOS` has been built, its client is copied to
+ * `/examples/<name>` so a local `wrangler dev` serves what production does.
  */
 
 import { mkdir, readdir, rm, copyFile, stat } from 'node:fs/promises'
@@ -20,6 +20,15 @@ import { agentsMd, llmsTxt, robotsTxt, sitemapXml } from './src/site/machine.js'
 
 const root = new URL('.', import.meta.url)
 const here = (path: string): string => join(Bun.fileURLToPath(root), path)
+
+/**
+ * Sibling checkouts whose built client gets copied to `/examples/<name>`.
+ *
+ * Only the ones whose Worker serves that path in production belong here — the
+ * MMO template is an example too, but it is hosted on its own domain and is
+ * linked rather than copied.
+ */
+const DEMOS = ['button', 'carpet-markets'] as const
 
 const dist = here('dist')
 await mkdir(dist, { recursive: true })
@@ -74,19 +83,24 @@ await write('AGENTS.md', agentsMd())
 await write('robots.txt', robotsTxt())
 await write('sitemap.xml', sitemapXml(['/', ...PAGES.map((page) => page.path), '/examples/button']))
 
-// The demo, if it has been built next door. Its own repo owns building it; this
-// only copies, so a missing build is a warning rather than a broken site.
-const demo = here('../button/public/build')
-if (existsSync(demo)) {
-  await copyDir(demo, join(dist, 'examples/button/build'))
-  await copyFile(here('../button/index.html'), join(dist, 'examples/button/index.html'))
-  // The demo's page asks for ./favicon.ico, which at /examples/button/ is not
+// The demos, if they have been built next door. Their own repos own building
+// them, and in production their own Workers own their routes — more specific
+// than this site's, so they win. Copying here is what makes a local
+// `wrangler dev` serve what production serves. A missing build is a warning
+// rather than a broken site.
+for (const demo of DEMOS) {
+  const build = here(`../${demo}/public/build`)
+  if (!existsSync(build)) {
+    console.log(`  examples/${demo}  SKIPPED — run \`bun run build\` in ../${demo} first`)
+    continue
+  }
+  await copyDir(build, join(dist, `examples/${demo}/build`))
+  await copyFile(here(`../${demo}/index.html`), join(dist, `examples/${demo}/index.html`))
+  // Each demo's page asks for ./favicon.ico, which at /examples/<demo>/ is not
   // the one at the site root.
-  const icon = here('../button/public/favicon.ico')
-  if (existsSync(icon)) await copyFile(icon, join(dist, 'examples/button/favicon.ico'))
-  console.log('  examples/button  copied')
-} else {
-  console.log('  examples/button  SKIPPED — run `bun run build` in ../button first')
+  const icon = here(`../${demo}/public/favicon.ico`)
+  if (existsSync(icon)) await copyFile(icon, join(dist, `examples/${demo}/favicon.ico`))
+  console.log(`  examples/${demo}  copied`)
 }
 
 const count = await countFiles(dist)
