@@ -96,7 +96,6 @@ body {
 
 header.site {
   background: var(--world);
-  border-top: 6px solid var(--ink);
   border-bottom: 1px solid var(--ink);
 }
 
@@ -135,6 +134,19 @@ header.site .home {
 header.site .home img { display: block; width: 28px; height: 28px; border-radius: 2px; }
 
 header.site .home b { color: var(--green); font-weight: 800; }
+
+.github-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  color: var(--ink-dim);
+  border: 1px solid var(--rule);
+}
+
+.github-link:hover { color: var(--ink); border-color: var(--ink-dim); }
+.github-link svg { display: block; width: 15px; height: 15px; }
 
 .theme-toggle {
   display: inline-flex;
@@ -209,22 +221,6 @@ header.site .home b { color: var(--green); font-weight: 800; }
 }
 
 .hero .sub b { color: var(--ink); font-weight: 600; }
-
-.cta { display: flex; flex-wrap: wrap; gap: 18px 28px; align-items: flex-start; }
-
-.button-link {
-  display: inline-block;
-  font: 700 12px/1 var(--mono);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  text-decoration: none;
-  padding: 15px 20px;
-  border: 1px solid var(--ink);
-  transition: background 0.12s ease, color 0.12s ease;
-}
-
-.button-link.primary { background: var(--ink); color: var(--world); }
-.button-link.primary:hover { background: var(--green-deep); color: #fff; }
 
 /* ----------------------------------------------------------- name and emblem */
 
@@ -367,29 +363,44 @@ header.site .home b { color: var(--green); font-weight: 800; }
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 18px;
-  padding: 56px 0 56px 64px;
+  gap: 12px;
+  padding: 48px 0 52px 48px;
   border-left: 1px solid var(--rule);
   user-select: none;
+  min-width: 0;
 }
 
-.press-readout {
-  font: 700 15px/1 var(--mono);
-  letter-spacing: 0.02em;
-  color: #b8bbb4;
-  background: var(--void);
-  border: 1px solid var(--void);
-  border-radius: 0;
-  padding: 13px 20px;
-  min-width: 250px;
+.press-count {
+  text-align: center;
+  font-family: var(--mono);
+}
+
+.press-count b { display: block; color: var(--green); font-size: 34px; line-height: 1; }
+.press-count span { display: block; margin-top: 5px; color: var(--ink-faint); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; }
+
+.press-network-status {
+  min-height: 2.8em;
+  max-width: 46ch;
+  margin: 0;
+  color: var(--ink-dim);
+  font: 500 10.5px/1.4 var(--mono);
   text-align: center;
 }
 
-.press-readout b { color: #74d799; font-size: 21px; }
-.press-readout span { display: block; margin-top: 6px; font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: #8d9189; }
+.press-stage {
+  display: grid;
+  grid-template-columns: 250px 0fr;
+  gap: 0;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  transition: grid-template-columns 260ms ease, gap 260ms ease;
+}
+
+.press.shop-open .press-stage { grid-template-columns: 250px minmax(210px, 230px); gap: 16px; }
 
 /* The actual photographed button from the demo, not a redrawn one. */
-.press-rig { position: relative; width: 260px; height: 260px; }
+.press-rig { position: relative; width: 250px; height: 250px; }
 
 .press-cap {
   position: absolute;
@@ -411,6 +422,7 @@ header.site .home b { color: var(--green); font-weight: 800; }
 
 .press-cap:active { transform: translateY(5px); }
 .press-cap.down { transform: translateY(5px); }
+.press-cap:disabled { cursor: wait; filter: grayscale(0.15) drop-shadow(0 12px 12px rgba(41, 43, 39, 0.18)); }
 
 .press-img {
   display: block;
@@ -439,7 +451,41 @@ header.site .home b { color: var(--green); font-weight: 800; }
   to { opacity: 0; transform: translate(-50%, -46px); }
 }
 
-.press-hint { font: 600 10.5px/1.5 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-faint); text-align: center; }
+.press-shop {
+  min-width: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateX(-14px);
+  border: 1px solid var(--rule);
+  background: var(--raised);
+  pointer-events: none;
+  transition: opacity 180ms ease 80ms, transform 260ms ease;
+}
+
+.press-shop.visible { opacity: 1; transform: translateX(0); pointer-events: auto; }
+
+.press-shop-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 11px;
+  border-bottom: 1px solid var(--rule);
+  font: 700 10px/1 var(--mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.press-shop-heading b { color: var(--green-deep); font-size: 9px; }
+
+.shop-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 10px 11px; border-top: 1px solid var(--rule); }
+.shop-item:first-of-type { border-top: 0; }
+.shop-item strong { display: block; color: var(--ink); font: 700 11px/1.2 var(--mono); }
+.shop-item span { display: block; margin-top: 4px; color: var(--ink-faint); font: 500 9px/1.35 var(--mono); }
+.shop-item button { min-width: 62px; padding: 7px 8px; border: 1px solid var(--ink-dim); background: transparent; color: var(--ink); font: 700 9px/1 var(--mono); cursor: pointer; }
+.shop-item button:hover:not(:disabled) { border-color: var(--green-deep); color: var(--green-deep); }
+.shop-item button:disabled { border-color: var(--rule); color: var(--ink-faint); cursor: not-allowed; }
+
+.press-local-status { max-width: 54ch; margin: 2px 0 0; color: var(--ink-faint); font: 500 9.5px/1.45 var(--mono); text-align: center; }
 
 /* ---------------------------------------------------------------- sections */
 
@@ -727,6 +773,11 @@ footer.site a:hover { color: var(--amber); }
     border-left: 0;
     border-top: 1px solid var(--rule);
   }
+
+  .press-stage { display: flex; flex-direction: column; gap: 0; align-items: center; }
+  .press.shop-open .press-stage { gap: 14px; }
+  .press-shop { width: min(100%, 340px); max-height: 0; transform: translateY(-12px); transition: opacity 180ms ease, transform 220ms ease, max-height 260ms ease; }
+  .press-shop.visible { max-height: 420px; transform: translateY(0); }
 }
 
 @media (max-width: 620px) {
@@ -735,7 +786,6 @@ footer.site a:hover { color: var(--amber); }
   header.site .home { width: 100%; }
   .theme-toggle { margin-left: auto; }
   .hero h1 { font-size: clamp(40px, 14vw, 58px); }
-  .cta { flex-direction: column; }
   .press-rig { width: 230px; height: 230px; }
   section { padding: 64px 0; }
   .swap-table { min-width: 680px; }
