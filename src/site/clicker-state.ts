@@ -57,6 +57,20 @@ export function rewardConfirmedPress(state: ClickerState): ClickerState {
   }
 }
 
+/**
+ * Undoes one optimistic `rewardConfirmedPress` when the send that was supposed
+ * to confirm it never lands. `reward` is the amount that press was credited
+ * with at the time — not `pressValue(state)` recomputed now, which could have
+ * moved if an upgrade was bought while the send was in flight.
+ */
+export function rollbackPress(state: ClickerState, reward: number): ClickerState {
+  return {
+    ...state,
+    credits: Math.max(0, state.credits - reward),
+    confirmedPresses: Math.max(0, state.confirmedPresses - 1),
+  }
+}
+
 export type PurchaseResult =
   | { ok: true; state: ClickerState; upgrade: Upgrade }
   | { ok: false; reason: 'unknown' | 'owned' | 'cost' }

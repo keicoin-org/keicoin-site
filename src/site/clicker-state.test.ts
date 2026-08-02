@@ -5,6 +5,7 @@ import {
   pressValue,
   purchaseUpgrade,
   rewardConfirmedPress,
+  rollbackPress,
   sanitizeClickerState,
 } from './clicker-state.js'
 
@@ -32,6 +33,15 @@ describe('homepage clicker progression', () => {
       ok: false,
       reason: 'owned',
     })
+  })
+
+  test('rolls back an optimistic press that never confirmed', () => {
+    const optimistic = rewardConfirmedPress(EMPTY_CLICKER_STATE)
+    expect(rollbackPress(optimistic, pressValue(EMPTY_CLICKER_STATE))).toEqual(EMPTY_CLICKER_STATE)
+  })
+
+  test('rollback never takes credits or presses below zero', () => {
+    expect(rollbackPress(EMPTY_CLICKER_STATE, 5)).toEqual(EMPTY_CLICKER_STATE)
   })
 
   test('sanitizes persisted state instead of trusting page storage', () => {

@@ -424,17 +424,32 @@ header.site .home b { color: var(--green); font-weight: 800; }
 .press-cap.down { transform: translateY(5px); }
 .press-cap:disabled { cursor: wait; filter: grayscale(0.15) drop-shadow(0 12px 12px rgba(41, 43, 39, 0.18)); }
 
+/*
+ * Two stacked images, cross-faded by opacity, rather than one `<img>` whose
+ * `src` gets reassigned on press. A `src` swap is a raster decode-and-paint
+ * that a same-frame pointerdown+pointerup can lose entirely; both images are
+ * already decoded and on the compositor, so `.press-cap.down` only ever has
+ * to flip an opacity — see clicker-client.ts's `setHeld`.
+ */
 .press-img {
+  position: absolute;
+  inset: 0;
   display: block;
   width: 100%;
   height: 100%;
   object-fit: contain;
+  opacity: 1;
+  transition: opacity 90ms ease;
   pointer-events: none;
   user-select: none;
   -webkit-user-select: none;
   -webkit-user-drag: none;
   -webkit-touch-callout: none;
 }
+
+.press-img-pressed { opacity: 0; }
+.press-cap.down .press-img-unpressed { opacity: 0; }
+.press-cap.down .press-img-pressed { opacity: 1; }
 
 .pop {
   position: absolute;

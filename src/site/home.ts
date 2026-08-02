@@ -98,7 +98,7 @@ export function homePage(): string {
       <div class="press-rig" id="press-rig">
         <button class="press-cap" id="press-cap" type="button" aria-label="Write one click to the Kei public testnet" aria-describedby="press-network-status press-local-status">
           <img
-            class="press-img"
+            class="press-img press-img-unpressed"
             id="press-image"
             src="/img/button-unpressed.webp"
             data-unpressed="/img/button-unpressed.webp"
@@ -107,6 +107,15 @@ export function homePage(): string {
             width="640"
             height="640"
             draggable="false"
+          >
+          <img
+            class="press-img press-img-pressed"
+            src="/img/button-pressed.webp"
+            alt=""
+            width="640"
+            height="640"
+            draggable="false"
+            aria-hidden="true"
           >
         </button>
       </div>
