@@ -22,6 +22,20 @@ export default defineConfig({
   markdown: {
     lineNumbers: true,
   },
+  vite: {
+    resolve: {
+      // Vite normalizes resolved module paths through fs.realpathSync,
+      // which corrects filesystem casing (e.g. C:/Users/... on Windows)
+      // even when the process cwd was reached via a differently-cased
+      // path (e.g. C:/users/...). VitePress's own resolvePageImports()
+      // does *not* realpath in that case (see vuejs/vitepress#2779), so
+      // the two disagree on a page's module id and rendering throws
+      // "Cannot read properties of undefined (reading 'imports')".
+      // Disabling realpath resolution on both sides keeps them in sync
+      // regardless of invocation casing.
+      preserveSymlinks: true,
+    },
+  },
   themeConfig: {
     siteTitle: 'Kei / documentation',
     nav: [
