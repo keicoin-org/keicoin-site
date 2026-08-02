@@ -11,6 +11,7 @@
  */
 
 import { USE_CASES, ISSUER_SNIPPET, PLAYER_SNIPPET } from './content.js'
+import { UPGRADES } from './clicker-state.js'
 import { COIN_ALT, SITE, escapeHtml, inline, shell } from './layout.js'
 
 /** Same three forms as everywhere else, plus the code panes. */
@@ -21,72 +22,6 @@ function code(caption: string, source: string): string {
     .replace(/(^|\n)(\s*\/\/[^\n]*)/g, '$1<span class="c">$2</span>')
   return `<figure class="code"><figcaption>${escapeHtml(caption)}</figcaption><pre><code>${highlighted}</code></pre></figure>`
 }
-
-/**
- * The hero button's behaviour. Deliberately honest: it counts locally and says
- * so, because the alternative — quietly implying this page is on a chain — is
- * exactly the kind of overstatement §12 warns about.
- *
- * The button itself is the real asset from the demo, swapped between its two
- * photographed states rather than redrawn in CSS.
- */
-const PRESS_SCRIPT = `
-(() => {
-  const bindPressButton = () => {
-    const cap = document.querySelector('.press-cap')
-    const rig = document.querySelector('.press-rig')
-    const img = document.querySelector('.press-img')
-    const count = document.querySelector('#press-count')
-    if (!cap || !rig || !img || !count) return
-
-    cap._pressController?.abort()
-    const controller = new AbortController()
-    cap._pressController = controller
-    const listener = { signal: controller.signal }
-
-    new Image().src = img.dataset.pressed
-
-    const setHeld = (held) => {
-      cap.classList.toggle('down', held)
-      img.src = held ? img.dataset.pressed : img.dataset.unpressed
-    }
-
-    setHeld(false)
-
-    cap.addEventListener('pointerdown', (e) => {
-      if (cap.setPointerCapture) cap.setPointerCapture(e.pointerId)
-      setHeld(true)
-    }, listener)
-    cap.addEventListener('pointerup', () => setHeld(false), listener)
-    cap.addEventListener('pointercancel', () => setHeld(false), listener)
-    cap.addEventListener('lostpointercapture', () => setHeld(false), listener)
-    cap.addEventListener('keydown', (e) => {
-      if (e.key === ' ' || e.key === 'Enter') setHeld(true)
-    }, listener)
-    cap.addEventListener('keyup', (e) => {
-      if (e.key === ' ' || e.key === 'Enter') setHeld(false)
-    }, listener)
-
-    cap.addEventListener('contextmenu', (e) => e.preventDefault(), listener)
-    cap.addEventListener('dragstart', (e) => e.preventDefault(), listener)
-
-    let pressed = Number(count.textContent) || 0
-    cap.addEventListener('click', () => {
-      count.textContent = String(++pressed)
-
-      const pop = document.createElement('span')
-      pop.className = 'pop'
-      pop.textContent = '+1'
-      pop.style.left = (44 + Math.random() * 12) + '%'
-      rig.appendChild(pop)
-      setTimeout(() => pop.remove(), 760)
-    }, listener)
-  }
-
-  bindPressButton()
-  window.addEventListener('pageshow', bindPressButton)
-})()
-`
 
 /**
  * The install picker. One command, four package managers — clicking a tab
@@ -135,47 +70,56 @@ export function homePage(): string {
       infrastructure, no balances table, and no signup. Sub-cent payments work,
       because transactions are free.
     </p>
-    <div class="cta">
-      <a class="button-link primary" href="/examples/button">Play the demo</a>
-      <div class="install">
-        <div class="install-tabs" role="tablist" aria-label="Package manager">
-          <button type="button" class="install-tab active" data-cmd="bun add ${SITE.npm}" role="tab" aria-selected="true">bun</button>
-          <button type="button" class="install-tab" data-cmd="npm install ${SITE.npm}" role="tab" aria-selected="false">npm</button>
-          <button type="button" class="install-tab" data-cmd="pnpm add ${SITE.npm}" role="tab" aria-selected="false">pnpm</button>
-          <button type="button" class="install-tab" data-cmd="yarn add ${SITE.npm}" role="tab" aria-selected="false">yarn</button>
-        </div>
-        <div class="install-cmd">
-          <code class="install-text">bun add ${escapeHtml(SITE.npm)}</code>
-          <button type="button" class="install-copy" aria-label="Copy install command to clipboard">
-            <span class="install-copy-label">Copy</span>
-            <span class="install-copied" aria-hidden="true">Copied</span>
-          </button>
-        </div>
-        <a class="install-link" href="/docs">Read the docs →</a>
+    <div class="install">
+      <div class="install-tabs" role="tablist" aria-label="Package manager">
+        <button type="button" class="install-tab active" data-cmd="bun add ${SITE.npm}" role="tab" aria-selected="true">bun</button>
+        <button type="button" class="install-tab" data-cmd="npm install ${SITE.npm}" role="tab" aria-selected="false">npm</button>
+        <button type="button" class="install-tab" data-cmd="pnpm add ${SITE.npm}" role="tab" aria-selected="false">pnpm</button>
+        <button type="button" class="install-tab" data-cmd="yarn add ${SITE.npm}" role="tab" aria-selected="false">yarn</button>
       </div>
+      <div class="install-cmd">
+        <code class="install-text">bun add ${escapeHtml(SITE.npm)}</code>
+        <button type="button" class="install-copy" aria-label="Copy install command to clipboard">
+          <span class="install-copy-label">Copy</span>
+          <span class="install-copied" aria-hidden="true">Copied</span>
+        </button>
+      </div>
+      <a class="install-link" href="/docs">Read the docs →</a>
     </div>
   </div>
 
   <div class="press">
-    <div class="press-readout">
+    <div class="press-count" aria-live="polite">
       <b id="press-count">0</b>
-      <span>presses — this one is just a page</span>
+      <span id="press-count-unit">click credits</span>
     </div>
-    <div class="press-rig">
-      <button class="press-cap" type="button" aria-label="Press the button">
-        <img
-          class="press-img"
-          src="/img/button-unpressed.webp"
-          data-unpressed="/img/button-unpressed.webp"
-          data-pressed="/img/button-pressed.webp"
-          alt=""
-          width="640"
-          height="640"
-          draggable="false"
-        >
-      </button>
+    <p id="press-network-status" class="press-network-status" role="status" aria-live="polite">Press to connect to the public testnet.</p>
+    <div class="press-stage">
+      <div class="press-rig" id="press-rig">
+        <button class="press-cap" id="press-cap" type="button" aria-label="Write one click to the Kei public testnet" aria-describedby="press-network-status press-local-status">
+          <img
+            class="press-img"
+            id="press-image"
+            src="/img/button-unpressed.webp"
+            data-unpressed="/img/button-unpressed.webp"
+            data-pressed="/img/button-pressed.webp"
+            alt=""
+            width="640"
+            height="640"
+            draggable="false"
+          >
+        </button>
+      </div>
+      <aside class="press-shop" id="press-shop" aria-label="Local clicker upgrades" aria-hidden="true" inert>
+        <div class="press-shop-heading"><span>Workshop</span><b>local</b></div>
+        ${UPGRADES.map((upgrade) => `<div class="shop-item">
+          <div><strong>${escapeHtml(upgrade.name)}</strong><span>${escapeHtml(upgrade.note)}</span></div>
+          <button type="button" data-upgrade="${escapeHtml(upgrade.id)}">Buy · ${upgrade.cost}</button>
+        </div>`).join('')}
+      </aside>
     </div>
-    <p class="press-hint">In the demo, every press is on-chain →</p>
+    <p id="press-local-status" class="press-local-status">Each manual press sends 0.000001 testnet-only Kei to the null account. Shop credits and upgrades stay in this browser.</p>
+    <script type="module" src="/clicker.js"></script>
   </div>
 </div></section>
 
@@ -303,7 +247,7 @@ export function homePage(): string {
       'A feeless chain with native tokens and an SDK that lets a game developer add real currencies, items, loot drops and a player market to a browser game without running payment infrastructure or a database.',
     asks: USE_CASES.flatMap((useCase) => useCase.asks),
     body,
-    script: `${PRESS_SCRIPT};\n${INSTALL_SCRIPT}`,
+    script: INSTALL_SCRIPT,
   })
 }
 

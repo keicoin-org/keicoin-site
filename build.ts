@@ -11,7 +11,7 @@
 
 import { mkdir, readdir, rm, copyFile, stat } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
-import { dirname, join } from 'node:path'
+import { basename, dirname, join } from 'node:path'
 
 import { PAGES } from './src/site/content.js'
 import { homePage } from './src/site/home.js'
@@ -47,6 +47,23 @@ for (const page of PAGES) {
 }
 
 await write('styles.css', await Bun.file(here('src/site/styles.css')).text())
+
+// The homepage clicker is the site's one hydrated island. Bundle the public
+// player SDK into a browser module; no issuer key or server-only entry point is
+// present in the page.
+const clicker = await Bun.build({
+  entrypoints: [here('src/site/clicker-client.ts')],
+  target: 'browser',
+  format: 'esm',
+  minify: true,
+  splitting: true,
+})
+if (!clicker.success || !clicker.outputs[0]) {
+  throw new AggregateError(clicker.logs, 'Could not build the homepage testnet clicker.')
+}
+for (const output of clicker.outputs) {
+  await write(output.kind === 'entry-point' ? 'clicker.js' : basename(output.path), await output.text())
+}
 
 // Static passthrough — anything in public/ lands at the same path in dist/,
 // which is where the coin (favicon.ico, the PNG icons, og.png) comes from.
