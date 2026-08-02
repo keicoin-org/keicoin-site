@@ -258,11 +258,11 @@ export function homePage(): string {
   <p class="eyebrow">Read this before you commit to anything</p>
   <h2>Where this actually is.</h2>
   <div class="limits">
-    <h4>M2 complete, M3 next</h4>
+    <h4>Public M3 testnet; native M4 claims merged</h4>
     <ul>
-      <li><strong>The SDK is published at 0.1.0</strong> and runs end to end, with TypeScript types.</li>
-      <li><strong>The chain it talks to is an in-memory mock.</strong> It enforces the real ledger rules, so the API will not move when the node lands — but there is no network yet.</li>
-      <li><strong>The exact 10-test SDK M2 suite passes against a clean real-node startup in enforced CI.</strong> Native CI also covers the ledger, reserve, ingress, and RPC history paths.</li>
+      <li><strong>The SDK packages are published at 0.2.0</strong> and run end to end, with TypeScript types.</li>
+      <li><strong><code>Kei.start()</code> defaults to the public testnet.</strong> It is one rate-limited, best-effort dev node with weak consensus, no uptime promise, and no monetary value; <code>Kei.mock()</code> remains available for tests.</li>
+      <li><strong>Native M4 claims are merged and CI-gated.</strong> The node runs the pinned SDK M2 and M4 contracts against a clean startup. This page does not yet claim the public endpoint has been redeployed with M4.</li>
       <li><strong>The MMO prototype is live over HTTPS.</strong> It still uses a process-local mock chain and is not a public network.</li>
       <li><strong>There is no token, no mainnet, and nothing holds value.</strong> Until the validator set is meaningfully distributed, nothing should.</li>
       <li><strong>The market and the wallets are specified, not built.</strong></li>

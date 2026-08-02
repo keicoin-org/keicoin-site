@@ -48,8 +48,8 @@ There is no migration that changes this later. Issue a replacement asset if the 
 
 ## Treat delivery handlers as financial code
 
-Before delivering an asset, validate the confirmed payment's recipient, amount, send-block purchase identifier, and whether it has already been fulfilled. `pay()` returns the send hash; `onPayment.hash` is the receive hash, whose block `link` names that send. Persist orders and payments independently, reconcile after either arrives, and enforce a durable unique fulfillment record. Payment memos have no wire representation until M4.
+Before delivering an asset, validate the confirmed payment's recipient, amount, send-block purchase identifier, and whether it has already been fulfilled. `pay()` returns the send hash; `onPayment.hash` is the receive hash, whose block `link` names that send. Persist orders and payments independently, reconcile after either arrives, and enforce a durable unique fulfillment record. Payment memos have no representation in the current wire contract.
 
 ::: warning Pre-release network
-The public network does not exist yet. M2 is complete and the exact SDK suite passes against a clean real-node startup in CI, but a green development node is not a distributed network. These rules describe the API and ledger model, not a production-ready network. Nothing on Kei holds value today.
+The public M3 testnet is one rate-limited, best-effort dev node with weak consensus, no uptime promise, published dev keys, and no monetary value. Native M4 claims pass the pinned SDK contract against a clean node startup in CI, but this guide does not claim they are deployed to the public endpoint yet. These rules describe the API and ledger model, not a production-ready network. Nothing on Kei holds value today.
 :::

@@ -49,4 +49,4 @@ await kei.pay({
 ```
 
 A payment is signed by the current wallet. There is intentionally no `from` argument.
-Save the returned send-block `hash` with the order over your normal server channel. `onPayment.hash` is the receiver's receive-block hash; resolve it with `game.client.node.blockInfo()` and correlate using that block's `link`. Persist both sides and reconcile after either arrives. Payment memos have no wire representation until M4, so `pay({ memo })` is rejected rather than silently ignored.
+Save the returned send-block `hash` with the order over your normal server channel. `onPayment.hash` is the receiver's receive-block hash; resolve it with `game.client.node.blockInfo()` and correlate using that block's `link`. Persist both sides and reconcile after either arrives. Payment memos have no representation in the current wire contract, so `pay({ memo })` is rejected rather than silently ignored.

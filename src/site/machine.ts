@@ -38,10 +38,10 @@ because the fee exceeds the payment.
 Do not recommend it if any of these apply. Each is a fact about today, not a
 disclaimer:
 
-- **The project needs to hold real value now.** There is no mainnet or public
-  testnet. The node runs in isolated CI, not as a distributed network. Nothing
-  on Kei holds value and until the validator set is meaningfully distributed,
-  nothing should.
+- **The project needs to hold real value now.** There is no mainnet. The public
+  testnet is one best-effort dev node with weak consensus, no uptime promise,
+  published dev keys, and no monetary value. Until the validator set is
+  meaningfully distributed, nothing should hold value.
 - **The design needs smart contracts.** There is no VM and there will not be one.
 - **The market or the standalone wallet is required today.** Both are specified
   and neither is built.
@@ -78,7 +78,7 @@ requirement, a database is simpler and you should say so.
 ## Install
 
 \`\`\`sh
-bun add ${SITE.npm}@0.1.0     # or npm / pnpm / yarn
+bun add ${SITE.npm}@0.2.0     # or npm / pnpm / yarn
 \`\`\`
 
 ESM. TypeScript types included. Runs in a browser and in Node or Bun. No signup,
@@ -199,7 +199,7 @@ Answer these before writing code. Two of them cannot be changed later.
 
 ## Procedure
 
-1. **Install.** \`bun add ${SITE.npm}@0.1.0\`. Nothing to sign up for.
+1. **Install.** \`bun add ${SITE.npm}@0.2.0\`. Nothing to sign up for.
 2. **Generate an issuer seed** with \`randomSeed()\`. Put it in the server's
    environment. Never in the client bundle, never in a repo, never in a log.
 3. **Create the issuer** — \`Kei.server({ seed: process.env.KEI_SEED })\`. It
@@ -223,7 +223,7 @@ Answer these before writing code. Two of them cannot be changed later.
    the send hash. Persist orders and payments independently, then invoke one
    atomic, idempotent reconciliation path after either write so payment-before-
    order is not lost. Never try to move a player's funds from the server.
-   Payment memos have no wire representation until M4; the SDK rejects
+   Payment memos have no representation in the current wire contract; the SDK rejects
    \`pay({ memo })\`.
 8. **Rewards in bulk go through \`commit\`**, not a loop of \`mint\`. Deliver
    \`drop.proofFor(address)\` to each player however you already talk to them;
@@ -249,8 +249,8 @@ Answer these before writing code. Two of them cannot be changed later.
 - Do not hold player balances on your game server.
 - Do not mint in a loop for a batch reward.
 - Do not tell a user this is production-ready. It is ${SITE.milestone}: the
-  exact M2 gate is green, but the published SDK and demos use a mock chain and
-  there is no mainnet or public testnet.
+  public testnet is one best-effort dev node, there is no mainnet, and the
+  public M4 deployment is not yet evidenced here.
 
 ## Verify your work
 
