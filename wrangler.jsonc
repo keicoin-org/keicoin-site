@@ -1,7 +1,11 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "keicoin-site",
+  "main": "worker/index.ts",
   "compatibility_date": "2026-07-01",
+  // bananojs (under @keicoin/core's blake2b, used by the work server below)
+  // reaches for a couple of Node built-ins.
+  "compatibility_flags": ["nodejs_compat"],
 
   // The zone lives in the same Cloudflare account; wrangler provisions these
   // as Custom Domains on deploy.
@@ -10,16 +14,23 @@
     { "pattern": "www.keicoin.org", "custom_domain": true }
   ],
 
-  // Static assets with no Worker script: the site is text, and there is nothing
-  // for a Worker to decide. `/examples/button` is served from the same origin
-  // (SPEC §10.4) — a working thing one click from the claim about it.
+  // Mostly still static assets — the site is text, and there is nothing for a
+  // Worker to decide about most of it. `worker/index.ts` is the one exception:
+  // the homepage clicker's work server. `/examples/button` is served from the
+  // same origin (SPEC §10.4) — a working thing one click from the claim about it.
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
     // Directory-style URLs (/docs → /docs/index.html) without a redirect, and a
     // real 404 rather than the home page pretending everything exists.
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "404-page"
   },
+
+  // The work server's proof-of-work search is a real, synchronous CPU cost —
+  // tier B (a `send` block) is ~8.4M expected blake2b hashes. The default
+  // limit is nowhere near enough room for that to finish.
+  "limits": { "cpu_ms": 30000 },
 
   "observability": {
     "enabled": true
