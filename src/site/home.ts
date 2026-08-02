@@ -209,7 +209,7 @@ export function homePage(): string {
       <li><strong>Native M4 claims are merged and CI-gated.</strong> The node runs the pinned SDK M2 and M4 contracts against a clean startup. This page does not yet claim the public endpoint has been redeployed with M4.</li>
       <li><strong>The MMO prototype is live over HTTPS.</strong> It still uses a process-local mock chain and is not a public network.</li>
       <li><strong>There is no token, no mainnet, and nothing holds value.</strong> Until the validator set is meaningfully distributed, nothing should.</li>
-      <li><strong>The market and the wallets are specified, not built.</strong></li>
+      <li><strong>The market and wallet-panel SDK work are in review, not merged.</strong> A standalone wallet is in progress in a separate repository.</li>
       <li><strong>There is no smart contract VM</strong>, deliberately. If your design needs one, Kei is the wrong tool, and this page would rather you found that out here.</li>
     </ul>
   </div>

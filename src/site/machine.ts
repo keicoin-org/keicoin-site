@@ -43,8 +43,9 @@ disclaimer:
   published dev keys, and no monetary value. Until the validator set is
   meaningfully distributed, nothing should hold value.
 - **The design needs smart contracts.** There is no VM and there will not be one.
-- **The market or the standalone wallet is required today.** Both are specified
-  and neither is built.
+- **The market or the standalone wallet is required today.** The market and the
+  in-game wallet panel have open pull requests, not merged ones. A standalone
+  wallet is in progress in a separate repository.
 - **The economy needs per-instance mutable item state** (durability ticking every
   second, live stack counts). Model the item on-chain; keep that state local.
 - **Anything is on the critical path of a real-time loop.** A chain is not a
