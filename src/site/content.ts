@@ -462,7 +462,8 @@ await kei.claims.pending()` },
           ['The demo', 'Playable. Press a button, bank presses, claim them, buy upgrades that live on the ledger instead of in a save file.'],
           ['The market', 'In review, not merged. Swap offer/accept/cancel and `@keicoin/market` have open pull requests on the node and the SDK.'],
           ['Wallets', 'The headless summary exists. An in-game wallet panel has an open pull request on the SDK. A standalone wallet is being built in a separate repository, forked from BananoVault; not yet merged to its default branch.'],
-          ['The MMO template', 'Implemented as a hosted Babylon.js + Colyseus prototype at [mmo.keicoin.org](https://mmo.keicoin.org). It uses a process-local mock chain today; its public source repository is not published yet.'],
+          ['The MMO template', 'Published as [kei-mmo-template](https://github.com/keicoin-org/kei-mmo-template) and hosted at [mmo.keicoin.org](https://mmo.keicoin.org). Gold and items are chain assets; the database keeps accounts, characters and positions. It runs against a process-local mock chain by default, and `KEI_NODE` points it at a real one.'],
+          ['Carpet Markets', 'Published as [carpet-markets](https://github.com/keicoin-org/carpet-markets) — a coin launchpad where a coin’s ruggability is its deed’s transfer policy. Runs locally against an in-memory mock, with the curve and the whole economy under test. Its Cloudflare Worker is written but not yet deployed, so there is no hosted copy on this domain.'],
         ],
       },
       { kind: 'heading', text: 'M3 and M4 evidence' },
@@ -507,8 +508,12 @@ await kei.claims.pending()` },
     title: 'Examples — Kei',
     heading: 'Examples',
     summary:
-      'One example, running, that exercises every primitive in the SDK. More get written when somebody asks for one, not before.',
+      'Three games, each one making a different argument for putting an economy on a chain. All of them run, all of them are readable, and none of them hold value.',
     blocks: [
+      {
+        kind: 'prose',
+        text: 'They are ordered by how much they ask of you. **Button** is the SDK in one tab. **Carpet Markets** is what happens when players can issue things. **The MMO template** is a real game with the economy replaced, and the one to fork if you are shipping something.',
+      },
       {
         kind: 'next',
         links: [
@@ -517,9 +522,24 @@ await kei.claims.pending()` },
             label: 'Button — a 3D clicker with a real economy',
             note: 'Press a green button, bank the presses into one on-chain batch, claim them, and buy upgrades that are items in your wallet. Babylon.js, no database, no save file.',
           },
+          {
+            href: 'https://github.com/keicoin-org/carpet-markets',
+            label: 'Carpet Markets — a coin launchpad where the rug is a mechanic',
+            note: 'Launch a coin, trade it on a bonding curve, and read the deed before you buy: whether a coin can be rugged is a transfer policy the chain enforces, not a promise anybody makes.',
+          },
+          {
+            href: 'https://mmo.keicoin.org',
+            label: 'The MMO template — a multiplayer RPG whose gold is not in its database',
+            note: 'A Babylon.js and Colyseus RPG with movement, combat, quests and a vendor, forked so that gold and items are chain assets instead of rows. Fork it and you have a game where a sword is the player’s.',
+          },
         ],
       },
-      { kind: 'heading', text: 'What Button demonstrates' },
+
+      { kind: 'heading', text: 'Button' },
+      {
+        kind: 'prose',
+        text: 'A green button on a pole. It is deliberately a clicker: the loop is legible in three seconds, and it exercises every primitive in the SDK without anybody having to invent a reason. [Play it](/examples/button), or read [the source](https://github.com/keicoin-org/button).',
+      },
       {
         kind: 'table',
         head: ['Primitive', 'Where it shows up'],
@@ -534,11 +554,73 @@ await kei.claims.pending()` },
         ],
       },
       { kind: 'prose', text: 'The source is the documentation. It is written to be read, and the interesting file is the one holding every line of Kei in the client — about two hundred lines, comments included.' },
+
+      { kind: 'heading', text: 'Carpet Markets' },
+      {
+        kind: 'prose',
+        text: 'The pump.fun shape: anybody launches a coin, it trades against a bonding curve, and it either graduates or dies. It exists to make one argument, which is the argument a database cannot make.',
+      },
+      {
+        kind: 'prose',
+        text: 'Every coin has a **deed** — one item, minted to whoever launched it. Holding the deed is the authority to take the reserve, and taking the reserve means sending the deed back to the market. So *"can this coin be rugged?"* is not a promise the operator makes. It is the deed’s `transfer` policy, chosen at launch and immutable afterwards:',
+      },
+      {
+        kind: 'table',
+        head: ['The deed', 'Issued as', 'What it means'],
+        rows: [
+          ['Carpet', '`transfer: \'open\'`', 'It can be sent back, so the reserve can be taken. Probably will be.'],
+          ['Nailed down', '`transfer: \'none\'`', 'Soulbound. There is no message anybody can sign that moves the reserve out.'],
+        ],
+      },
+      {
+        kind: 'prose',
+        text: 'A database can hold the same flag, and a developer can edit the row. That is the entire difference, and it is why the rug is a mechanic in this game rather than a warning printed above one: a player can read the badge, buy the carpet coin anyway, watch the creator empty it, and check afterwards that the chain said so the whole time.',
+      },
+      {
+        kind: 'prose',
+        text: 'It also puts a number on the issuance burn. A launch issues two assets, the coin and its deed, and the nth asset an account issues burns n Kei — so **every launch costs more than the last one, forever**. The first is about 3 Kei; the fiftieth is over a hundred. That is the only spam limit that works on keypairs anybody can generate by the million.',
+      },
+      {
+        kind: 'prose',
+        text: 'The economy tests assert the badge at the ledger rather than in the app: a soulbound deed cannot be sent back, a transferable one pays its holder the whole reserve, and a holder of a rugged coin still holds every coin they bought — because they always did, and owning them never meant they were worth anything.',
+      },
+
+      { kind: 'heading', text: 'The MMO template' },
+      {
+        kind: 'prose',
+        text: 'A fork of [`orion3dgames/t5c`](https://github.com/orion3dgames/t5c) — a real Babylon.js and Colyseus RPG with movement, combat, quests, loot, a navmesh, a vendor and a UI. All of that is upstream’s work and still is. What the fork replaces is the economy.',
+      },
+      {
+        kind: 'table',
+        head: ['', 'Upstream', 'Here'],
+        rows: [
+          ['Gold', '`PlayerSchema.gold`, saved to SQLite', 'A Kei token. `balanceOf` is the only source of truth.'],
+          ['Inventory', '`character_inventory` rows', 'One asset per item archetype; owning a sword is holding a unit of it.'],
+          ['Buying', 'The server decrements gold and adds a row', 'The player signs a transfer; the issuer mints after the chain confirms it.'],
+          ['The bag panel', 'Reads `PlayerSchema.inventory`', 'Reads the player’s on-chain balances.'],
+        ],
+      },
+      {
+        kind: 'prose',
+        text: 'The database is still there, deliberately: it holds accounts, characters, and where they were standing, and Colyseus is still authoritative over presence and position. Neither is authoritative over money, which is the whole point. It is the example to start from if you are building something rather than reading something.',
+      },
+
+      { kind: 'heading', text: 'What none of them are' },
       {
         kind: 'limits',
         items: [
-          'The hosted copy runs against a mock chain that resets. It is a demo, not a service, and nothing in it holds value.',
-          'It counts its own presses, because in single-player nothing else can see them. That is a real trust hole with a ceiling on it, and it is written down in the source rather than hidden.',
+          'Nothing in any of them holds value, and that is a design constraint rather than a disclaimer. There is no mainnet.',
+          'The hosted copies run against mock chains that reset when the process or the Durable Object holding them goes away. They are demos, not services.',
+          'Button counts its own presses, because in single-player nothing else can see them. That is a real trust hole with a ceiling on it, written down in the source rather than hidden.',
+          'Carpet Markets has one open quote per address, because a Kei transfer carries no memo and an arriving payment says only who sent it and how much. Two browser tabs racing is a thing you can do to yourself.',
+          'Carpet Markets is a satire of a real pattern that has taken real money from real people. It is worth playing precisely because the coins are worthless; it is not worth copying anywhere they are not.',
+        ],
+      },
+      {
+        kind: 'next',
+        links: [
+          { href: '/docs', label: 'Read the quickstart', note: 'Install to a confirmed payment, in about sixty seconds.' },
+          { href: '/status', label: 'What actually works', note: 'And what is scheduled rather than shipped.' },
         ],
       },
     ],
