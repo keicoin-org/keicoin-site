@@ -65,7 +65,7 @@ const NEXT_STEPS = {
 }
 
 const MOCK_CAVEAT =
-  'The published SDK and demos use an in-memory mock today. M2 is complete: the exact SDK suite passes against a clean real-node startup in enforced CI. The API is real, but **nothing on it holds value** and there is no public network yet.'
+  '`Kei.start()` now defaults to a public testnet instead of the old in-memory mock — but that testnet is one rate-limited, best-effort dev node with weak consensus, not a distributed network. M4 (commit, claim, commit_close) is merged and CI-gated on kei-node; that is evidence about the code, not about which build the public testnet is running. The API is real, but **nothing on it holds value.**'
 
 export const USE_CASES: UseCase[] = [
   {
@@ -222,7 +222,7 @@ await kei.items.ownedBy(address)    // [ item, ... ]`,
           kind: 'limits',
           title: 'Read this before choosing Kei for a market',
           items: [
-            '**The market is not built yet.** Offers and atomic settlement are designed and specified, and they are scheduled work, not shipped work. See [status](/status).',
+            '**The market is not built yet — it is M5.** Offers and atomic settlement are designed and specified, and they are scheduled work, not shipped work. See [status](/status).',
             MOCK_CAVEAT,
             'A market only exists for tokens issued `transfer: "open"`. That is a decision you make once, at issuance, and cannot reverse.',
             'There is no order book or matching engine in the protocol, and there will not be. Offers are individual blocks; a front end aggregates them.',
@@ -361,13 +361,13 @@ game.onPayment(async ({ from, amount, hash: receiveHash }) => {
   await purchases.recordPayment({ sendHash: receive.link, receiveHash, from, amount })
   await reconcile(receive.link)
 })` },
-        { kind: 'prose', text: '`pay()` returns the player\'s **send** hash. `onPayment.hash` is the game\'s **receive** hash; resolve that block and use its `link` to recover the send hash. Persist payments and orders independently by send hash, then run the same atomic, idempotent `reconcile(sendHash)` after either write — the payment can arrive before the browser attaches it to an order. A Kei payment has no memo field until M4, and the SDK rejects `pay({ memo })` instead of silently dropping it.' },
+        { kind: 'prose', text: '`pay()` returns the player\'s **send** hash. `onPayment.hash` is the game\'s **receive** hash; resolve that block and use its `link` to recover the send hash. Persist payments and orders independently by send hash, then run the same atomic, idempotent `reconcile(sendHash)` after either write — the payment can arrive before the browser attaches it to an order. A Kei payment has no memo field in the current wire contract, and the SDK rejects `pay({ memo })` instead of silently dropping it.' },
         { kind: 'prose', text: 'A purchase is **always** two signed transactions. There is no `charge(someoneElse, …)` and there never will be — a game cannot sign for a player\'s wallet. Any API implying otherwise is a bug.' },
         {
           kind: 'limits',
           items: [
             MOCK_CAVEAT,
-            'Free means no transaction fee. Anti-spam is proof-of-work instead, which is why a **work server** is required infrastructure rather than an optimisation.',
+            'Free means no transaction fee. Anti-spam is proof-of-work instead — the SDK ships work-server integration for it as of M4 (0.2.0).',
             '**Issuing an asset burns Kei — 1 for an account\'s first, n for its nth.** Transactions are free; creating permanent state on every node forever is not.',
             'This is not a way to take money from customers today. There is no mainnet, no exchange, and no liquidity — see [status](/status).',
           ],
@@ -450,31 +450,31 @@ await kei.claims.pending()` },
     summary:
       'Published early and updated as it changes, including the parts that say "not yet". A page that only becomes honest at launch was never honest.',
     blocks: [
-      { kind: 'prose', text: 'Kei has **M2 complete, with M3 next**. Version 0.1.0 of the SDK packages is published. Its exact 10-test M2 suite passes against a clean real-node startup in enforced CI, while the native node gate covers 46 tests across eight suites.' },
+      { kind: 'prose', text: 'Kei has a **public M3 testnet and merged native M4 claims**. Version 0.2.0 of the SDK packages is published. `Kei.start()` defaults to the best-effort public testnet; the node gate runs the pinned SDK-owned M2 and M4 contracts against a clean native startup.' },
       {
         kind: 'table',
         head: ['', 'State'],
         rows: [
-          ['The SDK', 'Version 0.1.0 is published. Wallet, send, receive, issue, mint, burn, transfer, balanceOf, items, commit and claim work against the mock, with TypeScript types. Payment memos are rejected until M4; correlate purchases by payment hash.'],
-          ['The mock chain', 'In memory, and the thing the SDK actually talks to. It enforces the real ledger rules — one chain per account, derived asset ids, receivable arrivals, work tiers, the issuance burn, supply caps, transfer policy, and the double-claim index — so the SDK is written against real semantics.'],
-          ['The node', 'Builds, starts, and serves RPC on Linux CI. All five M2 asset operations execute through the ledger and rollback tests. Dev genesis now creates the fixed 900B reserve and four allocations totalling 100B; beta/live still require their offline ceremonies.'],
-          ['The network', 'None. There is no public testnet or mainnet. CI starts an isolated dev node for acceptance work; the hosted MMO uses its own mock chain.'],
+          ['The SDK', 'Version 0.2.0 is published. Wallet, send, receive, issue, mint, burn, transfer, balanceOf, items, commit and claim ship with TypeScript types. Payment memos are not in the current wire contract; correlate purchases by payment hash.'],
+          ['The mock chain', 'Available explicitly through `Kei.mock()` for deterministic tests and still used by some hosted demos. It enforces the real ledger rules — one chain per account, derived asset ids, receivable arrivals, work tiers, the issuance burn, supply caps, transfer policy, and the double-claim index.'],
+          ['The node', 'Builds, starts, and serves RPC on Linux CI. M2 asset operations and native M4 commit, claim, commit-close, commit-info, and claim-status pass the SDK-owned contracts against a clean startup. Dev genesis has the fixed allocation; beta/live still require their offline ceremonies.'],
+          ['The network', 'One rate-limited, best-effort public dev-network node at `https://testnet.keicoin.org/rpc`. It has weak consensus, no uptime promise, published dev keys, and no monetary value. There is no mainnet.'],
           ['The demo', 'Playable. Press a button, bank presses, claim them, buy upgrades that live on the ledger instead of in a save file.'],
           ['The market', 'Specified, not built.'],
           ['Wallets', 'The headless summary exists. The in-game panel and the standalone wallet are not built.'],
           ['The MMO template', 'Implemented as a hosted Babylon.js + Colyseus prototype at [mmo.keicoin.org](https://mmo.keicoin.org). It uses a process-local mock chain today; its public source repository is not published yet.'],
         ],
       },
-      { kind: 'heading', text: 'M2 completion evidence' },
-      { kind: 'prose', text: 'M2 closed only after the shared SDK suite passed unchanged against a clean node startup and the same run became an enforced node CI gate.' },
+      { kind: 'heading', text: 'M3 and M4 evidence' },
+      { kind: 'prose', text: 'M3 runs the same SDK contract through the public HTTPS boundary. M4 adds native commit, claim, and commit-close, and the node gate runs the SDK-owned M4 contract against a clean startup.' },
       {
         kind: 'list',
         items: [
           '**[The exact SDK suite](https://github.com/keicoin-org/kei-transaction/pull/9) is shared from a pinned revision.** All 10 M2 tests pass live against the node with only the URL changed.',
           '**[The development reserve ceremony](https://github.com/keicoin-org/kei-node/pull/12) is deterministic and tested.** Dev genesis creates the fixed 900B reserve and four allocations totalling 100B without giving the reserve voting weight.',
           '**[The node acceptance gate](https://github.com/keicoin-org/kei-node/pull/13) is merged and enforced.** Both final CI runs passed; the native gate covers 46 core tests in eight suites, including five reserve tests and the ingress regression, plus the separate RPC history test.',
-          '**M4 remains separate.** `commit`, `claim`, and a payment memo wire representation are not M2 features. The SDK mock can exercise batch claims, but the real node cannot yet.',
-          '**There is still no public testnet.** That is M3. A green local-node gate proves compatibility, not network security or distribution.',
+          '**[The M4 node contract is pinned in CI](https://github.com/keicoin-org/kei-node).** Native `commit`, `claim`, `commit_close`, `commit_info`, and `claim_status` are merged and exercised against a clean node startup.',
+          '**The public endpoint is M3 evidence, not proof of an M4 deployment.** The repository gate proves compatibility; this page does not claim the public node has been redeployed with M4 until that is separately recorded.',
         ],
       },
       { kind: 'heading', text: 'What this means for you' },
@@ -483,19 +483,19 @@ await kei.claims.pending()` },
         title: 'Do not',
         items: [
           'Put real value anywhere near this. There is no token, no mainnet, and until the validator set is meaningfully distributed there should not be.',
-          'Read "the node runs in CI" as "a public network exists". It does not.',
+          'Read "a public testnet exists" as "a production network exists". It does not.',
           'Ship a production economy on it. Build against it, and expect the chain under the API to change.',
           'Assume the market or the wallets exist because the design for them does.',
         ],
       },
-      { kind: 'prose', text: 'What you **can** do today is build a complete game economy against the API and have it work, because the mock enforces the real rules rather than pretending. When the node lands, the transport changes and the API does not.' },
+      { kind: 'prose', text: 'What you **can** do today is build against the published API and the public M3 testnet, or keep tests deterministic with `Kei.mock()`. Native M4 claims are merged and gated, while a public M4 deployment remains a separately evidenced step.' },
       { kind: 'heading', text: 'Known and stated plainly' },
       {
         kind: 'list',
         items: [
-          '**Network security.** A future chain with a handful of nodes would have weak consensus. Today there is only an isolated CI dev node, not a public testnet.',
+          '**Network security.** The public testnet is one best-effort dev node with weak consensus, not a production network.',
           '**No inherited liquidity.** Kei launches with no users, no exchanges, and no market.',
-          '**Timeline.** M2 is complete. M3 is the next network milestone.',
+          '**Timeline.** M3 is public. Native M4 claims are merged and CI-gated; the market remains M5.',
           '**No smart contract VM**, deliberately. If your design needs one, Kei is the wrong tool and this page would rather you found out here.',
         ],
       },

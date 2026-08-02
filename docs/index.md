@@ -8,7 +8,7 @@ description: Install the Kei SDK and send a confirmed payment.
 Kei has two entry points: one for a player's browser and one for the game's server. A key signs only for its own account, so those roles never collapse into one.
 
 ::: warning Current network status
-M2 is complete: the published 0.1.0 SDK's exact 10-test M2 suite passes against a clean real-node startup in enforced CI. There is still no public network, mainnet, or asset with value; that work starts in M3. Build against the API, but do not ship a production economy on it.
+The 0.2.0 SDK defaults to the public M3 testnet at `https://testnet.keicoin.org/rpc`. It is one rate-limited, best-effort dev node with weak consensus, no uptime promise, and no monetary value. Native M4 commit, claim, and commit-close are merged and pass the pinned SDK contract in node CI; this guide does not yet claim that M4 is deployed to the public endpoint. There is no mainnet. Build against the API, but do not ship a production economy on it.
 :::
 
 ## Install
@@ -87,7 +87,7 @@ game.onPayment(async ({ from, amount, hash: receiveHash }) => {
 
 `onPayment.hash` is the game's receive-block hash, not `receipt.hash`; the receive block's `link` is the player's send hash. Persist the order and confirmed payment independently by that send hash, then call the same atomic, idempotent reconciliation path after either write. This handles a payment that confirms before the browser attaches it to the order and prevents duplicate delivery.
 
-A Kei payment has no memo field until M4. The SDK rejects `pay({ memo })` rather than silently dropping it. There is also no `charge(someoneElse, amount)`: the player signs payment; the issuer signs delivery.
+A Kei payment has no memo field in the current wire contract. The SDK rejects `pay({ memo })` rather than silently dropping it. There is also no `charge(someoneElse, amount)`: the player signs payment; the issuer signs delivery.
 
 ## Continue
 

@@ -60,7 +60,7 @@ The issuer can issue assets and deliver them. It cannot authorize a payment from
 
 Persist orders and confirmed payments independently by send hash, then invoke the same atomic, idempotent reconciliation path after either write. The payment can arrive before the browser attaches it to the order; a one-shot event handler would lose that purchase. A durable unique fulfillment record prevents the same confirmed payment from delivering twice.
 
-A Kei payment has no memo field until M4. The published SDK rejects `pay({ memo })`; use the confirmed payment hash as the exact purchase identifier.
+A Kei payment has no memo field in the current wire contract. The published SDK rejects `pay({ memo })`; use the confirmed payment hash as the exact purchase identifier.
 
 ## What remains off-chain
 

@@ -40,9 +40,9 @@ export const SITE = {
   repo: 'https://github.com/keicoin-org',
   npm: 'kei-transaction',
   /** Kept in one place because it appears on every page and will change often. */
-  milestone: 'M2 complete, M3 next',
+  milestone: 'Public M3 testnet; native M4 claims merged',
   status:
-    'The 0.1.0 SDK packages are published, and their exact 10-test M2 suite passes against a clean real-node startup in enforced CI. There is no public network yet, and nothing anywhere holds value.',
+    'The 0.2.0 SDK packages are published and default to one best-effort public testnet node. Native commit, claim, and commit-close are merged and pass the pinned M4 contract in node CI; no mainnet exists, the public M4 deployment is not yet evidenced here, and nothing holds value.',
 } as const
 
 /**
