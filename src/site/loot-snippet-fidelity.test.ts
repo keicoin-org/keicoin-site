@@ -47,4 +47,10 @@ describe('the loot migration snippet', () => {
     expect(guide).toContain('There is no network loot claim in World of Wonder today.')
     expect(guide).toContain('The next section is a design, and it is unbuilt.')
   })
+
+  test('describes proof delivery as recipient-bound, not bearer authority', () => {
+    expect(guide).toContain('The proof bundle is recipient-bound')
+    expect(guide).toContain('a bundle that reaches the wrong wallet cannot be claimed by it')
+    expect(guide).not.toContain('bearer credential')
+  })
 })

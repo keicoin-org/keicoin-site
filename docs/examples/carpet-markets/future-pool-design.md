@@ -15,8 +15,8 @@ Treat every code block below as a sketch of a shape somebody would have to build
 ## Status
 
 **Proposed. Not scheduled, not designed at the ledger, not implemented.** It sits
-behind the remaining v1 milestones (SPEC §14 — M6 wallets through M10 first
-external integration) and behind whatever the public testnet needs. It also runs
+behind the remaining v1 milestones and current higher-priority work (SPEC §14)
+and behind whatever the public testnet needs. It also runs
 against a standing non-goal: SPEC §3 rejects an "on-chain exchange, AMM, or order
 book," and §9.4 says the chain moves and records assets rather than pricing them.
 Nothing here can ship without that decision being deliberately revisited and the
@@ -203,7 +203,8 @@ preferred on schedule.
 ## Migration plan
 
 Staged, and every stage is after the higher-priority milestones — this queues
-behind M6–M10 and a stable public testnet (SPEC §14, §12).
+behind the remaining v1 milestones and current higher-priority work, plus a
+stable public testnet (SPEC §14, §12).
 
 1. **Decide, in the SPEC.** An amendment that either admits a pool primitive as an
    exception to §3 with stated bounds, or closes the question. Nothing else starts

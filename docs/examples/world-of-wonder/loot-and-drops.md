@@ -114,7 +114,7 @@ Why this shape rather than a mint per kill: one account has one chain, so an iss
 ::: warning Commit-and-claim removes the issuer bottleneck. It does not decide who deserves a drop.
 The ledger will check the proof. It will reject a forged bundle, a changed amount, a claim for another account, and a second claim from the same account. It will not tell you whether the player actually killed anything.
 
-The game still has to authenticate the gameplay that earned the reward and deliver the right proof bundle to the right player. Getting that wrong hands out real assets for fake kills, and the chain will faithfully settle every one of them.
+The game still has to authenticate the gameplay that earned the reward. Getting that wrong commits real assets for fake kills, and the chain will faithfully settle every one of them — the proof is bound to its recipient, so it protects who can claim, never whether the kill happened.
 :::
 
 Where that leaves responsibility:
@@ -124,7 +124,7 @@ Where that leaves responsibility:
 | Did this player kill this enemy? | Colyseus, server-side, exactly as today |
 | What does that kill pay? | The server's loot table — design, not custody |
 | Committing the batch | The issuer, in one call — which lands one block per distinct item |
-| Getting the right bundle to the right player | Your existing authenticated game service |
+| Getting each bundle to its recipient, privately and reliably | Your existing authenticated game service |
 | Publishing the claim | **The player's wallet.** Nobody else can sign it. |
 | Refusing a forged, altered, reused or misdirected claim | The ledger |
 
@@ -133,7 +133,7 @@ Where that leaves responsibility:
 In order of how expensive they are to get wrong:
 
 - **Never mint on request.** An endpoint that hands out an asset because a client asked for it is a printing press — the same rule that killed `POST /kei/sell` in this fork. The kill must be resolved server-side first, and the commit must react to it.
-- **The proof bundle is a bearer credential.** A bundle delivered to the wrong player is a reward given to the wrong player. Deliver it over the authenticated session that already knows who this character is; do not put it anywhere a client can enumerate.
+- **The proof bundle is recipient-bound, and still not public.** The leaf commits to the recipient's account, so a bundle that reaches the wrong wallet cannot be claimed by it — the ledger rejects a claim for another account. What misdelivery costs you is different: it leaks who is entitled to what, and it lets whoever holds the bundle withhold or delay the delivery the rightful player is waiting on. Deliver it over the authenticated private session that already knows who this character is; do not put it anywhere a client can enumerate.
 - **The player signs their own claim.** Do not hold player keys to "help" them claim. The wallet is the browser's, and the game never holds that key.
 - **Do not merge `character_inventory` into the bag.** Until an item is claimed on-chain, it is a database row, and showing it as ownership is a lie the fork is built to avoid.
 - **Close commitments on a published policy**, with `close(root)` after the claim period you told players about — not whenever it is convenient.

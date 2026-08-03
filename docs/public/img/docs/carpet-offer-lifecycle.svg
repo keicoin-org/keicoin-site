@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc" width="1200" height="520">
   <title id="title">Carpet Markets offer lifecycle: publish, discover, validate, then accept or cancel</title>
-  <desc id="desc">A protocol diagram of the current bilateral offer flow. A seller publishes an offer, which locks the give asset. An address-scoped buyer UI discovers the offer, then re-reads it by hash and validates that it is still open and that the terms match. From there the flow branches: accepting produces one atomic settlement that moves the give asset to the buyer and the quote asset to the seller, while a seller cancel releases the locked give asset back to the seller. Either branch ends in reconciliation from mine() and trades(). If a stale cache races a settled offer, the chain returns offer-taken or offer-cancelled and the UI refreshes. These are current bilateral offers only: there is no pool and no bonding curve.</desc>
+  <desc id="desc">A protocol diagram of the current bilateral offer flow. A seller publishes an offer, which locks the give asset. The buyer UI discovers the offer by calling offers({ from: [seller.address] }), which selects the seller account chains the UI reads rather than granting any permission, then re-reads it by hash and validates that it is still open and that the terms match. From there the flow branches: accepting produces one atomic settlement that moves the give asset to the buyer and the quote asset to the seller, while a seller cancel releases the locked give asset back to the seller. Either branch ends in reconciliation from mine() and trades(). If a stale cache races a settled offer, the chain returns offer-taken or offer-cancelled and the UI refreshes. These are current bilateral offers only: there is no pool and no bonding curve.</desc>
 
   <style>
     .bg { fill: #f7f7f5; }
@@ -48,9 +48,9 @@
   <!-- 2. discover -->
   <rect class="box" x="300" y="92" width="220" height="96" rx="6"/>
   <text class="t h" x="316" y="120">2. Buyer UI discovers</text>
-  <text class="t b" x="316" y="143">address-scoped listing</text>
-  <text class="t s" x="316" y="164">what a given address</text>
-  <text class="t s" x="316" y="180">is allowed to see</text>
+  <text class="t b" x="316" y="143" font-size="11.5" font-family="ui-monospace, 'SFMono-Regular', Menlo, monospace">offers({ from: [seller.address] })</text>
+  <text class="t s" x="316" y="164">selects the seller account</text>
+  <text class="t s" x="316" y="180">chains the UI reads</text>
 
   <!-- 3. validate -->
   <rect class="box-accent" x="568" y="92" width="240" height="96" rx="6"/>

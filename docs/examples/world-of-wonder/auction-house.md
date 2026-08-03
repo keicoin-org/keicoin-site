@@ -7,7 +7,7 @@ description: Wire World of Wonder's player-to-player auction house into your own
 
 **By the end of this page your fork has a player-to-player auction house whose listings live on sellers' own chains, whose sales settle both legs at once or not at all, and whose server holds nobody's item and signs nothing.**
 
-This is the narrow version of [World of Wonder](../world-of-wonder.md)'s Auction House panel: the calls the player's wallet makes, the two routes the server answers, and the check that has to be there before an accept is signed. Every line below is in the repository — the wallet side is `src/client/Controllers/Wallet.ts`.
+This is the narrow version of [World of Wonder](../world-of-wonder.md)'s Auction House panel: the calls the player's wallet makes, the two routes the server answers, and the check that has to be there before an accept is signed. The wallet side lives in `src/client/Controllers/Wallet.ts`; the snippet below is adapted from it rather than copied line for line.
 
 ## Before you begin
 
@@ -35,7 +35,7 @@ The verified SDK surface is `market.offer`, `market.get`, `market.accept`, `mark
 
 ## The integration, in one file
 
-This is the whole player side, from `src/client/Controllers/Wallet.ts`, using only the methods above.
+An adapted, condensed example of the player side, using only the methods above. The actual `src/client/Controllers/Wallet.ts` implements `list(key, price, qty = 1)` and `cancel(listing)`, with `cancel` delegating authorization to `market.cancel`; the version here reorders the arguments and inlines the validation so each check is visible where it matters.
 
 ```ts
 // item.asset and this._coin both come from the client's catalogue.

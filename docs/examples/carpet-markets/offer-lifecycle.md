@@ -28,8 +28,13 @@ await game.faucet(20_000)
 
 const seller = await Kei.start({ node, seed: randomSeed() })
 const buyer = await Kei.start({ node, seed: randomSeed() })
-await Promise.all([game.send(seller.address, 2_000), game.send(buyer.address, 2_000)])
-await Promise.all([seller.sync(), buyer.sync()])
+// A second buyer, funded up front, so the race sections below have someone to race.
+const eve = await Kei.start({ node, seed: randomSeed() })
+// A wallet with the background expiry sweep off, for the expiry section.
+const quiet = await Kei.start({ node, seed: randomSeed(), autoCancelExpired: false })
+
+await Promise.all([seller, buyer, eve, quiet].map((w) => game.send(w.address, 2_000)))
+await Promise.all([seller, buyer, eve, quiet].map((w) => w.sync()))
 
 const parcel = await game.items.create({ name: 'Carpet Parcel' })
 await game.items.mint(parcel.id, seller.address)
@@ -92,13 +97,13 @@ Discovery is address-scoped. There is no network-wide index (SPEC §9.4), so you
 
 ```ts
 const listings = await buyer.market.offers({
-  from: [seller.address, otherSeller.address],   // required
+  from: [seller.address],                        // required — the accounts whose chains you read
   asset: parcel,                                 // only offers giving this asset
   state: 'open',                                 // the default; null for every state
 })
 ```
 
-Calling `offers()` without `from` throws `no-accounts` on purpose. Your app supplies the address list — in Carpet Markets, the registry is that list.
+Calling `offers()` without `from` throws `no-accounts` on purpose. Your app supplies the address list — in Carpet Markets, the registry is that list, and a real UI passes every seller address it knows about rather than the one above.
 
 **Re-read by hash immediately before you act.** A listing you fetched a moment ago may already be gone; `get()` is the cheap authoritative check:
 
@@ -140,8 +145,26 @@ await seller.balance()               // 2_000 + 5
 
 Two buyers racing the same offer is a normal event, not an error state: exactly one `accept()` fulfils and the other rejects with `offer-taken`. Both wallets then agree on one owner — `owner()` answers globally, so neither reports itself.
 
+The parcel above has already sold, and an offer settles exactly once, so every race and cancel below needs an offer of its own. This helper mints a brand-new parcel to the seller and lists it, and the rest of the page calls it instead of reusing a spent hash:
+
 ```ts
-const results = await Promise.allSettled([buyer.market.accept(offer), eve.market.accept(offer)])
+async function openOffer(name: string) {
+  const item = await game.items.create({ name })
+  await game.items.mint(item.id, seller.address)
+  await seller.sync()   // a mint is a receivable until the wallet signs for it
+  return seller.market.sell({ asset: item, price: 10 })
+}
+```
+
+`eve` is the second buyer funded in [Before you begin](#before-you-begin), so both wallets can race the same hash:
+
+```ts
+const contested = await openOffer('Carpet Parcel (contested)')
+
+const results = await Promise.allSettled([
+  buyer.market.accept(contested),
+  eve.market.accept(contested),
+])
 results.filter((r) => r.status === 'fulfilled')   // length 1
 ```
 
@@ -150,26 +173,39 @@ results.filter((r) => r.status === 'fulfilled')   // length 1
 Only the author can cancel, because nobody else's asset is locked by the offer:
 
 ```ts
-const cancellation = await seller.market.cancel(offer)
+const withdrawn = await openOffer('Carpet Parcel (withdrawn)')
+
+await buyer.market.cancel(withdrawn)   // throws not-your-offer
+const cancellation = await seller.market.cancel(withdrawn)
 cancellation.returned.asset   // back in the seller's spendable balance
-await buyer.market.cancel(offer)   // throws not-your-offer
 ```
 
 Cancelling something already settled throws `offer-taken` — and the message is the right one for a UI: there is nothing left to cancel, the payment is on its way.
 
-**Accept and cancel race for the same locked entry, and either can win** (SPEC §9.2, conflict 4). Losing is a normal outcome with a plain `KeiError`, and the asset is never stuck — it is with its new owner or back home:
+**Accept and cancel race for the same locked entry, and either can win** (SPEC §9.2, conflict 4). Losing is a normal outcome with a plain `KeiError`, and the asset is never stuck — it is with its new owner or back home. Again, a fresh offer, because the two above are spent:
 
 ```ts
-const results = await Promise.allSettled([buyer.market.accept(offer), seller.market.cancel(offer)])
+const disputed = await openOffer('Carpet Parcel (disputed)')
+
+const results = await Promise.allSettled([
+  buyer.market.accept(disputed),
+  seller.market.cancel(disputed),
+])
 // exactly one fulfilled, exactly one rejected
-const settled = await seller.market.get(offer.hash)
+const settled = await seller.market.get(disputed.hash)
 settled?.state   // 'accepted' or 'cancelled' — read it, don't guess from who threw
 ```
 
 Expiry is advisory. The chain has no clock, so an offer past `expiresAt` **still settles if somebody accepts it**; `Offer.expired` is a hint for the view and never a guarantee:
 
+`quiet` is the wallet declared in [Before you begin](#before-you-begin) with the background sweep off; give it an asset of its own to list:
+
 ```ts
-const listing = await quiet.market.sell({ asset: parcel, price: 5, expiresIn: '1ms' })
+const spare = await game.items.create({ name: 'Carpet Parcel (spare)' })
+await game.items.mint(spare.id, quiet.address)
+await quiet.sync()
+
+const listing = await quiet.market.sell({ asset: spare, price: 5, expiresAt: Date.now() - 1 })
 ;(await quiet.market.get(listing.hash))?.expired   // true
 await buyer.market.accept(listing)                 // and it still works
 ```
@@ -177,7 +213,7 @@ await buyer.market.accept(listing)                 // and it still works
 What actually removes a listing is the offerer's own cancel, so somebody has to write one. The SDK writes it in the background by default (`autoCancelExpired`, swept every 30s). Turn that off and sweep by hand when your process owns the schedule:
 
 ```ts
-const quiet = await Kei.start({ node, seed: randomSeed(), autoCancelExpired: false })
+// `quiet` was opened with autoCancelExpired: false in Before you begin.
 const swept = await quiet.market.cancelExpired()   // Cancellation[], this wallet's own only
 ```
 
