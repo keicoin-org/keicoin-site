@@ -172,7 +172,10 @@ Not enough Kei — balance is 0.4, tried to send 1.2.
 ${[...USE_CASES.map((u) => `- [${u.label}](${SITE.origin}${u.path}): ${u.claim}`)].join('\n')}
 - [Quickstart and API](${SITE.origin}/docs): the full surface on one page.
 - [Status](${SITE.origin}/status): what works, what is scheduled, what is not true yet.
-- [Examples](${SITE.origin}/examples): Button, a 3D clicker with a real economy, running.
+- [Examples](${SITE.origin}/docs/examples): three working games, with the primitives each one exercises, how to run it, and what it gets wrong.
+- [Button](${SITE.origin}/docs/examples/button): a 3D clicker. Every primitive, including commit/claim. Playable at ${SITE.origin}/examples/button.
+- [Carpet Markets](${SITE.origin}/docs/examples/carpet-markets): a launchpad with a peer-to-peer order book. The worked demo of the market API. Playable at ${SITE.origin}/examples/carpet-markets.
+- [World of Wonder](${SITE.origin}/docs/examples/world-of-wonder): a Babylon.js + Colyseus MMO whose gold and items are chain assets. The one to fork.
 - [AGENTS.md](${SITE.origin}/AGENTS.md): the integration procedure with failure modes.
 `
 }
@@ -272,6 +275,9 @@ User-agent: *
 Allow: /
 
 Sitemap: ${SITE.origin}/sitemap.xml
+# VitePress writes its own, and nothing links to it. Without this line the
+# reference pages and the examples are reachable only by following links.
+Sitemap: ${SITE.origin}/docs/sitemap.xml
 `
 }
 

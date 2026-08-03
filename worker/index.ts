@@ -55,10 +55,25 @@ function workHandler(env: Env): (request: Request) => Promise<Response> {
   return handler
 }
 
+/**
+ * The examples page moved into the documentation, where the rest of the writing
+ * lives. `/examples/<demo>` is untouched — those are the demos themselves, on
+ * their own Workers' path routes, and this Worker never sees them. Only the
+ * bare index is matched, so the redirect cannot swallow a running demo.
+ */
+// The trailing slash is VitePress's own canonical form for a directory index,
+// so this lands on a 200 rather than on the asset binding's second redirect.
+const MOVED = new Map([
+  ['/examples', '/docs/examples/'],
+  ['/examples/', '/docs/examples/'],
+])
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url)
     if (url.pathname === CLICK_WORK_PATH) return workHandler(env)(request)
+    const moved = MOVED.get(url.pathname)
+    if (moved) return Response.redirect(new URL(moved, url).toString(), 301)
     return env.ASSETS.fetch(request)
   },
 } satisfies ExportedHandler<Env>
