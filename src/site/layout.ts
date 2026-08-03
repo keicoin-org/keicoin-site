@@ -46,7 +46,7 @@ export const SITE = {
   /** Kept in one place because it appears on every page and will change often. */
   milestone: 'Public testnet carrying M4 claims and M5 swaps',
   status:
-    'Since 3 August 2026 the public testnet node accepts commit and swap blocks, and the gateway forwards the market reads, so claims and atomic settlement work end to end over `https://testnet.keicoin.org/rpc`. The 0.4.0 SDK set is published, including item stats and the three `create-kei-game@0.2.0` templates. It is still one rate-limited, best-effort node with weak consensus, no uptime promise and published dev keys; there is no mainnet, and nothing on it holds value.',
+    'Since 3 August 2026 the public testnet node accepts commit and swap blocks, and the gateway forwards the market reads, so claims and atomic settlement work end to end over `https://testnet.keicoin.org/rpc`. The 0.4.0 SDK set is published, including item stats; the `create-kei-game@0.2.0` package on npm is the superseded legacy scaffolder, not the standalone harness now in development. It is still one rate-limited, best-effort node with weak consensus, no uptime promise and published dev keys; there is no mainnet, and nothing on it holds value.',
 } as const
 
 /**

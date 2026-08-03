@@ -12,7 +12,7 @@ The installable SDK is **0.4.0**, and it defaults to the public testnet at `http
 :::
 
 ::: warning It is still one node
-The testnet is one rate-limited, best-effort dev node with weak consensus, published dev keys, no uptime promise, and no monetary value. There is no mainnet. Item stats and `create-kei-game`'s three templates are now published, but that does not make the network production infrastructure. Build against the API; do not ship a production economy on it.
+The testnet is one rate-limited, best-effort dev node with weak consensus, published dev keys, no uptime promise, and no monetary value. There is no mainnet. Item stats are published in the current SDK; the `create-kei-game@0.2.0` package on npm is the superseded legacy scaffolder, not the standalone harness now in development. Build against the API; do not ship a production economy on it.
 :::
 
 ## Install
