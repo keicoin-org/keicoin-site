@@ -213,12 +213,12 @@ export function homePage(): string {
   <div class="limits">
     <h4>Public M3 testnet; native M4 claims merged</h4>
     <ul>
-      <li><strong>The SDK packages are published at 0.2.0</strong> and run end to end, with TypeScript types.</li>
+      <li><strong>The SDK packages are published at 0.3.0</strong> and run end to end, with TypeScript types. That includes the market and the in-game wallet panel.</li>
       <li><strong><code>Kei.start()</code> defaults to the public testnet.</strong> It is one rate-limited, best-effort dev node with weak consensus, no uptime promise, and no monetary value; <code>Kei.mock()</code> remains available for tests.</li>
       <li><strong>Native M4 claims are merged and CI-gated.</strong> The node runs the pinned SDK M2 and M4 contracts against a clean startup. This page does not yet claim the public endpoint has been redeployed with M4.</li>
-      <li><strong>The MMO prototype is live over HTTPS.</strong> It still uses a process-local mock chain and is not a public network.</li>
+      <li><strong>World of Wonder is live over HTTPS</strong> and its source is public. The hosted copy at <a href="https://mmo.keicoin.org">mmo.keicoin.org</a> still runs a process-local mock chain, so it is not a public network; the repository itself settles on the testnet by default.</li>
       <li><strong>There is no token, no mainnet, and nothing holds value.</strong> Until the validator set is meaningfully distributed, nothing should.</li>
-      <li><strong>The market and wallet-panel SDK work are in review, not merged.</strong> A standalone wallet is in progress in a separate repository.</li>
+      <li><strong>The market and both wallets are merged and published</strong> — <code>@keicoin/market</code>, the in-game panel in <code>kei-transaction</code>, and the standalone wallet in its own repository. No public node deployment carrying the native swap blocks is claimed here, and the standalone wallet's market panel is not wired up yet.</li>
       <li><strong>There is no smart contract VM</strong>, deliberately. If your design needs one, Kei is the wrong tool, and this page would rather you found that out here.</li>
     </ul>
   </div>

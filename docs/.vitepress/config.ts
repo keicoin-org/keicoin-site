@@ -75,7 +75,9 @@ export default defineConfig({
       label: 'On this page',
     },
     editLink: {
-      pattern: 'https://github.com/keicoin-org/keicoin-site/edit/main/docs/:path',
+      // `master`, not `main` — this repository's default branch. The wrong one
+      // here is a 404 on every page of the docs.
+      pattern: 'https://github.com/keicoin-org/keicoin-site/edit/master/docs/:path',
       text: 'Edit this page on GitHub',
     },
     lastUpdated: {
@@ -89,7 +91,9 @@ export default defineConfig({
       next: 'Next',
     },
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/keicoin-org/keicoin-site' },
+      // The organisation. A reader following this wants the project, not the
+      // repository that renders the page they are standing on.
+      { icon: 'github', link: 'https://github.com/keicoin-org' },
     ],
     footer: {
       message: 'The package is the source of truth for the API.',
