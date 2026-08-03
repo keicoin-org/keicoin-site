@@ -566,15 +566,17 @@ header.site .home b { color: var(--ink); font-weight: 500; }
   max-width: 26ch;
   margin: 0;
   font-size: clamp(28px, 3.6vw, 46px);
-  line-height: 1.25;
+  line-height: 1.45;
   letter-spacing: -0.025em;
   color: var(--ink-dim);
 }
 
+/* The vertical padding is what keeps a descender off the edge of its box; the
+   leading above has to allow for it, hence the roomier line-height. */
 .statement mark {
   background: var(--raised);
   color: var(--ink);
-  padding: 0.1em 0.18em;
+  padding: 0.14em 0.16em 0.2em;
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
 }
@@ -599,12 +601,11 @@ section.tight { padding: clamp(52px, 6vw, 76px) 0; }
 }
 
 /*
- * The argument/evidence split. One column holds the claim and its exit link;
- * the hairline and everything past it is what backs the claim up. `.flip`
- * moves the evidence to the left, and moves the narrow track with it.
+ * The argument/evidence split. The left column holds the claim and its exit
+ * link; the hairline and everything past it is what backs the claim up. Every
+ * section uses the same hand, so the eye learns where the proof lives once.
  */
 .split { display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 1fr); gap: 0; align-items: start; }
-.split.flip { grid-template-columns: minmax(0, 1fr) minmax(0, 360px); }
 
 .split-copy { padding-right: clamp(28px, 4vw, 56px); }
 .split-copy p { max-width: 40ch; font-size: 14.5px; color: var(--ink-dim); }
@@ -616,13 +617,10 @@ section.tight { padding: clamp(52px, 6vw, 76px) 0; }
   border-left: 1px solid var(--rule);
 }
 
-.split.flip .split-copy { order: 2; padding-right: 0; padding-left: clamp(28px, 4vw, 56px); border-left: 1px solid var(--rule); }
-.split.flip .split-evidence { order: 1; padding-left: 0; padding-right: clamp(28px, 4vw, 56px); border-left: 0; }
-
 @media (max-width: 900px) {
-  .split, .split.flip { grid-template-columns: 1fr; gap: 40px; }
-  .split-copy, .split.flip .split-copy { order: 1; padding: 0; border: 0; }
-  .split-evidence, .split.flip .split-evidence { order: 2; padding: 0; border: 0; }
+  .split { grid-template-columns: 1fr; gap: 40px; }
+  .split-copy { padding: 0; }
+  .split-evidence { padding: 0; border: 0; }
 }
 
 /*
@@ -675,7 +673,9 @@ section.tight { padding: clamp(52px, 6vw, 76px) 0; }
 
 .figure-note { margin: 12px 0 0; }
 
-.origin-coin { margin: 0; }
+/* Capped rather than filling its column: past about this size the emblem stops
+   being evidence beside the argument and becomes the page. */
+.origin-coin { margin: 0; max-width: 440px; }
 .origin-coin img { display: block; width: 100%; height: auto; padding: 22px; }
 
 /* ------------------------------------------------------------ the swap table */
@@ -870,9 +870,11 @@ footer.site p strong { color: var(--ink-dim); font-weight: 500; }
 .lede { font-size: 18px; line-height: 1.55; color: var(--ink-dim); max-width: 58ch; }
 .lede b, .lede strong { color: var(--ink); font-weight: 500; }
 
+/* The rule is the section divider, so it runs the full column — capping the
+   width here would stop the line short of the text it is dividing. */
 .page h2 {
   font-size: clamp(22px, 2.6vw, 30px);
-  max-width: 26ch;
+  max-width: none;
   margin: 56px 0 16px;
   padding-top: 28px;
   border-top: 1px solid var(--rule);

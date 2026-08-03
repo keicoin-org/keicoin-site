@@ -142,10 +142,10 @@ export function homePage(): string {
 </div></section>
 
 <section class="statement"><div class="wrap">
-  <p>The owl <mark>keeps pushing</mark>. Kei makes the ledger <mark>remember how far it got</mark>.</p>
+  <p>The owl <mark>keeps pushing.</mark> Kei makes the ledger <mark>remember how far it got.</mark></p>
 </div></section>
 
-<section class="origin"><div class="wrap split flip">
+<section class="origin"><div class="wrap split">
   <div class="split-copy">
     <p class="eyebrow">Why Kei</p>
     <h2>The boulder is the point.</h2>
