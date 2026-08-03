@@ -8,11 +8,11 @@ description: Install the Kei SDK and send a confirmed payment.
 Kei has two entry points: one for a player's browser and one for the game's server. A key signs only for its own account, so those roles never collapse into one.
 
 ::: info Live on the public testnet
-The installable SDK is **0.3.0**, and it defaults to the public testnet at `https://testnet.keicoin.org/rpc`. Since 3 August 2026 that node accepts M4 claim blocks and M5 swaps: a rooted claim lands, a second claim from the same account is refused, an offer locks its units, and one accept moves both legs — measured over the public URL, not inferred from CI.
+The installable SDK is **0.4.0**, and it defaults to the public testnet at `https://testnet.keicoin.org/rpc`. Since 3 August 2026 that node accepts M4 claim blocks and M5 swaps: a rooted claim lands, a second claim from the same account is refused, an offer locks its units, and one accept moves both legs — measured over the public URL, not inferred from CI.
 :::
 
-::: warning It is still one node, and `master` is ahead of npm
-The testnet is one rate-limited, best-effort dev node with weak consensus, published dev keys, no uptime promise, and no monetary value. There is no mainnet. Separately, `master` has moved to 0.4.0 and nobody has published it, so item stats and `create-kei-game`'s three templates are merged and not installable. Build against the API, but do not ship a production economy on it.
+::: warning It is still one node
+The testnet is one rate-limited, best-effort dev node with weak consensus, published dev keys, no uptime promise, and no monetary value. There is no mainnet. Item stats and `create-kei-game`'s three templates are now published, but that does not make the network production infrastructure. Build against the API; do not ship a production economy on it.
 :::
 
 ## Install

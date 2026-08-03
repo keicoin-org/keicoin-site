@@ -54,8 +54,8 @@ npm create kei-game my-launchpad -- --template carpet-markets
 
 Cloning the repository directly gets you the same files under the original name.
 
-::: warning The three templates are merged, not published
-`create-kei-game` on npm is `0.1.2` and scaffolds the star-clicker only. The version carrying all three is `0.2.0` on `master`, and publishing is a manual step nobody has run yet. Until then, clone.
+::: info The three templates are published
+`create-kei-game@0.2.0` scaffolds Button, Carpet Markets, or World of Wonder. Cloning a repository directly remains useful when you want the complete worked application rather than a starting template.
 :::
 
 ## What all three have in common

@@ -277,7 +277,7 @@ export function homePage(): string {
     <div class="limits">
       <h4>${escapeHtml(SITE.milestone)}</h4>
       <ul>
-        <li><strong>What you can install is 0.3.0</strong>, and every <code>@keicoin/*</code> package with it, market and in-game wallet panel included. <code>master</code> has moved to 0.4.0 and nobody has published it, so item stats and the three scaffolder templates are merged and not installable.</li>
+        <li><strong>What you can install is 0.4.0</strong>, and every SDK <code>@keicoin/*</code> package with it. Item stats and the roll-supply fix are included; the market is <code>0.1.1</code>, and <code>create-kei-game@0.2.0</code> ships all three templates.</li>
         <li><strong><code>Kei.start()</code> defaults to the public testnet.</strong> It is one rate-limited, best-effort dev node with weak consensus, no uptime promise, and no monetary value; <code>Kei.mock()</code> remains available for tests.</li>
         <li><strong>M4 claims and M5 swaps settle on that testnet</strong>, measured on 3 August 2026 rather than inferred from CI: a rooted claim lands, a double claim is refused, an offer locks its units, and one accept moves both legs — over the public URL.</li>
         <li><strong>World of Wonder is live over HTTPS</strong> and its source is public. The hosted copy at <a href="https://mmo.keicoin.org">mmo.keicoin.org</a> still runs a process-local mock chain, so it is not a public network; the repository itself settles on the testnet by default, and its auction house now has Browse, Sell and Mine over atomic player-to-player settlement.</li>

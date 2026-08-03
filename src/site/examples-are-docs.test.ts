@@ -64,10 +64,8 @@ describe('the machine-readable pages', () => {
   })
 
   test('the install line is the version that is actually installable', () => {
-    // master is 0.4.0 and unpublished; telling an agent to install it is a
-    // failed `npm install` in somebody else's terminal.
-    expect(llmsTxt()).toContain('kei-transaction@0.3.0')
-    expect(agentsMd()).toContain('kei-transaction@0.3.0')
+    expect(llmsTxt()).toContain('kei-transaction@0.4.0')
+    expect(agentsMd()).toContain('kei-transaction@0.4.0')
     expect(llmsTxt()).not.toContain('kei-transaction@0.2.0')
   })
 })
