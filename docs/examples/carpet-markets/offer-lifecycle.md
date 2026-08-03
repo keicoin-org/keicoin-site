@@ -161,11 +161,11 @@ async function openOffer(name: string) {
 ```ts
 const contested = await openOffer('Carpet Parcel (contested)')
 
-const results = await Promise.allSettled([
+const acceptRace = await Promise.allSettled([
   buyer.market.accept(contested),
   eve.market.accept(contested),
 ])
-results.filter((r) => r.status === 'fulfilled')   // length 1
+acceptRace.filter((r) => r.status === 'fulfilled')   // length 1
 ```
 
 ## Cancel and expire
@@ -175,7 +175,10 @@ Only the author can cancel, because nobody else's asset is locked by the offer:
 ```ts
 const withdrawn = await openOffer('Carpet Parcel (withdrawn)')
 
-await buyer.market.cancel(withdrawn)   // throws not-your-offer
+const [unauthorizedCancel] = await Promise.allSettled([
+  buyer.market.cancel(withdrawn),
+])
+unauthorizedCancel.status   // 'rejected': not-your-offer
 const cancellation = await seller.market.cancel(withdrawn)
 cancellation.returned.asset   // back in the seller's spendable balance
 ```
@@ -187,7 +190,7 @@ Cancelling something already settled throws `offer-taken` — and the message is
 ```ts
 const disputed = await openOffer('Carpet Parcel (disputed)')
 
-const results = await Promise.allSettled([
+const cancelRace = await Promise.allSettled([
   buyer.market.accept(disputed),
   seller.market.cancel(disputed),
 ])
