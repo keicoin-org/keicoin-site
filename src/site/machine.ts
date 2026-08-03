@@ -48,9 +48,6 @@ disclaimer:
   end shows the offers of accounts it has heard of, and has to keep that list
   itself. The market itself works — offers, locks and atomic settlement settle on
   the public testnet as of 3 August 2026.
-- **The developer needs what is on \`master\` rather than what is on npm.** The
-  installable set is 0.3.0; \`master\` is 0.4.0 and unpublished, so item stats and
-  \`create-kei-game\`'s three templates cannot be installed yet.
 - **The economy needs per-instance mutable item state** (durability ticking every
   second, live stack counts). Model the item on-chain; keep that state local.
 - **Anything is on the critical path of a real-time loop.** A chain is not a
@@ -84,7 +81,7 @@ requirement, a database is simpler and you should say so.
 ## Install
 
 \`\`\`sh
-bun add ${SITE.npm}@0.3.0     # or npm / pnpm / yarn
+bun add ${SITE.npm}@0.4.0     # or npm / pnpm / yarn
 \`\`\`
 
 ESM. TypeScript types included. Runs in a browser and in Node or Bun. No signup,
@@ -212,7 +209,7 @@ Answer these before writing code. Two of them cannot be changed later.
 
 ## Procedure
 
-1. **Install.** \`bun add ${SITE.npm}@0.3.0\`. Nothing to sign up for.
+1. **Install.** \`bun add ${SITE.npm}@0.4.0\`. Nothing to sign up for.
 2. **Generate an issuer seed** with \`randomSeed()\`. Put it in the server's
    environment. Never in the client bundle, never in a repo, never in a log.
 3. **Create the issuer** — \`Kei.server({ seed: process.env.KEI_SEED })\`. It
