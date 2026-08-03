@@ -44,9 +44,9 @@ export const SITE = {
   repo: 'https://github.com/keicoin-org',
   npm: 'kei-transaction',
   /** Kept in one place because it appears on every page and will change often. */
-  milestone: 'Public M3 testnet; native M4 claims merged',
+  milestone: 'Public testnet carrying M4 claims and M5 swaps',
   status:
-    'The 0.3.0 SDK packages are published — every `@keicoin/*` package with them, including the market and the in-game wallet panel — and default to one best-effort public testnet node. Native commit, claim, commit-close, and the swap trio are merged and pass the pinned node contracts in CI; no mainnet exists, no public node deployment carrying M4 or M5 is evidenced here, and nothing holds value.',
+    'Since 3 August 2026 the public testnet node accepts commit and swap blocks, and the gateway forwards the market reads, so claims and atomic settlement work end to end over `https://testnet.keicoin.org/rpc`. What is installable is 0.3.0 — `master` has moved to 0.4.0 and nobody has published it. It is still one rate-limited, best-effort node with weak consensus, no uptime promise and published dev keys; there is no mainnet, and nothing on it holds value.',
 } as const
 
 /**
@@ -105,41 +105,65 @@ const THEME_SCRIPT = `
 })()
 `
 
-// `/docs/examples` rather than `/examples`: the examples are documentation, and
-// `/examples/<name>` is where the demos themselves are mounted. `/examples`
-// redirects here (worker/index.ts) for anything already linking to it.
-const NAV: Array<[string, string]> = [
-  ['/use-cases', 'Use cases'],
+/**
+ * `/docs/examples` rather than `/examples`: the examples are documentation, and
+ * `/examples/<name>` is where the demos themselves are mounted. `/examples`
+ * redirects here (worker/index.ts) for anything already linking to it.
+ *
+ * Examples is deliberately not a peer of Docs in either the header or the
+ * footer. It is a section *of* the documentation, and a nav that lists it
+ * beside Docs tells a reader it is a separate product area — which is exactly
+ * the misreading that had editorial pages living at `/examples` in the first
+ * place. Here it renders as `Docs / Examples`, one group, one hierarchy.
+ */
+const NAV_BEFORE: Array<[string, string]> = [['/use-cases', 'Use cases']]
+
+/** The one nested pair in the header, rendered as a single `Docs / Examples` group. */
+const NAV_DOCS: Array<[string, string]> = [
   ['/docs', 'Docs'],
   ['/docs/examples', 'Examples'],
+]
+
+const NAV_AFTER: Array<[string, string]> = [
   ['/status', 'Status'],
   ['/llms.txt', 'llms.txt'],
 ]
 
+/** Every header destination, in order, for anything that needs the flat list. */
+export const NAV: ReadonlyArray<readonly [string, string]> = [...NAV_BEFORE, ...NAV_DOCS, ...NAV_AFTER]
+
+interface FootLink {
+  href: string
+  label: string
+  /** Rendered indented under the entry above it. */
+  nested?: boolean
+}
+
 /** The footer's three link columns; the first column is the mark and the notice. */
-const FOOT_COLUMNS: Array<[string, Array<[string, string]>]> = [
+const FOOT_COLUMNS: Array<[string, FootLink[]]> = [
   [
-    'Build',
+    'Documentation',
     [
-      ['/docs', 'Documentation'],
-      ['/use-cases', 'Use cases'],
-      ['/docs/examples', 'Examples'],
-      [`https://www.npmjs.com/package/${SITE.npm}`, SITE.npm],
+      { href: '/docs', label: 'Quickstart' },
+      { href: '/docs/reference/wallet', label: 'API reference' },
+      { href: '/docs/examples', label: 'Examples', nested: true },
+      { href: `https://www.npmjs.com/package/${SITE.npm}`, label: SITE.npm },
     ],
   ],
   [
     'For agents',
     [
-      ['/llms.txt', 'llms.txt'],
-      ['/AGENTS.md', 'AGENTS.md'],
+      { href: '/llms.txt', label: 'llms.txt' },
+      { href: '/AGENTS.md', label: 'AGENTS.md' },
     ],
   ],
   [
     'Project',
     [
-      ['/status', 'Status'],
-      [SITE.repo, 'GitHub'],
-      ['https://mmo.keicoin.org', 'World of Wonder'],
+      { href: '/use-cases', label: 'Use cases' },
+      { href: '/status', label: 'Status' },
+      { href: SITE.repo, label: 'GitHub' },
+      { href: 'https://mmo.keicoin.org', label: 'World of Wonder' },
     ],
   ],
 ]
@@ -281,7 +305,11 @@ export function shell(options: {
 <a class="skip" href="#main">Skip to content</a>
 <header class="site"><div class="wrap">
 <a class="home" href="/"><img src="/img/kei-coin-64.png" alt="" width="26" height="26" decoding="async"><span>kei<b>coin</b>.org</span></a>
-${NAV.map(([href, label]) => `<a href="${href}">${label}</a>`).join('\n')}
+${NAV_BEFORE.map(([href, label]) => `<a href="${href}">${label}</a>`).join('\n')}
+<span class="nav-group">${NAV_DOCS.map(([href, label]) => `<a href="${href}">${label}</a>`).join(
+  '<span class="nav-sep" aria-hidden="true">/</span>',
+)}</span>
+${NAV_AFTER.map(([href, label]) => `<a href="${href}">${label}</a>`).join('\n')}
 <a class="github-link" href="${SITE.repo}" target="_blank" rel="noopener noreferrer" aria-label="Kei on GitHub" title="Kei on GitHub">
 <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
 </a>
@@ -303,7 +331,12 @@ ${options.body}
 ${FOOT_COLUMNS.map(
   ([heading, links]) => `<div class="foot-col">
 <h4>${escapeHtml(heading)}</h4>
-<ul>${links.map(([href, label]) => `<li><a href="${href}">${escapeHtml(label)}</a></li>`).join('')}</ul>
+<ul>${links
+    .map(
+      (link) =>
+        `<li${link.nested ? ' class="foot-sub"' : ''}><a href="${link.href}">${escapeHtml(link.label)}</a></li>`,
+    )
+    .join('')}</ul>
 </div>`,
 ).join('\n')}
 </div></footer>

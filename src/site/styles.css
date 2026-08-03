@@ -194,6 +194,14 @@ header.site .home {
 header.site .home img { display: block; width: 22px; height: 22px; }
 header.site .home b { color: var(--ink); font-weight: 500; }
 
+/*
+ * `Docs / Examples` as one group rather than two peers. The examples are a
+ * section of the documentation, and a header that spaces them equally says the
+ * opposite of that in the only place a reader looks for the site's shape.
+ */
+.nav-group { display: inline-flex; align-items: center; gap: 7px; }
+.nav-sep { color: var(--ink-faint); font: 400 12.5px/1 var(--mono); }
+
 .github-link {
   display: inline-flex;
   align-items: center;
@@ -842,6 +850,10 @@ footer.site .wrap {
 .foot-col h4 { margin: 0 0 16px; }
 .foot-col ul { margin: 0; padding: 0; list-style: none; max-width: none; }
 .foot-col li { margin-bottom: 9px; }
+
+/* Examples, under Documentation. The indent and the rule are the whole claim:
+   it is a section of the docs, not a fourth column of its own. */
+.foot-col li.foot-sub { margin-left: 2px; padding-left: 11px; border-left: 1px solid var(--rule); }
 .foot-col a { color: var(--ink-dim); font-size: 13.5px; text-decoration: none; }
 .foot-col a:hover { color: var(--ink); }
 

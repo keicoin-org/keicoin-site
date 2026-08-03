@@ -11,20 +11,21 @@ A coin launchpad in the pump.fun shape: anybody launches a coin in one click, wh
 
 | | |
 | --- | --- |
-| Client | Plain DOM, one bundle |
-| Server | One Bun process — the mock node, the registry, and the static client |
+| Client | Next.js 16, React 19, Tailwind 4 — shipped as a **static export**, no Node server behind it |
+| Server | One Bun process — the mock node, the registry, and the dev proxy's target |
 | Database | None. No `users`, no `balances`, no `holdings` |
 | Chain | In-memory mock; a Durable Object in the hosted copy |
-| Every line of Kei in the client | `src/market-client.ts` |
+| Every line of Kei in the client | `lib/market.ts` |
 
 ## Run it
 
 ```sh
 git clone https://github.com/keicoin-org/carpet-markets
-cd carpet-markets
 bun install
-bun run dev          # http://localhost:7788
+bun run dev          # client on :3000, chain and registry on :7788
 ```
+
+`next dev` proxies `/rpc` and `/market/*` to the Bun process. The deployed copy has no proxy: `bun run build:site` writes a static export to `dist/examples/carpet-markets/`, and a Cloudflare Worker serves those files and answers the same two paths out of a Durable Object. That is the only difference between running it and shipping it.
 
 ## The loop
 
@@ -113,21 +114,33 @@ Everything it reports is read back off the chain. A reader with the same list of
 ```
 shared/format.ts      turning numbers into text. Used to be the bonding curve.
 shared/listing.ts     the wire shape, and what a valid coin identity is.
+shared/social.ts      the replies, and what a signature on one does and does not prove.
 server/registry.ts    issues coins, and remembers who to read. The whole backend.
-server/main.ts        one Bun server: the mock node at /rpc, the registry at /market/*, the client at /
-src/market-client.ts  every line of Kei in the client.
-src/main.ts           the market floor.
-src/ui.ts             elements and the chart.
+server/main.ts        one Bun server: the mock node at /rpc, the registry at /market/*
+app/                  the routes: the floor, and a page per coin.
+components/           the cards, the badge, the holders panel, the reply thread.
+lib/market.ts         every line of Kei in the client.
+worker/index.ts       the deployed copy: static export out of ASSETS, chain in a Durable Object.
 ```
 
-Read `src/market-client.ts` to learn the market API. Read `server/registry.ts` to learn what a server still has to do when it is not allowed to touch the money.
+Read `lib/market.ts` to learn the market API. Read `server/registry.ts` to learn what a server still has to do when it is not allowed to touch the money.
+
+## The card is an argument, not a dashboard
+
+The genre this copies puts the market cap in the largest type on a card and the transfer policy in grey text below the fold. This inverts that: the policy badge is the loudest thing on a card and it reads **CAN BE DUMPED**, and the feature slot is *most traded* rather than a market cap — because a market cap here would be a supply nobody has bought, multiplied by a price one person paid once.
+
+Beside it is the number that actually predicts a rug: how much of the supply the creator is still holding. It starts at 100% and only falls when they sell.
+
+Two panels are new and both are honest about what they are. **Holders** is read with `balanceOf`, and its percentages are of the supply rather than of the rows, because the registry can only ask about accounts it has heard of. **Replies** are the only state in this project that is not a block: the registry stores them and loses them with the chain. They carry a signature from the same key that signs their author's blocks, so nobody can post as the creator — a strictly weaker claim than a block makes, and the panel says so rather than letting the word *signed* imply consensus.
+
+Coin art is derived from the asset id rather than uploaded — a small mirrored kilim, since the site is called Carpet Markets — so there is no pinning service, no bucket, and no moderation problem, and the same coin draws the same rug everywhere.
 
 ## Four things worth stealing
 
 Each one cost an afternoon.
 
 ::: warning `sell({ amount, price })` takes the total ask, not the price each
-The `Offer` that comes back reports `price` *per unit*, so the two differ by `amount`. Getting it backwards mislists by several orders of magnitude on a coin with a million units. `src/market-client.ts` multiplies in one place for exactly this reason.
+The `Offer` that comes back reports `price` *per unit*, so the two differ by `amount`. Getting it backwards mislists by several orders of magnitude on a coin with a million units. `lib/market.ts` multiplies in one place for exactly this reason.
 :::
 
 - **`market.price()` defaults to your own trades.** Pass `{ from }`, or a wallet that has never traded summarises nothing and returns `null` — which reads like the coin has no history.
@@ -149,6 +162,8 @@ bun run check     # typecheck, worker typecheck, and the tests
 
 `test/registry.test.ts` is where the claim on the badge is either true or marketing. It asserts at the ledger that a soulbound coin cannot be offered at all, that an issuer-only coin cannot be traded between two holders, that an open one settles peer-to-peer in whatever size the seller chose, and that the launch fee does not move as coins pile up.
 
+`test/social.test.ts` covers the other claim the interface makes — that the address on a reply wrote it. Every test in it is a way of trying to post as somebody else: forging the author, editing the body after signing, lifting a signed reply onto another coin, and sending the same one twice.
+
 ## Known limits
 
 ::: danger This is a satire of a pattern that has taken real money from real people
@@ -159,10 +174,11 @@ It is worth playing precisely because the coins are worthless. It is not worth c
 - **One open quote per address.** A Kei transfer carries no memo, so an arriving payment says only who sent it and how much. Two browser tabs racing is a thing you can do to yourself. The honest fix is a memo field in the wire format, not a cleverer guess on this side.
 - **The registry keeps unmatched payments.** Send it Kei answering no quote and it stays there. Reflexively refunding whoever sends money would make it return its own working capital to the faucet on startup.
 - **A creator selling their whole position is not an exploit.** It is the documented behaviour of `transfer: 'open'`. If you would like it to be impossible, that is the other radio button, and it is impossible at the ledger rather than in the app.
-- The hosted copy runs an in-memory mock chain inside a Durable Object, so the ledger resets when that object is evicted.
+- **The replies are not on the chain**, and they are the only thing here that is not. They go when the chain does.
+- The hosted copy runs an in-memory mock chain inside a Durable Object, so the ledger resets when that object is evicted. It does **not** run against the public testnet, even though the testnet has settled swaps since 3 August 2026 — this demo is a launchpad anybody can mint on, and that belongs on a chain nobody can mistake for one that matters.
 
 ## Continue
 
 - [World of Wonder](./world-of-wonder.md) — the same rules inside a real game.
 - [Tokens reference](../reference/tokens.md) — `transfer`, `swap`, and what issuance costs.
-- [Project status](https://keicoin.org/status) — the market is merged and published; no public node deployment carrying the native swap blocks is claimed.
+- [Project status](https://keicoin.org/status) — the market is published, and the public testnet settles swaps as of 3 August 2026.

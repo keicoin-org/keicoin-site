@@ -92,6 +92,14 @@ await coins.transfer(order.to, order.price)
 
 **The order is not the purchase.** The order records intent; the arriving transfer is the fact. The server reconciles the two, and an unpaid order delivers nothing.
 
+## What a player is allowed to spend
+
+The balance on the pole is the chain's figure and nothing is added to it. What a press has earned and not been paid for is a second, amber number beside it — presses still unbanked, plus whatever is in flight — and it is never part of the balance.
+
+That split is the point rather than a nicety. The screen used to draw `coins + pendingCoins`, so the biggest number in a game whose whole argument is *there is no number that is not on the chain* was the one number that was not. It also disagreed with the shop board two metres away, which grades affordability off the confirmed balance: a player could read 40, click a 25-coin upgrade, and be told they have 20 — which reads as the chain being broken when it was the client guessing.
+
+**Spending is graded against confirmed, available funds.** The pending figure drains as real confirmations arrive rather than when banking starts, so it does not blink to zero mid-batch, and it drains by what the bundle actually paid — the server caps a bank that arrived too fast to be a human hand, so the presses asked for and the coins paid are not always the same figure.
+
 ## Where things are
 
 ```
@@ -149,8 +157,9 @@ bun test
 In single-player nothing else can see them. There is a rate ceiling, so the hole is worth a few coins rather than the supply — that is all it is, and it is written down in the source rather than hidden. Presses become observed once there is a server watching them.
 :::
 
-- The chain underneath is a mock. It dies when you stop the server, and nothing on it is worth anything.
+- The chain underneath is a mock. It dies when you stop the server, and nothing on it is worth anything. `test/m4-native.test.ts` is what connects this to a real node; the game itself does not.
 - The issuer seed is generated per run unless `KEI_GAME_SEED` is set.
+- The pending figure is the client's own arithmetic until a bundle confirms it. It is shown as what is owed, never as what is held, and nothing in the game will let a player spend it.
 
 ## Continue
 

@@ -1,58 +1,132 @@
+/*
+ * The documentation, wearing the site's own clothes.
+ *
+ * `src/site/styles.css` is the source of the visual system and this file is the
+ * translation of it onto VitePress's variables. Nothing here is a second
+ * opinion: the same olive-black, the same paper, the same hairlines, the same
+ * two accents, the same system-and-mono type. A reader crossing from
+ * keicoin.org to keicoin.org/docs should not be able to tell that a different
+ * generator drew the page.
+ *
+ * The rules that carry it, in the order they matter:
+ *
+ *   Dark first. The landing page is built around a photographed steel button in
+ *   a dark room; the docs inherit the room. `appearance: 'dark'` in the config
+ *   makes that the default rather than the OS's opinion, and the toggle stays.
+ *
+ *   Amber is interaction and nothing else — links, the active sidebar item,
+ *   buttons, focus. Green is the chain: it appears where the copy literally
+ *   means the ledger or a live network, which here is the `info` block and
+ *   nowhere else. An accent that appears forty times is a background.
+ *
+ *   Warning and danger are told apart by weight, not by a third hue. A warning
+ *   is amber on a hairline; a danger is the same amber inverted into a solid
+ *   title bar, which is as loud as this palette gets.
+ *
+ *   Square. Every panel, code block, button and search box has its radius taken
+ *   off, because the landing page is drawn with instrument panels and a rounded
+ *   rectangle in the middle of them reads as a component from somewhere else.
+ *
+ *   Headings are large and medium-weight. A page shouting in 800 is a page that
+ *   does not trust its sentences.
+ *
+ * Architecture and content are VitePress's, untouched: the sidebar, the
+ * outline, local search, the edit link and the prev/next footer all stay.
+ */
+
 :root {
+  /* ---- paper, the light theme ---- */
   --vp-c-bg: #e9e6da;
-  --vp-c-bg-alt: #dedacd;
-  --vp-c-bg-elv: #f3f0e7;
-  --vp-c-bg-soft: #d8d4c7;
-  --vp-c-border: #9f9f96;
-  --vp-c-divider: #b7b5aa;
-  --vp-c-gutter: #cbc8bc;
+  --vp-c-bg-alt: #e3e0d3;
+  --vp-c-bg-elv: #dcd8ca;
+  --vp-c-bg-soft: #dcd8ca;
+  --vp-c-border: #a9a698;
+  --vp-c-divider: #c6c3b5;
+  --vp-c-gutter: #c6c3b5;
+
   --vp-c-text-1: #171916;
-  --vp-c-text-2: #4f534c;
-  --vp-c-text-3: #74786f;
-  --vp-c-brand-1: #08763b;
-  --vp-c-brand-2: #065e30;
-  --vp-c-brand-3: #0b8f48;
-  --vp-c-brand-soft: rgba(8, 118, 59, 0.12);
-  --vp-c-tip-1: #08763b;
-  --vp-c-tip-2: #065e30;
-  --vp-c-tip-3: #0b8f48;
-  --vp-c-tip-soft: rgba(8, 118, 59, 0.1);
-  --vp-c-warning-1: #93440f;
-  --vp-c-warning-2: #7b350b;
-  --vp-c-warning-3: #a94e16;
-  --vp-c-warning-soft: rgba(169, 78, 22, 0.1);
-  --vp-code-block-bg: #111310;
-  --vp-code-line-highlight-color: rgba(116, 215, 153, 0.08);
-  --vp-code-tab-divider: #343832;
+  --vp-c-text-2: #545850;
+  --vp-c-text-3: #7c8077;
+
+  /* The indicator-lamp amber. Every interactive thing, and nothing else. */
+  --vp-c-brand-1: #9a4712;
+  --vp-c-brand-2: #7c360a;
+  --vp-c-brand-3: #9a4712;
+  --vp-c-brand-soft: rgba(154, 71, 18, 0.1);
+
+  /* The dome's green, only where the copy means the chain. */
+  --kei-green: #0a6e39;
+  --kei-amber-ink: #fffaf0;
+
+  --vp-c-tip-1: var(--vp-c-text-1);
+  --vp-c-tip-2: var(--vp-c-text-2);
+  --vp-c-tip-3: var(--vp-c-text-3);
+  --vp-c-tip-soft: rgba(23, 25, 22, 0.05);
+
+  --vp-c-warning-1: #9a4712;
+  --vp-c-warning-2: #7c360a;
+  --vp-c-warning-3: #9a4712;
+  --vp-c-warning-soft: rgba(154, 71, 18, 0.1);
+
+  --vp-c-danger-1: #7c360a;
+  --vp-c-danger-2: #7c360a;
+  --vp-c-danger-3: #7c360a;
+  --vp-c-danger-soft: rgba(124, 54, 10, 0.12);
+
   --vp-font-family-base: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
-  --vp-font-family-mono: ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, monospace;
+  --vp-font-family-mono: ui-monospace, "SFMono-Regular", "Cascadia Mono", "JetBrains Mono", Consolas, monospace;
+
   --vp-layout-max-width: 1440px;
-  --vp-sidebar-width: 280px;
+  --vp-sidebar-width: 288px;
+
+  /* Code is always the dark panel, in both themes, exactly as the landing page
+     draws it: a code block is an instrument readout, not a sheet of paper. */
+  --vp-code-block-bg: #0f110e;
+  --vp-code-line-highlight-color: rgba(79, 179, 124, 0.09);
+  --vp-code-tab-divider: #23261f;
+  --vp-code-copy-code-bg: #141613;
+  --vp-code-copy-code-hover-bg: #23261f;
+
+  --vp-nav-bg-color: var(--vp-c-bg);
+  --vp-sidebar-bg-color: var(--vp-c-bg);
 }
 
 .dark {
-  --vp-c-bg: #141613;
-  --vp-c-bg-alt: #1b1e1a;
-  --vp-c-bg-elv: #20231f;
-  --vp-c-bg-soft: #262925;
-  --vp-c-border: #51554e;
-  --vp-c-divider: #3b3e39;
-  --vp-c-gutter: #2d302b;
-  --vp-c-text-1: #eeede7;
-  --vp-c-text-2: #adb0a7;
-  --vp-c-text-3: #7b8076;
-  --vp-c-brand-1: #72dfa0;
-  --vp-c-brand-2: #8be8ae;
-  --vp-c-brand-3: #45cc78;
-  --vp-c-brand-soft: rgba(69, 204, 120, 0.13);
-  --vp-c-tip-1: #72dfa0;
-  --vp-c-tip-2: #8be8ae;
-  --vp-c-tip-3: #45cc78;
-  --vp-c-tip-soft: rgba(69, 204, 120, 0.11);
-  --vp-c-warning-1: #efb06d;
-  --vp-c-warning-2: #f5c287;
-  --vp-c-warning-3: #d98941;
-  --vp-c-warning-soft: rgba(217, 137, 65, 0.12);
+  /* ---- the olive black, and the default ---- */
+  --vp-c-bg: #0a0b09;
+  --vp-c-bg-alt: #0f110e;
+  --vp-c-bg-elv: #141613;
+  --vp-c-bg-soft: #141613;
+  --vp-c-border: #333730;
+  --vp-c-divider: #23261f;
+  --vp-c-gutter: #23261f;
+
+  --vp-c-text-1: #eceae3;
+  --vp-c-text-2: #9b9f95;
+  --vp-c-text-3: #676c62;
+
+  --vp-c-brand-1: #d69a52;
+  --vp-c-brand-2: #edb673;
+  --vp-c-brand-3: #d69a52;
+  --vp-c-brand-soft: rgba(214, 154, 82, 0.12);
+
+  --kei-green: #4fb37c;
+  --kei-amber-ink: #1a1206;
+
+  --vp-c-tip-1: var(--vp-c-text-1);
+  --vp-c-tip-2: var(--vp-c-text-2);
+  --vp-c-tip-3: var(--vp-c-text-3);
+  --vp-c-tip-soft: rgba(255, 255, 255, 0.04);
+
+  --vp-c-warning-1: #d69a52;
+  --vp-c-warning-2: #edb673;
+  --vp-c-warning-3: #d69a52;
+  --vp-c-warning-soft: rgba(214, 154, 82, 0.12);
+
+  --vp-c-danger-1: #edb673;
+  --vp-c-danger-2: #edb673;
+  --vp-c-danger-3: #edb673;
+  --vp-c-danger-soft: rgba(214, 154, 82, 0.14);
 }
 
 html,
@@ -60,105 +134,377 @@ body {
   background: var(--vp-c-bg);
 }
 
-.VPNav {
-  border-top: 6px solid var(--vp-c-text-1);
+body {
+  font-size: 15.5px;
+  line-height: 1.62;
+  -webkit-font-smoothing: antialiased;
 }
 
+/* ----------------------------------------------------------------- header */
+
+/*
+ * The site header is a hairline with a blurred background behind it, and this
+ * is the same header. VitePress ships a 1px bottom border already; what it does
+ * not ship is the translucency, and a solid bar under a scrolling page looks
+ * like a different site's chrome.
+ */
 .VPNavBar,
 .VPNavBar.has-sidebar .content {
-  background: rgba(233, 230, 218, 0.96) !important;
+  background: color-mix(in srgb, var(--vp-c-bg) 88%, transparent) !important;
+  backdrop-filter: blur(10px);
 }
 
-.dark .VPNavBar,
-.dark .VPNavBar.has-sidebar .content {
-  background: rgba(20, 22, 19, 0.96) !important;
+.VPNavBar .divider {
+  background: transparent;
 }
 
 .VPNavBarTitle .title {
-  font-weight: 800;
-  letter-spacing: 0.02em;
+  font-weight: 500;
+  font-size: 14.5px;
+  letter-spacing: -0.01em;
+  border-bottom: 0;
 }
 
 .VPNavBarMenuLink,
-.VPSidebarItem .text,
-.VPDocOutlineItem a,
-.VPDocFooter {
+.VPNavBarMenuGroup .VPMenuLink,
+.VPSocialLink {
+  font-family: var(--vp-font-family-base);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--vp-c-text-2);
+}
+
+.VPNavBarMenuLink:hover,
+.VPNavBarMenuLink.active {
+  color: var(--vp-c-text-1);
+}
+
+/* ---------------------------------------------------------------- sidebar */
+
+.VPSidebar {
+  background: var(--vp-c-bg);
+  border-right: 1px solid var(--vp-c-divider);
+}
+
+/* Section names are the micro label the whole site is organised by: mono,
+   uppercase, tracked out, and quiet. A dozen of these carry the architecture. */
+.VPSidebarItem.level-0 > .item > .text {
+  color: var(--vp-c-text-3);
+  font: 500 10.5px/1 var(--vp-font-family-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.VPSidebarItem.level-1 .text,
+.VPSidebarItem.level-2 .text {
   font-family: var(--vp-font-family-mono);
   font-size: 12px;
 }
 
-.VPSidebar {
-  border-right: 1px solid var(--vp-c-divider);
+/* The active page is amber, like every other interactive state on the site. */
+.VPSidebarItem.is-active > .item > .link > .text {
+  color: var(--vp-c-brand-1);
 }
 
-.VPSidebarItem.level-0 > .item > .text {
-  color: var(--vp-c-text-3);
-  font-size: 10px;
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
+.VPSidebarItem.level-1.is-active > .item .link > .text {
+  font-weight: 500;
 }
 
-.VPDoc h1 {
-  max-width: 14ch;
-  font-size: clamp(40px, 6vw, 64px);
-  line-height: 0.98;
-  letter-spacing: -0.05em;
-}
-
-.VPDoc h2 {
-  margin-top: 56px;
-  border-top-color: var(--vp-c-border);
-  font-size: 28px;
-  letter-spacing: -0.03em;
-}
-
-.VPDoc h3 {
-  margin-top: 34px;
-}
-
-.VPDoc a {
-  text-underline-offset: 3px;
-}
-
-.VPDoc table {
-  display: table;
-  width: 100%;
-}
-
-.VPDoc tr:nth-child(2n) {
-  background: rgba(23, 25, 22, 0.035);
-}
-
-.dark .VPDoc tr:nth-child(2n) {
-  background: rgba(255, 255, 255, 0.035);
-}
-
-.VPDoc th,
-.VPDoc td {
-  border-color: var(--vp-c-border);
-}
-
-.VPDoc div[class*='language-'],
-.VPDoc .custom-block,
-.VPButton,
-.DocSearch-Button,
-.VPLocalSearchBox .shell {
-  border-radius: 0 !important;
-}
-
-.VPDoc .custom-block {
-  border-left-width: 5px;
-}
-
-.VPDoc .custom-block-title {
-  font-family: var(--vp-font-family-mono);
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+.VPSidebarItem.collapsible > .item {
+  cursor: pointer;
 }
 
 @media (max-width: 959px) {
   .VPSidebar {
     border-right: 0;
+  }
+}
+
+/* ------------------------------------------------------------------ type */
+
+.VPDoc h1,
+.VPDoc h2,
+.VPDoc h3,
+.VPDoc h4 {
+  font-weight: 500;
+}
+
+.VPDoc h1 {
+  max-width: 18ch;
+  font-size: clamp(34px, 4.6vw, 52px);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+/* The rule is the section divider, so it runs the full column. */
+.VPDoc h2 {
+  margin-top: 56px;
+  padding-top: 28px;
+  border-top: 1px solid var(--vp-c-divider);
+  font-size: clamp(22px, 2.6vw, 30px);
+  letter-spacing: -0.025em;
+}
+
+.VPDoc h3 {
+  margin-top: 34px;
+  font-size: 17px;
+  letter-spacing: -0.01em;
+}
+
+.VPDoc .VPDocFooter,
+.VPDocOutlineItem a,
+.VPDocAsideOutline .outline-title {
+  font-family: var(--vp-font-family-mono);
+  font-size: 12px;
+}
+
+.VPDocAsideOutline .outline-title {
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--vp-c-text-3);
+}
+
+.VPDoc a {
+  font-weight: 400;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
+.VPDoc p,
+.VPDoc li {
+  color: var(--vp-c-text-2);
+}
+
+.VPDoc strong {
+  color: var(--vp-c-text-1);
+  font-weight: 500;
+}
+
+.VPDoc :not(pre) > code {
+  font-weight: 500;
+  background: var(--vp-c-bg-elv);
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 0;
+  color: var(--vp-c-text-1);
+}
+
+/* --------------------------------------------------------------- panels */
+
+/*
+ * Square, hairlined, and headed by a micro label — the instrument panel the
+ * landing page uses for the button, the emblem and the datasheet. Radius is
+ * removed rather than reduced: this palette has no soft edges in it.
+ */
+.VPDoc div[class*='language-'],
+.VPDoc .custom-block,
+.VPDoc .vp-code-group,
+.VPDoc .vp-code-group .tabs,
+.VPButton,
+.DocSearch-Button,
+.VPLocalSearchBox .shell,
+.VPLocalSearchBox .search-bar,
+.VPLocalSearchBox .result,
+.VPNavScreenMenuGroup,
+.VPFlyout .menu,
+.VPBadge {
+  border-radius: 0 !important;
+}
+
+.VPDoc div[class*='language-'] {
+  border: 1px solid var(--vp-c-divider);
+}
+
+.VPDoc div[class*='language-'] .lang,
+.VPDoc .vp-code-group .tabs label {
+  font: 500 10.5px/1 var(--vp-font-family-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.VPDoc .vp-code-group .tabs {
+  background: #141613;
+  border-bottom: 1px solid #23261f;
+  box-shadow: none;
+}
+
+.VPDoc .line-numbers-wrapper {
+  color: var(--vp-c-text-3);
+}
+
+/* ------------------------------------------------------------- callouts */
+
+.VPDoc .custom-block {
+  border: 1px solid var(--vp-c-divider);
+  border-left-width: 4px;
+  background: var(--vp-c-bg-alt);
+}
+
+.VPDoc .custom-block-title {
+  font-family: var(--vp-font-family-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.VPDoc .custom-block p,
+.VPDoc .custom-block li {
+  color: var(--vp-c-text-2);
+}
+
+/* `info` is the one block that means the chain, so it is the one block the
+   dome's green is allowed to touch. */
+.VPDoc .custom-block.info {
+  border-left-color: var(--kei-green);
+}
+
+.VPDoc .custom-block.info .custom-block-title {
+  color: var(--kei-green);
+}
+
+.VPDoc .custom-block.tip {
+  border-left-color: var(--vp-c-text-2);
+}
+
+.VPDoc .custom-block.warning {
+  border-left-color: var(--vp-c-warning-1);
+}
+
+.VPDoc .custom-block.warning .custom-block-title {
+  color: var(--vp-c-warning-1);
+}
+
+/*
+ * Danger is the same amber, inverted. A third hue would be a colour this site
+ * does not own; a solid bar is louder than any of them and costs nothing.
+ */
+.VPDoc .custom-block.danger {
+  border-color: var(--vp-c-danger-1);
+  border-left-width: 1px;
+  padding-top: 0;
+}
+
+.VPDoc .custom-block.danger .custom-block-title {
+  display: block;
+  margin: 0 -16px 12px;
+  padding: 9px 16px;
+  background: var(--vp-c-danger-1);
+  color: var(--kei-amber-ink);
+}
+
+/* ---------------------------------------------------------------- tables */
+
+.VPDoc table {
+  display: table;
+  width: 100%;
+  margin: 22px 0;
+  border-collapse: collapse;
+  font-size: 14.5px;
+}
+
+.VPDoc th,
+.VPDoc td {
+  text-align: left;
+  vertical-align: top;
+  border: 0;
+  border-bottom: 1px solid var(--vp-c-divider);
+  padding: 12px 18px 12px 0;
+  background: transparent;
+}
+
+.VPDoc th {
+  font: 500 10.5px/1.4 var(--vp-font-family-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--vp-c-text-3);
+}
+
+.VPDoc td {
+  color: var(--vp-c-text-2);
+}
+
+.VPDoc tr {
+  background: transparent;
+  border-top: 0;
+}
+
+.VPDoc td:first-child {
+  color: var(--vp-c-text-1);
+}
+
+/* ----------------------------------------------------------------- footer */
+
+.VPDocFooter {
+  margin-top: 56px;
+  border-top: 1px solid var(--vp-c-divider);
+  padding-top: 20px;
+}
+
+.VPDocFooter .edit-link-button,
+.VPDocFooter .prev-link .title,
+.VPDocFooter .next-link .title {
+  color: var(--vp-c-brand-1);
+}
+
+.VPDocFooter .pager-link {
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 0;
+  background: var(--vp-c-bg-alt);
+}
+
+.VPDocFooter .pager-link:hover {
+  border-color: var(--vp-c-brand-1);
+}
+
+.VPDocFooter .desc {
+  font: 500 10.5px/1 var(--vp-font-family-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--vp-c-text-3);
+}
+
+.VPFooter {
+  border-top: 1px solid var(--vp-c-divider);
+  background: var(--vp-c-bg);
+}
+
+.VPFooter .message,
+.VPFooter .copyright {
+  color: var(--vp-c-text-3);
+  font-size: 12.5px;
+}
+
+/* ------------------------------------------------------------------ misc */
+
+/*
+ * One focus ring, amber, everywhere — including the components VitePress
+ * styles itself. It has to survive a narrow viewport, so it is an outline
+ * rather than a box-shadow: an outline is not clipped by an ancestor's
+ * `overflow: hidden`, and the sidebar and the search box both have one.
+ */
+:focus-visible {
+  outline: 2px solid var(--vp-c-brand-1);
+  outline-offset: 3px;
+  border-radius: 0;
+}
+
+.VPSidebar :focus-visible,
+.VPLocalSearchBox :focus-visible {
+  outline-offset: 1px;
+}
+
+.VPSkipLink {
+  border-radius: 0;
+  background: var(--vp-c-brand-1);
+  color: var(--kei-amber-ink);
+  font-family: var(--vp-font-family-mono);
+  box-shadow: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }

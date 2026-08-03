@@ -14,28 +14,13 @@ import { existsSync } from 'node:fs'
 import { basename, dirname, join } from 'node:path'
 
 import { PAGES } from './src/site/content.js'
+import { DEMOS, copyDemoInto, reportLine } from './src/site/demos.js'
 import { homePage } from './src/site/home.js'
 import { render } from './src/site/layout.js'
 import { agentsMd, llmsTxt, robotsTxt, sitemapXml } from './src/site/machine.js'
 
 const root = new URL('.', import.meta.url)
 const here = (path: string): string => join(Bun.fileURLToPath(root), path)
-
-/**
- * Sibling checkouts whose built client gets copied to `/examples/<name>`.
- *
- * Only the ones whose Worker **is deployed** on that route belong here, and the
- * distinction is not pedantic. These clients are not self-contained: each one
- * talks to a mock node and a game server at `<mount>/rpc` under its own mount
- * point, served by that demo's own Worker on a path route of this zone. Copy one
- * in without its Worker and the page loads, the wallet initialises, and every
- * call after that 404s — a demo that is broken in a way a visitor discovers
- * after clicking, which is worse than a link to the repository.
- *
- * World of Wonder is an example too, and is hosted on its own domain rather than
- * copied.
- */
-const DEMOS = ['button', 'carpet-markets'] as const
 
 const dist = here('dist')
 await mkdir(dist, { recursive: true })
@@ -106,20 +91,15 @@ await write(
 // them, and in production their own Workers own their routes — more specific
 // than this site's, so they win. Copying here is what makes a local
 // `wrangler dev` serve what production serves. A missing build is a warning
-// rather than a broken site.
+// rather than a broken site — but a *precise* warning, because the two demos
+// have different artifacts now and "run bun run build" pointed at the wrong
+// directory is how a demo silently stops being copied.
+// The checkouts are found by walking up rather than by a fixed `../<name>`:
+// `here('..')` is the sibling directory in an ordinary checkout and
+// `.worktrees/` when the work is happening in a git worktree, and neither path
+// is written down here.
 for (const demo of DEMOS) {
-  const build = here(`../${demo}/public/build`)
-  if (!existsSync(build)) {
-    console.log(`  examples/${demo}  SKIPPED — run \`bun run build\` in ../${demo} first`)
-    continue
-  }
-  await copyDir(build, join(dist, `examples/${demo}/build`))
-  await copyFile(here(`../${demo}/index.html`), join(dist, `examples/${demo}/index.html`))
-  // Each demo's page asks for ./favicon.ico, which at /examples/<demo>/ is not
-  // the one at the site root.
-  const icon = here(`../${demo}/public/favicon.ico`)
-  if (existsSync(icon)) await copyFile(icon, join(dist, `examples/${demo}/favicon.ico`))
-  console.log(`  examples/${demo}  copied`)
+  console.log(reportLine(await copyDemoInto(demo, Bun.fileURLToPath(root), join(dist, 'examples', demo.name))))
 }
 
 const count = await countFiles(dist)

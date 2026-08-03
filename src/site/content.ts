@@ -65,7 +65,7 @@ const NEXT_STEPS = {
 }
 
 const MOCK_CAVEAT =
-  '`Kei.start()` now defaults to a public testnet instead of the old in-memory mock — but that testnet is one rate-limited, best-effort dev node with weak consensus, not a distributed network. M4 (commit, claim, commit_close) is merged and CI-gated on kei-node; that is evidence about the code, not about which build the public testnet is running. The API is real, but **nothing on it holds value.**'
+  '`Kei.start()` defaults to the public testnet, which since 3 August 2026 has been running a build that accepts M4 claim blocks and M5 swaps. It is still one rate-limited, best-effort dev node with weak consensus, published dev keys, and no uptime promise — not a distributed network. The API is real and now measured against that node, but **nothing on it holds value.**'
 
 export const USE_CASES: UseCase[] = [
   {
@@ -222,7 +222,8 @@ await kei.items.ownedBy(address)    // [ item, ... ]`,
           kind: 'limits',
           title: 'Read this before choosing Kei for a market',
           items: [
-            '**The market is merged and published as `@keicoin/market@0.1.0`, but no public node runs it yet.** Offers and atomic settlement (`swap_offer`/`swap_accept`/`swap_cancel`) are native on `kei-node` and gated in its CI; the best-effort testnet endpoint is not claimed to be carrying them. See [status](/status).',
+            '**The market is published as `@keicoin/market@0.1.0` and the public testnet settles swaps.** Measured on 3 August 2026 over `https://testnet.keicoin.org/rpc`: an offer locks the units at the ledger, a second sale of the same units is refused, one accept moves both legs, and the gateway now forwards the two read actions (`swap_info`, `account_swaps`) a market needs. See [status](/status).',
+            '**Nobody can show you the whole book.** An offer lives on its author\'s chain and Kei ships no indexer, so a front end has to keep the list of accounts to read. That is bookkeeping about where to look, not about who owns what — `carpet-markets`\' registry is the worked example.',
             MOCK_CAVEAT,
             'A market only exists for tokens issued `transfer: "open"`. That is a decision you make once, at issuance, and cannot reverse.',
             'There is no order book or matching engine in the protocol, and there will not be. Offers are individual blocks; a front end aggregates them.',
@@ -268,6 +269,7 @@ await kei.items.ownedBy(address)    // [ item, ... ]`,
           items: [
             MOCK_CAVEAT,
             '**The [hosted World of Wonder](https://mmo.keicoin.org) is live, not production-ready.** That copy runs a process-local mock chain, so nothing on it survives a restart. The source is public at [world-of-wonder](https://github.com/keicoin-org/world-of-wonder) and settles on the testnet by default.',
+            '**Its auction house is a tested mechanism without a screen.** One player lists a sword, another buys it, and both legs move in one settlement with the game server taking no part — that is covered by a test. The panel a player would use is not built, and equipping, loot and quest rewards still run on the upstream inventory tables.',
             'A chain is not a low-latency datastore. Do not put anything on the critical path of a 60 Hz loop on it.',
             'Consensus is weak until the validator set is distributed. Until then this is a testnet with branding, and it is not somewhere to put real value.',
           ],
@@ -450,32 +452,33 @@ await kei.claims.pending()` },
     summary:
       'Published early and updated as it changes, including the parts that say "not yet". A page that only becomes honest at launch was never honest.',
     blocks: [
-      { kind: 'prose', text: 'Kei has a **public M3 testnet and merged native M4 claims**. Version 0.3.0 of the SDK packages is published, and every `@keicoin/*` package with it. `Kei.start()` defaults to the best-effort public testnet; the node gate runs the pinned SDK-owned M2 and M4 contracts against a clean native startup.' },
+      { kind: 'prose', text: 'Kei has a **public testnet that carries M4 claims and M5 swaps**, measured on 3 August 2026 rather than inferred from CI. What you can install is version 0.3.0 of the SDK packages, and every `@keicoin/*` package with it. `master` has since moved to 0.4.0 and nobody has published it.' },
       {
         kind: 'table',
         head: ['', 'State'],
         rows: [
-          ['The SDK', 'Version 0.3.0 is published, and every `@keicoin/*` package with it. Wallet, send, receive, issue, mint, burn, transfer, balanceOf, items, commit, claim, the market, and the in-game wallet panel ship with TypeScript types. Payment memos are not in the current wire contract; correlate purchases by payment hash.'],
+          ['The SDK', 'Version 0.3.0 is on npm, and every `@keicoin/*` package with it. Wallet, send, receive, issue, mint, burn, transfer, balanceOf, items, commit, claim, the market, and the in-game wallet panel ship with TypeScript types. Payment memos are not in the current wire contract; correlate purchases by payment hash.'],
+          ['Installable vs merged', '`master` carries 0.4.0 — `@keicoin/market` 0.1.1, `create-kei-game` 0.2.0 — and none of it is published. Item stats, the roll-supply fix behind them, and the three scaffolder templates are merged and not installable. Publishing is a manual, owner-only step; until it is run, install 0.3.0 and read these pages against it.'],
           ['The mock chain', 'Available explicitly through `Kei.mock()` for deterministic tests and still used by some hosted demos. It enforces the real ledger rules — one chain per account, derived asset ids, receivable arrivals, work tiers, the issuance burn, supply caps, transfer policy, and the double-claim index.'],
-          ['The node', 'Builds, starts, and serves RPC on Linux CI. M2 asset operations and native M4 commit, claim, commit-close, commit-info, and claim-status pass the SDK-owned contracts against a clean startup. Dev genesis has the fixed allocation; beta/live still require their offline ceremonies.'],
+          ['The node', 'The public node was rebuilt onto `master` on 3 August 2026 and reports `store_version 24`. Before that, an M4 or M5 binary could not open a ledger written by an M2 or M3 one at all — the new tables were added to an existing store version instead of getting their own, and only a fresh database, which is all CI ever starts from, was unaffected.'],
           ['The network', 'One rate-limited, best-effort public dev-network node at `https://testnet.keicoin.org/rpc`. It has weak consensus, no uptime promise, published dev keys, and no monetary value. There is no mainnet.'],
           ['The demo', 'Playable. Press a button, bank presses, claim them, buy upgrades that live on the ledger instead of in a save file.'],
-          ['The market', 'Merged on the node and the SDK, and published as `@keicoin/market@0.1.0`. Swap offer/accept/cancel, atomic settlement, and price history. What is not claimed: a public node deployment carrying the native swap blocks.'],
-          ['Wallets', 'Both merged. The in-game panel ships in `kei-transaction@0.3.0`; the standalone wallet, forked from BananoVault, is on [kei-wallet](https://github.com/keicoin-org/kei-wallet)’s default branch. The standalone wallet’s market panel still reports itself unavailable — it was written while `@keicoin/market` was unpublished, and is simply not wired up yet.'],
-          ['World of Wonder', 'Published as [world-of-wonder](https://github.com/keicoin-org/world-of-wonder) and hosted at [mmo.keicoin.org](https://mmo.keicoin.org). Gold and items are chain assets; the database keeps accounts, characters and positions. It settles on the public testnet by default, and `KEI_NETWORK=mock` runs it against a chain inside its own process.'],
+          ['The market', 'Published as `@keicoin/market@0.1.0`, and **settling on the public testnet**. An offer locks the units at the ledger, a second sale of the same units is refused, and one accept moves both legs — measured against the node, then again over the public URL once the gateway was taught to forward `swap_info` and `account_swaps`. It could be written to and not read from until that landed.'],
+          ['Wallets', 'Both merged. The in-game panel ships in `kei-transaction@0.3.0`; the standalone wallet, forked from BananoVault, is on [kei-wallet](https://github.com/keicoin-org/kei-wallet)’s default branch, and its market panel is now wired to `kei.market` — it shows that wallet’s own offers, cancellable, and its settled trades. The network’s book stays unshowable: an offer lives on its author’s chain and Kei ships no indexer, so the panel says so rather than presenting a handful of offers as the market.'],
+          ['World of Wonder', 'Published as [world-of-wonder](https://github.com/keicoin-org/world-of-wonder) and hosted at [mmo.keicoin.org](https://mmo.keicoin.org). Gold and items are chain assets; the database keeps accounts, characters and positions. It settles on the public testnet by default, and `KEI_NETWORK=mock` runs it against a chain inside its own process. **The auction house is the mechanism without the screen** — the trade is tested end to end, the panel is not built.'],
           ['Carpet Markets', 'Playable at [/examples/carpet-markets](/examples/carpet-markets), and the worked demo of `@keicoin/market`. A coin launchpad where every trade is an offer one player wrote and another accepted, settled in one block, and where whether a market can exist at all is the coin’s transfer policy. It runs against an in-memory mock chain in a Durable Object, so the ledger resets when that object is evicted.'],
         ],
       },
-      { kind: 'heading', text: 'M3 and M4 evidence' },
-      { kind: 'prose', text: 'M3 runs the same SDK contract through the public HTTPS boundary. M4 adds native commit, claim, and commit-close, and the node gate runs the SDK-owned M4 contract against a clean startup.' },
+      { kind: 'heading', text: 'What was measured, and when' },
+      { kind: 'prose', text: 'This section used to say a public M4/M5 deployment was "not evidenced here", which was a polite way of saying nobody had checked. It was checked on 3 August 2026, from a clean `npm install kei-transaction` against `https://testnet.keicoin.org/rpc`.' },
       {
         kind: 'list',
         items: [
-          '**[The exact SDK suite](https://github.com/keicoin-org/kei-transaction/pull/9) is shared from a pinned revision.** All 10 M2 tests pass live against the node with only the URL changed.',
-          '**[The development reserve ceremony](https://github.com/keicoin-org/kei-node/pull/12) is deterministic and tested.** Dev genesis creates the fixed 900B reserve and four allocations totalling 100B without giving the reserve voting weight.',
-          '**[The node acceptance gate](https://github.com/keicoin-org/kei-node/pull/13) is merged and enforced.** Both final CI runs passed; the native gate covers 46 core tests in eight suites, including five reserve tests and the ingress regression, plus the separate RPC history test.',
-          '**[The M4 node contract is pinned in CI](https://github.com/keicoin-org/kei-node).** Native `commit`, `claim`, `commit_close`, `commit_info`, and `claim_status` are merged and exercised against a clean node startup.',
-          '**The public endpoint is M3 evidence, not proof of an M4 deployment.** The repository gate proves compatibility; this page does not claim the public node has been redeployed with M4 until that is separately recorded.',
+          '**Payments, automatic receive, issuance and its burn, mint and `balanceOf` all work** against the public node. Re-issuing the same symbol returns the same asset id; the issuer’s balance really does drop by 1 on its first asset.',
+          '**`token.commit()` — M4 rooted claims — works.** The M4 conformance suite passes against the node: one issuer block, three player claims, correct balances, and a second claim from the same account refused.',
+          '**`market.sell()` / `accept()` — M5 swaps — work**, and the whole flow passes over the public URL: offer, lock, refused double-sale, settlement.',
+          '**The first rows of that list were `Block is invalid` the same morning**, on a node predating both block types. Evidence about a deployment is behavioural: `store_version` and a passing suite, not `build_info`, which is stamped at configure time and lied for several hours.',
+          '**[The exact SDK suite](https://github.com/keicoin-org/kei-transaction/pull/9) is shared from a pinned revision**, so the node gate and the live check run the same contract. The pinned run: M2 11 pass, M4 2 pass, M5 3 pass.',
         ],
       },
       { kind: 'heading', text: 'What this means for you' },
@@ -486,17 +489,19 @@ await kei.claims.pending()` },
           'Put real value anywhere near this. There is no token, no mainnet, and until the validator set is meaningfully distributed there should not be.',
           'Read "a public testnet exists" as "a production network exists". It does not.',
           'Ship a production economy on it. Build against it, and expect the chain under the API to change.',
-          'Read "the market is published" as "a public node will settle a swap for you". `@keicoin/market` is on npm and the swap blocks are native in `kei-node`, but no deployment of the public endpoint carrying them is claimed here.',
+          'Read "claims and swaps settle on the testnet" as "the network is durable". One node accepting the blocks is a working API, not consensus. The ledger survived its last rebuild; that is a fact about one afternoon, not a promise.',
+          'Assume `master` is what you installed. It is not — the registry is a release behind, and the gap is item stats, the roll-supply fix, and the scaffolder templates.',
         ],
       },
-      { kind: 'prose', text: 'What you **can** do today is build against the published API and the public M3 testnet, or keep tests deterministic with `Kei.mock()`. Native M4 claims are merged and gated, while a public M4 deployment remains a separately evidenced step.' },
+      { kind: 'prose', text: 'What you **can** do today is build against the published 0.3.0 API and a public testnet that carries claims and swaps, or keep tests deterministic with `Kei.mock()`.' },
       { kind: 'heading', text: 'Known and stated plainly' },
       {
         kind: 'list',
         items: [
           '**Network security.** The public testnet is one best-effort dev node with weak consensus, not a production network.',
           '**No inherited liquidity.** Kei launches with no users, no exchanges, and no market.',
-          '**Timeline.** M3 is public. Native M4 claims and M5 swaps are merged and CI-gated, and M5 and M6 are published on npm. What no milestone here claims is a public node redeployed with either.',
+          '**Timeline.** M3, M4 and M5 are live on the public testnet. M6 is merged in both wallets. M7 — the MMO template — needs its auction-house screen; the mechanism under it is written and tested.',
+          '**What is installable is a release behind what is merged.** 0.3.0 on npm, 0.4.0 on `master`, and publishing is a manual step somebody has to run.',
           '**No smart contract VM**, deliberately. If your design needs one, Kei is the wrong tool and this page would rather you found out here.',
         ],
       },
