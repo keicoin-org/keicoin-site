@@ -316,9 +316,46 @@ header.site .home b { color: var(--ink); font-weight: 500; }
   padding: 20px 18px 22px;
 }
 
+/*
+ * The total reacts to a press immediately; the split under it is the caption
+ * that keeps that honest. Available is settled and spendable, so it wears the
+ * page's confirmed green; pending is still with the testnet, so it wears amber
+ * while there is any and goes faint at zero. It stays in the layout either
+ * way — a row that appears and vanishes would reflow the panel on every press.
+ */
+.press-readout { display: flex; flex-direction: column; align-items: center; gap: 7px; }
+
 .press-count { display: flex; align-items: baseline; gap: 9px; font-family: var(--mono); }
-.press-count b { color: var(--green); font-size: 30px; line-height: 1; font-weight: 500; letter-spacing: -0.02em; }
+.press-count b { color: var(--green); font-size: 30px; line-height: 1; font-weight: 500; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
 .press-count span { color: var(--ink-faint); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; }
+
+.press-split { display: flex; margin: 0; border: 1px solid var(--rule); }
+
+.press-split-term {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  padding: 5px 11px;
+  font-family: var(--mono);
+}
+
+.press-split-term + .press-split-term { border-left: 1px solid var(--rule); }
+.press-split dt { color: var(--ink-faint); font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; }
+.press-split dd { margin: 0; color: var(--green); font-size: 12px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.press-split .pending dd { color: var(--ink-faint); transition: color 160ms ease; }
+.press-split.has-pending .pending dd { color: var(--amber); }
+
+/* The one thing announced on a credit change, so three nodes are not read out. */
+.press-announce {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
 
 .press-network-status {
   min-height: 2.6em;

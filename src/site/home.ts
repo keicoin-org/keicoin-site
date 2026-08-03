@@ -355,10 +355,23 @@ function pressPanel(): string {
       <span>0.000001 Kei per press</span>
     </div>
     <div class="press-body">
-      <div class="press-count" aria-live="polite">
-        <b id="press-count">0</b>
-        <span id="press-count-unit">click credits</span>
+      <div class="press-readout" aria-hidden="true">
+        <div class="press-count">
+          <b id="press-count">0</b>
+          <span id="press-count-unit">click credits</span>
+        </div>
+        <dl class="press-split" id="press-split">
+          <div class="press-split-term">
+            <dt>Available</dt>
+            <dd id="press-available">0</dd>
+          </div>
+          <div class="press-split-term pending">
+            <dt>Pending</dt>
+            <dd id="press-pending">0</dd>
+          </div>
+        </dl>
       </div>
+      <p class="press-announce" id="press-credit-status" role="status" aria-live="polite">0 click credits, 0 available.</p>
       <p id="press-network-status" class="press-network-status" role="status" aria-live="polite">Press to connect to the public testnet.</p>
       <div class="press-stage">
         <div class="press-rig" id="press-rig">
@@ -394,7 +407,7 @@ function pressPanel(): string {
         </aside>
       </div>
     </div>
-    <p id="press-local-status" class="press-local-status">Each manual press sends 0.000001 testnet-only Kei to the null account. Shop credits and upgrades stay in this browser.</p>
+    <p id="press-local-status" class="press-local-status">Each manual press sends 0.000001 testnet-only Kei to the null account. Only available credits can be spent in the workshop; pending ones are still with the testnet.</p>
     <script type="module" src="/clicker.js"></script>
   </div>`
 }
