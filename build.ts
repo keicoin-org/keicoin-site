@@ -88,7 +88,19 @@ if (existsSync(publicDir)) await copyDir(publicDir, dist)
 await write('llms.txt', llmsTxt())
 await write('AGENTS.md', agentsMd())
 await write('robots.txt', robotsTxt())
-await write('sitemap.xml', sitemapXml(['/', ...PAGES.map((page) => page.path), '/examples/button']))
+// The demos are on other Workers' routes, so nothing here writes them and
+// nothing here would otherwise list them. `/docs/*` is VitePress's own sitemap,
+// except the examples index, which is linked from the header of every page.
+await write(
+  'sitemap.xml',
+  sitemapXml([
+    '/',
+    ...PAGES.map((page) => page.path),
+    '/docs/examples',
+    '/examples/button',
+    '/examples/carpet-markets',
+  ]),
+)
 
 // The demos, if they have been built next door. Their own repos own building
 // them, and in production their own Workers own their routes — more specific

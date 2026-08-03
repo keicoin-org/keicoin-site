@@ -94,4 +94,5 @@ A Kei payment has no memo field in the current wire contract. The SDK rejects `p
 - Read the [integration model](./guide/integration.md) before building a purchase flow.
 - Treat the [security rules](./guide/security.md) as requirements, not recommendations.
 - Use the [wallet](./reference/wallet.md), [token](./reference/tokens.md), and [item](./reference/items.md) references while integrating.
+- Read a working game: the [examples](./examples/index.md) are three of them, each one structurally different.
 - Check the [current milestone and known gaps](https://keicoin.org/status).

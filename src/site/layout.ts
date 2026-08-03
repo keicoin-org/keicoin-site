@@ -105,10 +105,13 @@ const THEME_SCRIPT = `
 })()
 `
 
+// `/docs/examples` rather than `/examples`: the examples are documentation, and
+// `/examples/<name>` is where the demos themselves are mounted. `/examples`
+// redirects here (worker/index.ts) for anything already linking to it.
 const NAV: Array<[string, string]> = [
   ['/use-cases', 'Use cases'],
   ['/docs', 'Docs'],
-  ['/examples', 'Examples'],
+  ['/docs/examples', 'Examples'],
   ['/status', 'Status'],
   ['/llms.txt', 'llms.txt'],
 ]
@@ -120,7 +123,7 @@ const FOOT_COLUMNS: Array<[string, Array<[string, string]>]> = [
     [
       ['/docs', 'Documentation'],
       ['/use-cases', 'Use cases'],
-      ['/examples', 'Examples'],
+      ['/docs/examples', 'Examples'],
       [`https://www.npmjs.com/package/${SITE.npm}`, SITE.npm],
     ],
   ],

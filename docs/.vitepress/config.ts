@@ -41,6 +41,7 @@ export default defineConfig({
     nav: [
       { text: 'Quickstart', link: '/' },
       { text: 'API reference', link: '/reference/wallet' },
+      { text: 'Examples', link: '/examples/' },
       { text: 'Project status', link: 'https://keicoin.org/status' },
       { text: 'keicoin.org', link: 'https://keicoin.org' },
     ],
@@ -61,6 +62,17 @@ export default defineConfig({
           { text: 'Items', link: '/reference/items' },
           { text: 'Batch rewards', link: '/reference/claims' },
           { text: 'Errors', link: '/reference/errors' },
+        ],
+      },
+      {
+        text: 'Examples',
+        items: [
+          // `/examples/` with the trailing slash: the directory index, not
+          // `/examples`, which `cleanUrls` would resolve to a page of that name.
+          { text: 'Overview', link: '/examples/' },
+          { text: 'Button', link: '/examples/button' },
+          { text: 'Carpet Markets', link: '/examples/carpet-markets' },
+          { text: 'World of Wonder', link: '/examples/world-of-wonder' },
         ],
       },
     ],
