@@ -73,9 +73,35 @@ export default defineConfig({
           // `/examples/` with the trailing slash: the directory index, not
           // `/examples`, which `cleanUrls` would resolve to a page of that name.
           { text: 'Overview', link: '/examples/' },
-          { text: 'Button', link: '/examples/button' },
-          { text: 'Carpet Markets', link: '/examples/carpet-markets' },
-          { text: 'World of Wonder', link: '/examples/world-of-wonder' },
+          {
+            text: 'Button',
+            link: '/examples/button',
+            items: [
+              { text: 'Fundamentals', link: '/examples/button/fundamentals' },
+              { text: 'NPC shop', link: '/examples/button/npc-shop' },
+              { text: 'Player rewards', link: '/examples/button/player-rewards' },
+            ],
+          },
+          {
+            text: 'Carpet Markets',
+            link: '/examples/carpet-markets',
+            items: [
+              { text: 'Market API', link: '/examples/carpet-markets/api' },
+              { text: 'Offer lifecycle', link: '/examples/carpet-markets/offer-lifecycle' },
+              { text: 'Future pool design (proposal)', link: '/examples/carpet-markets/future-pool-design' },
+            ],
+          },
+          {
+            text: 'World of Wonder',
+            link: '/examples/world-of-wonder',
+            // The page above is the overview; anything below it is one task done
+            // end to end. A section with a `link` of its own stays clickable
+            // rather than becoming a heading that only expands.
+            items: [
+              { text: 'Auction house integration', link: '/examples/world-of-wonder/auction-house' },
+              { text: 'Loot and drops', link: '/examples/world-of-wonder/loot-and-drops' },
+            ],
+          },
         ],
       },
     ],

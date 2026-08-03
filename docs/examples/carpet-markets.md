@@ -36,6 +36,10 @@ bun run dev          # client on :3000, chain and registry on :7788
 | **Buy** | Accept somebody's offer. One block, both legs, or neither. |
 | **Cancel** | Take back your own unaccepted offer, and the coins with it. |
 
+![Protocol diagram of the bilateral offer lifecycle: publish locks the give asset, an address-scoped UI discovers the offer and re-reads it by hash to check it is still open, then either an accept settles both legs atomically or a seller cancel releases the lock, with both paths reconciling from mine() and trades().](/img/docs/carpet-offer-lifecycle.svg)
+
+*A protocol diagram, not a screenshot. Current bilateral offers only — no pool, no bonding curve — and the chain is authoritative.*
+
 ## The transfer policy is the whole argument
 
 There is no mechanic here called *rug*. A creator holding the supply can sell it, in whatever size they like, whenever they like — that is not a special power, it is selling, and it is the only thing anybody on this market can do.
@@ -74,6 +78,8 @@ const [asks, bids, trades, price] = await Promise.all([
 ```
 
 An offer locks the coins out of the seller's wallet until it settles or is cancelled. Nobody can move them in the meantime, including whoever issued them.
+
+[Market API](./carpet-markets/api.md) is the quickstart for these calls: exact signatures, the errors they throw, and what "no indexer" means when you go to read a book.
 
 ## There is no curve, deliberately
 
@@ -179,6 +185,9 @@ It is worth playing precisely because the coins are worthless. It is not worth c
 
 ## Continue
 
+- [Market API](./carpet-markets/api.md) — the `@keicoin/market` quickstart, signature by signature.
+- [Offer lifecycle](./carpet-markets/offer-lifecycle.md) — one offer from publish to settlement or cancellation, and how to rebuild the view from the chain.
+- [Future pool design (proposal)](./carpet-markets/future-pool-design.md) — a **proposal**, not shipped behaviour: what a pump-style pooled buy/sell box would cost, and why `@keicoin/market` cannot do it today.
 - [World of Wonder](./world-of-wonder.md) — the same rules inside a real game.
 - [Tokens reference](../reference/tokens.md) — `transfer`, `swap`, and what issuance costs.
 - [Project status](https://keicoin.org/status) — the market is published, and the public testnet settles swaps as of 3 August 2026.

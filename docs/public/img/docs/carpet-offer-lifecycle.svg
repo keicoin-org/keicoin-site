@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc" width="1200" height="520">
+  <title id="title">Carpet Markets offer lifecycle: publish, discover, validate, then accept or cancel</title>
+  <desc id="desc">A protocol diagram of the current bilateral offer flow. A seller publishes an offer, which locks the give asset. An address-scoped buyer UI discovers the offer, then re-reads it by hash and validates that it is still open and that the terms match. From there the flow branches: accepting produces one atomic settlement that moves the give asset to the buyer and the quote asset to the seller, while a seller cancel releases the locked give asset back to the seller. Either branch ends in reconciliation from mine() and trades(). If a stale cache races a settled offer, the chain returns offer-taken or offer-cancelled and the UI refreshes. These are current bilateral offers only: there is no pool and no bonding curve.</desc>
+
+  <style>
+    .bg { fill: #f7f7f5; }
+    .box { fill: #ffffff; stroke: #4a4a52; stroke-width: 2; }
+    .box-accent { fill: #eef1f6; stroke: #33455e; stroke-width: 2; }
+    .box-warn { fill: #f6efe6; stroke: #7a5a2c; stroke-width: 2; }
+    .t { font-family: Georgia, 'Times New Roman', serif; fill: #1d1d20; }
+    .h { font-size: 17px; font-weight: bold; }
+    .b { font-size: 14px; }
+    .s { font-size: 13px; fill: #4d4d55; }
+    .lbl { font-size: 13px; fill: #33455e; font-style: italic; }
+    .ln { stroke: #4a4a52; stroke-width: 2; fill: none; }
+    .ln-warn { stroke: #7a5a2c; stroke-width: 2; fill: none; stroke-dasharray: 6 5; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #16161a; }
+      .box { fill: #232329; stroke: #a9a9b4; }
+      .box-accent { fill: #1e2733; stroke: #93b4dc; }
+      .box-warn { fill: #2c2519; stroke: #d8b071; }
+      .t { fill: #ececf0; }
+      .s { fill: #b6b6c0; }
+      .lbl { fill: #93b4dc; }
+      .ln { stroke: #a9a9b4; }
+      .ln-warn { stroke: #d8b071; }
+    }
+  </style>
+
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="context-stroke"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" width="1200" height="520"/>
+
+  <text class="t h" x="32" y="38">Current bilateral offers — no pool or bonding curve</text>
+  <text class="t s" x="32" y="60">Protocol diagram of the offer lifecycle. The chain is authoritative; the UI only re-reads it.</text>
+
+  <!-- 1. publish -->
+  <rect class="box" x="32" y="92" width="220" height="96" rx="6"/>
+  <text class="t h" x="48" y="120">1. Seller publishes</text>
+  <text class="t b" x="48" y="143">offer with give + quote</text>
+  <text class="t s" x="48" y="164">give asset locks on</text>
+  <text class="t s" x="48" y="180">publish, not on accept</text>
+
+  <!-- 2. discover -->
+  <rect class="box" x="300" y="92" width="220" height="96" rx="6"/>
+  <text class="t h" x="316" y="120">2. Buyer UI discovers</text>
+  <text class="t b" x="316" y="143">address-scoped listing</text>
+  <text class="t s" x="316" y="164">what a given address</text>
+  <text class="t s" x="316" y="180">is allowed to see</text>
+
+  <!-- 3. validate -->
+  <rect class="box-accent" x="568" y="92" width="240" height="96" rx="6"/>
+  <text class="t h" x="584" y="120">3. Re-read by hash</text>
+  <text class="t b" x="584" y="143">validate open state</text>
+  <text class="t b" x="584" y="162">and exact terms</text>
+  <text class="t s" x="584" y="181">the listing is a hint only</text>
+
+  <line class="ln" x1="252" y1="140" x2="294" y2="140" marker-end="url(#arrow)"/>
+  <line class="ln" x1="520" y1="140" x2="562" y2="140" marker-end="url(#arrow)"/>
+
+  <!-- branch label -->
+  <text class="t lbl" x="856" y="134">branch — exactly one wins</text>
+
+  <!-- accept -->
+  <rect class="box" x="856" y="150" width="312" height="104" rx="6"/>
+  <text class="t h" x="872" y="178">4a. Accept</text>
+  <text class="t b" x="872" y="201">one atomic settlement:</text>
+  <text class="t b" x="872" y="221">give → buyer, quote → seller</text>
+  <text class="t s" x="872" y="241">both legs land, or neither does</text>
+
+  <!-- cancel -->
+  <rect class="box" x="856" y="278" width="312" height="94" rx="6"/>
+  <text class="t h" x="872" y="306">4b. Seller cancels</text>
+  <text class="t b" x="872" y="329">locked give is released</text>
+  <text class="t s" x="872" y="350">back to the seller, nothing moves out</text>
+
+  <path class="ln" d="M 808 140 L 832 140 L 832 202 L 850 202" marker-end="url(#arrow)"/>
+  <path class="ln" d="M 832 202 L 832 325 L 850 325" marker-end="url(#arrow)"/>
+
+  <!-- reconcile -->
+  <rect class="box-accent" x="568" y="396" width="304" height="90" rx="6"/>
+  <text class="t h" x="584" y="424">5. Reconcile from the chain</text>
+  <text class="t b" x="584" y="447">mine() for your own offers</text>
+  <text class="t b" x="584" y="467">trades() for settled history</text>
+
+  <path class="ln" d="M 1012 254 L 1012 380 L 720 380 L 720 390" marker-end="url(#arrow)"/>
+  <path class="ln" d="M 1012 372 L 1012 380" marker-end="url(#arrow)"/>
+
+  <!-- race / stale -->
+  <rect class="box-warn" x="32" y="396" width="440" height="90" rx="6"/>
+  <text class="t h" x="48" y="424">Race: stale cache accepts a closed offer</text>
+  <text class="t b" x="48" y="447">chain rejects with offer-taken or offer-cancelled</text>
+  <text class="t s" x="48" y="467">the UI treats that as a refresh signal, not an error state</text>
+
+  <path class="ln-warn" d="M 688 188 L 688 300 L 252 300 L 252 390" marker-end="url(#arrow)"/>
+  <path class="ln-warn" d="M 252 396 L 252 250 L 152 250 L 152 192" marker-end="url(#arrow)"/>
+  <text class="t lbl" x="266" y="284">stale terms or already settled</text>
+  <text class="t lbl" x="160" y="232">re-read and retry</text>
+</svg>

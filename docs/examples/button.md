@@ -9,6 +9,12 @@ A green button on a pole. Press it, get coins, buy something that presses better
 
 It is deliberately a clicker: the loop is legible in three seconds, and it exercises every primitive in the SDK without anybody having to invent a reason. [Play it](https://keicoin.org/examples/button), or read [the source](https://github.com/keicoin-org/button).
 
+![Local Button game showing the green button, reward counter, NPC shop board, shopkeeper, and targets](/img/docs/button-gameplay.png)
+
+*Local Button app at localhost:7777. The center board exposes press rewards and clearing; the left board is the implemented shop.*
+
+For the money loop on its own — press, bank, commit, claim, as a script you can run — start with [Button fundamentals](./button/fundamentals.md).
+
 | | |
 | --- | --- |
 | Client | Babylon.js, one bundle, no framework |
@@ -84,13 +90,15 @@ The game cannot sign for a player's wallet, so a purchase is always the player s
 
 ```ts
 // src/economy.ts
-const order = await fetch(at('/game/buy'), { /* address, sku */ }).then(r => r.json())
+const order = await fetch(at('/game/order'), { /* address, sku */ }).then(r => r.json())
 await coins.transfer(order.to, order.price)
 // The shop signs the delivery. There is no third arrangement in which one of
 // them signs for the other.
 ```
 
 **The order is not the purchase.** The order records intent; the arriving transfer is the fact. The server reconciles the two, and an unpaid order delivers nothing.
+
+For the whole shopkeeper protocol — the quote, the verification, the mint, the burn, and what is still missing — see [the NPC shop guide](./button/npc-shop.md).
 
 ## What a player is allowed to spend
 
@@ -163,6 +171,9 @@ In single-player nothing else can see them. There is a rate ceiling, so the hole
 
 ## Continue
 
+- [Button fundamentals](./button/fundamentals.md) — the same loop as a runnable script: two seeds, one commit, one claim, no Babylon.
+- [Button NPC shop](./button/npc-shop.md) — the purchase protocol: order, transfer, on-chain verification, mint, burn.
+- [Player rewards](./button/player-rewards.md) — presses and mob drops as recipient-bound claims: batching, retries, serialized claiming, and the gaps.
 - [Carpet Markets](./carpet-markets.md) — what happens when players can issue things and trade them with each other.
 - [Batch rewards reference](../reference/claims.md) — the `commit` and `claim` API this example is built around.
 - [Integration model](../guide/integration.md) — the two halves, stated once, without a game around them.
