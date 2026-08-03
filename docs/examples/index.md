@@ -58,21 +58,32 @@ onboarding starts with:
 bun run src/index.ts --
 ```
 
-An AI caller uses the same validated project plan through the hard no-prompt
-agent boundary. With the named API-key environment variable already set:
+It asks for the project name, the source, then the provider, the exact model
+ID, the name of the environment variable holding your provider key, any
+transport detail that provider needs, and the game brief. The variable it is
+told about has to already hold a key: the harness reads only the name, checks
+that the value is present, and refuses the run if it is not.
+
+An AI caller reaches the same validated project plan through the hard no-prompt
+agent boundary. With that environment variable already set:
 
 ```sh
 bun run src/index.ts -- "My Button Game" --agent --json \
-  --template button --provider openai --model provider-model-id \
+  --source template --template button \
+  --provider openai --model provider-model-id \
   --api-key-env OPENAI_API_KEY --brief "Build a cooperative button game." \
   --no-launch
 ```
 
 Those flag names come from the current development parser; run
 `bun run src/index.ts -- --help` in the checkout for its complete surface.
-`--template` is the compatibility spelling for selecting an example as the
-project's source. It clones that example's repository; it does not mean the
-harness generates or carries a bundled game template. The draft's
+`--template` names which example to start from, and it clones that example's
+repository — the harness generates no game and carries no bundled template
+archive. **Agent mode requires `--source` spelled out.** At a prompt, or with
+flags alone, `--template button` is enough to imply the template source; under
+`--agent` the source is a required input, and leaving it out returns
+`{"ok":false,"error":{"code":"missing_inputs",...,"missing":["source"]}}`
+rather than guessing. The draft's
 [implementation PR](https://github.com/keicoin-org/create-kei-game/pull/1)
 links its agent-mode guide, which documents config files, bounded stdin,
 precedence, and machine result shapes.
@@ -82,6 +93,10 @@ precedence, and machine result shapes.
 `kei-transaction`; it is not this harness. The current draft validates
 onboarding and agent input and prepares the selected source, then stops. Its
 model/tool loop, Kei terminal UI, and persisted workflow are not released yet.
+The engine that will run them, and the JSON-lines boundary both front ends talk
+over, are a
+[second unmerged draft](https://github.com/keicoin-org/create-kei-game/pull/3)
+with scripted transports and no provider adapter.
 :::
 
 ## What all three have in common
