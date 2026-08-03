@@ -1,9 +1,8 @@
 import {
   UPGRADES,
+  creditConfirmedPress,
   pressValue,
   purchaseUpgrade,
-  rewardConfirmedPress,
-  rollbackPress,
   sanitizeClickerState,
   type ClickerState,
 } from './clicker-state.js'
@@ -36,6 +35,10 @@ if (cap && rig && image && count && countUnit && networkStatus && localStatus &&
   let client: NetworkClient | undefined
   let connecting: Promise<NetworkClient> | undefined
   let pending = 0
+  // Credits pressed for and not yet accepted by the testnet. Deliberately not
+  // part of `state`: `state` is what gets written to localStorage and what the
+  // workshop spends, and an unsettled credit belongs in neither.
+  let pendingCredits = 0
   let cooldownUntil = 0
 
   const save = (): void => {
@@ -69,7 +72,11 @@ if (cap && rig && image && count && countUnit && networkStatus && localStatus &&
         owned ? `${upgrade.name} installed` : `Buy ${upgrade.name} for ${upgrade.cost} click credits`,
       )
     }
-    localStatus.textContent = `Manual press value: ${value}. Shop credits and upgrades stay in this browser.`
+    const waiting =
+      pendingCredits > 0
+        ? `${pendingCredits} credit${pendingCredits === 1 ? '' : 's'} waiting on the testnet. `
+        : ''
+    localStatus.textContent = `${waiting}Manual press value: ${value}. Shop credits and upgrades stay in this browser.`
     revealShop()
   }
 
@@ -174,18 +181,18 @@ if (cap && rig && image && count && countUnit && networkStatus && localStatus &&
     if (now < cooldownUntil) return
     cooldownUntil = now + PRESS_COOLDOWN_MS
 
-    // Optimistic: the credit is granted the instant the button is pressed,
-    // not after the account_info → PoW → process round trip confirms it —
-    // matching the pattern button/src/economy.ts's press() already uses for
-    // its unbanked counter. `submit` reconciles below: on success there is
-    // nothing further to do, the chain agreed; on failure the credit is
-    // rolled back and the failure is shown.
+    // No credit here. A press is worth something once the testnet has accepted
+    // the block it writes, and this button exists to say exactly that — so
+    // granting the credit first and unwinding it later gives away the only
+    // claim the page is making. It also cannot be unwound honestly: the
+    // workshop spends credits, and a spent credit will not come back.
+    //
+    // What is instant is the press itself (`setHeld`) and the count of what is
+    // in flight. `submit` credits it when the chain agrees.
     const reward = pressValue(state)
-    state = rewardConfirmedPress(state)
-    save()
-    render()
-    showReward(reward)
+    pendingCredits += reward
     setPending(1)
+    render()
 
     void submit(reward)
   }
@@ -195,13 +202,21 @@ if (cap && rig && image && count && countUnit && networkStatus && localStatus &&
       const kei = await connect()
       networkStatus.textContent = 'Generating work and sending testnet-only Kei to the null account…'
       const receipt = await kei.send(CLICK_SINK_ADDRESS, CLICK_SEND_AMOUNT)
-      networkStatus.textContent = `Testnet accepted block ${shortHash(receipt.hash)}. One press credited.`
+      // The block is on the chain, so the credit is earned. Credited by what
+      // this press was worth when it was made rather than what it would be
+      // worth now, because an upgrade can be installed while it is in flight.
+      pendingCredits -= reward
+      state = creditConfirmedPress(state, reward)
+      save()
+      render()
+      showReward(reward)
+      networkStatus.textContent = `Testnet accepted block ${shortHash(receipt.hash)}. ${reward === 1 ? '1 credit' : `${reward} credits`} added.`
       networkStatus.title = receipt.hash
     } catch (error) {
       client = undefined
-      // Nothing was confirmed, so the optimistic credit was never earned.
-      state = rollbackPress(state, reward)
-      save()
+      // Nothing was written, so nothing is owed — and nothing has to be taken
+      // back, because nothing was given.
+      pendingCredits -= reward
       render()
       const message = error instanceof Error ? error.message : 'Unknown testnet error.'
       networkStatus.textContent = `No credit added. ${message} Press again to retry.`

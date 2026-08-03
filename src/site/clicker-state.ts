@@ -49,25 +49,20 @@ export function pressValue(state: ClickerState): number {
   )
 }
 
-export function rewardConfirmedPress(state: ClickerState): ClickerState {
-  return {
-    ...state,
-    credits: state.credits + pressValue(state),
-    confirmedPresses: state.confirmedPresses + 1,
-  }
-}
-
 /**
- * Undoes one optimistic `rewardConfirmedPress` when the send that was supposed
- * to confirm it never lands. `reward` is the amount that press was credited
- * with at the time — not `pressValue(state)` recomputed now, which could have
- * moved if an upgrade was bought while the send was in flight.
+ * Credits a press the testnet has already accepted. Everything in `ClickerState`
+ * is settled by construction — a press that has not landed yet is held outside
+ * it, so it cannot be saved, reloaded, or spent as though it had.
+ *
+ * `reward` is what that press was worth when it was made, not `pressValue(state)`
+ * recomputed now, which moves if an upgrade is installed while a press is in
+ * flight.
  */
-export function rollbackPress(state: ClickerState, reward: number): ClickerState {
+export function creditConfirmedPress(state: ClickerState, reward: number): ClickerState {
   return {
     ...state,
-    credits: Math.max(0, state.credits - reward),
-    confirmedPresses: Math.max(0, state.confirmedPresses - 1),
+    credits: state.credits + reward,
+    confirmedPresses: state.confirmedPresses + 1,
   }
 }
 
