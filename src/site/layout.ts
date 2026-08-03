@@ -58,15 +58,18 @@ export const COIN_ALT =
   'The Kei coin: an owl pushing a boulder uphill between two olive branches, ' +
   'with UNUS KEI above and a lyre marked with the Roman numeral one below.'
 
+/*
+ * Dark is the site's own look rather than a mirror of the OS: the page is built
+ * around a photograph of a steel button in a dark room, and on paper that is a
+ * picture of a dark room lying on a desk. An explicit choice still wins, and
+ * the toggle is in the header.
+ */
 const THEME_BOOT = `
 (() => {
   try {
     const saved = localStorage.getItem('kei-theme')
-    const theme = saved === 'light' || saved === 'dark'
-      ? saved
-      : matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-    document.documentElement.dataset.theme = theme
-    document.documentElement.style.colorScheme = theme
+    document.documentElement.dataset.theme = saved === 'light' ? 'light' : 'dark'
+    document.documentElement.style.colorScheme = saved === 'light' ? 'light' : 'dark'
   } catch {}
 })()
 `
@@ -76,18 +79,13 @@ const THEME_SCRIPT = `
   const root = document.documentElement
   const button = document.querySelector('.theme-toggle')
   const label = button?.querySelector('.theme-toggle-label')
-  const media = matchMedia('(prefers-color-scheme: dark)')
-
-  const savedTheme = () => {
-    try { return localStorage.getItem('kei-theme') } catch { return null }
-  }
 
   const applyTheme = (theme, save = false) => {
     root.dataset.theme = theme
     root.style.colorScheme = theme
     document.querySelector('meta[name="theme-color"]')?.setAttribute(
       'content',
-      theme === 'dark' ? '#141613' : '#e9e6da',
+      theme === 'dark' ? '#0a0b09' : '#e9e6da',
     )
     if (button && label) {
       const next = theme === 'dark' ? 'light' : 'dark'
@@ -104,18 +102,43 @@ const THEME_SCRIPT = `
   button?.addEventListener('click', () => {
     applyTheme(root.dataset.theme === 'dark' ? 'light' : 'dark', true)
   })
-  media.addEventListener?.('change', (event) => {
-    if (!savedTheme()) applyTheme(event.matches ? 'dark' : 'light')
-  })
 })()
 `
 
 const NAV: Array<[string, string]> = [
-  ['/use-cases', 'use cases'],
-  ['/docs', 'docs'],
-  ['/examples', 'examples'],
-  ['/status', 'status'],
+  ['/use-cases', 'Use cases'],
+  ['/docs', 'Docs'],
+  ['/examples', 'Examples'],
+  ['/status', 'Status'],
   ['/llms.txt', 'llms.txt'],
+]
+
+/** The footer's three link columns; the first column is the mark and the notice. */
+const FOOT_COLUMNS: Array<[string, Array<[string, string]>]> = [
+  [
+    'Build',
+    [
+      ['/docs', 'Documentation'],
+      ['/use-cases', 'Use cases'],
+      ['/examples', 'Examples'],
+      [`https://www.npmjs.com/package/${SITE.npm}`, SITE.npm],
+    ],
+  ],
+  [
+    'For agents',
+    [
+      ['/llms.txt', 'llms.txt'],
+      ['/AGENTS.md', 'AGENTS.md'],
+    ],
+  ],
+  [
+    'Project',
+    [
+      ['/status', 'Status'],
+      [SITE.repo, 'GitHub'],
+      ['https://mmo.keicoin.org', 'World of Wonder'],
+    ],
+  ],
 ]
 
 export function escapeHtml(text: string): string {
@@ -254,7 +277,7 @@ export function shell(options: {
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <header class="site"><div class="wrap">
-<a class="home" href="/"><img src="/img/kei-coin-64.png" alt="" width="26" height="26" decoding="async">kei<b>coin</b>.org</a>
+<a class="home" href="/"><img src="/img/kei-coin-64.png" alt="" width="26" height="26" decoding="async"><span>kei<b>coin</b>.org</span></a>
 ${NAV.map(([href, label]) => `<a href="${href}">${label}</a>`).join('\n')}
 <a class="github-link" href="${SITE.repo}" target="_blank" rel="noopener noreferrer" aria-label="Kei on GitHub" title="Kei on GitHub">
 <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
@@ -268,9 +291,18 @@ ${NAV.map(([href, label]) => `<a href="${href}">${label}</a>`).join('\n')}
 ${options.body}
 </main>
 <footer class="site"><div class="wrap">
-<p>${escapeHtml(SITE.name)} — ${escapeHtml(SITE.tagline)}<br>
-<strong>keicoin.org is the only domain this project uses.</strong> Anything else claiming to be Kei is not.<br>
-<a href="/llms.txt">llms.txt</a> · <a href="/AGENTS.md">AGENTS.md</a> · <a href="/status">status</a> · <a href="/examples">examples</a> · MIT</p>
+<div class="foot-col">
+<p class="foot-mark"><img src="/img/kei-coin-64.png" alt="" width="20" height="20" loading="lazy" decoding="async"><span>kei<b>coin</b>.org</span></p>
+<p>${escapeHtml(SITE.tagline)}</p>
+<p><strong>keicoin.org is the only domain this project uses.</strong> Anything else claiming to be Kei is not.</p>
+<p>MIT</p>
+</div>
+${FOOT_COLUMNS.map(
+  ([heading, links]) => `<div class="foot-col">
+<h4>${escapeHtml(heading)}</h4>
+<ul>${links.map(([href, label]) => `<li><a href="${href}">${escapeHtml(label)}</a></li>`).join('')}</ul>
+</div>`,
+).join('\n')}
 </div></footer>
 <script>${THEME_SCRIPT}${options.script ? `;\n${options.script}` : ''}</script>
 </body>
