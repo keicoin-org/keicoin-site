@@ -42,20 +42,61 @@ A blank cell is not a gap in the SDK. It is a primitive that example had no hone
 | `wallet.summary` | ✅ | ✅ | ✅ |
 | `faucet` | ✅ | ✅ | ✅ |
 
-## Start from one instead of cloning it
+## Use one as a harness source
 
-Each example is a template the scaffolder writes for you, renamed and with your own currency already in it:
+Create Kei Game is becoming an ongoing game-building harness, not another game
+template. During onboarding, a project can start blank, from one of these three
+examples, from an existing local project, or from an HTTPS GitHub or GitLab
+repository. Choosing an example clones its real repository; the harness does
+not hide a second bundled copy that can drift away from it.
+
+The standalone harness is still an unpublished development draft. From its
+[repository checkout](https://github.com/keicoin-org/create-kei-game), human
+onboarding starts with:
 
 ```sh
-npm create kei-game my-game                                    # star-clicker, the default
-npm create kei-game my-mmo -- --template world-of-wonder
-npm create kei-game my-launchpad -- --template carpet-markets
+bun run src/index.ts --
 ```
 
-Cloning the repository directly gets you the same files under the original name.
+It asks for the project name, the source, then the provider, the exact model
+ID, the name of the environment variable holding your provider key, any
+transport detail that provider needs, and the game brief. The variable it is
+told about has to already hold a key: the harness reads only the name, checks
+that the value is present, and refuses the run if it is not.
 
-::: info The three templates are published
-`create-kei-game@0.2.0` scaffolds Button, Carpet Markets, or World of Wonder. Cloning a repository directly remains useful when you want the complete worked application rather than a starting template.
+An AI caller reaches the same validated project plan through the hard no-prompt
+agent boundary. With that environment variable already set:
+
+```sh
+bun run src/index.ts -- "My Button Game" --agent --json \
+  --source template --template button \
+  --provider openai --model provider-model-id \
+  --api-key-env OPENAI_API_KEY --brief "Build a cooperative button game." \
+  --no-launch
+```
+
+Those flag names come from the current development parser; run
+`bun run src/index.ts -- --help` in the checkout for its complete surface.
+`--template` names which example to start from, and it clones that example's
+repository — the harness generates no game and carries no bundled template
+archive. **Agent mode requires `--source` spelled out.** At a prompt, or with
+flags alone, `--template button` is enough to imply the template source; under
+`--agent` the source is a required input, and leaving it out returns
+`{"ok":false,"error":{"code":"missing_inputs",...,"missing":["source"]}}`
+rather than guessing. The draft's
+[implementation PR](https://github.com/keicoin-org/create-kei-game/pull/1)
+links its agent-mode guide, which documents config files, bounded stdin,
+precedence, and machine result shapes.
+
+::: warning The npm package is the old scaffolder
+`create-kei-game@0.2.0` on npm is the superseded package published from
+`kei-transaction`; it is not this harness. The current draft validates
+onboarding and agent input and prepares the selected source, then stops. Its
+model/tool loop, Kei terminal UI, and persisted workflow are not released yet.
+The engine that will run them, and the JSON-lines boundary both front ends talk
+over, are a
+[second unmerged draft](https://github.com/keicoin-org/create-kei-game/pull/3)
+with scripted transports and no provider adapter.
 :::
 
 ## What all three have in common
