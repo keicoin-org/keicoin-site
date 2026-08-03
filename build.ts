@@ -24,11 +24,22 @@ const here = (path: string): string => join(Bun.fileURLToPath(root), path)
 /**
  * Sibling checkouts whose built client gets copied to `/examples/<name>`.
  *
- * Only the ones whose Worker serves that path in production belong here — the
- * MMO template is an example too, but it is hosted on its own domain and is
- * linked rather than copied.
+ * Only the ones whose Worker **is deployed** on that route belong here, and the
+ * distinction is not pedantic. These clients are not self-contained: each one
+ * talks to a mock node and a game server at `<mount>/rpc` under its own mount
+ * point, served by that demo's own Worker on a path route of this zone. Copy one
+ * in without its Worker and the page loads, the wallet initialises, and every
+ * call after that 404s — a demo that is broken in a way a visitor discovers
+ * after clicking, which is worse than a link to the repository.
+ *
+ * Carpet Markets is deliberately not here: its Worker (`worker/index.ts`, a
+ * Durable-Object-backed floor) is written but has never been deployed, so the
+ * route does not exist. Add it back in the same change that deploys it.
+ *
+ * World of Wonder is an example too, and is hosted on its own domain rather than
+ * copied.
  */
-const DEMOS = ['button', 'carpet-markets'] as const
+const DEMOS = ['button'] as const
 
 const dist = here('dist')
 await mkdir(dist, { recursive: true })
