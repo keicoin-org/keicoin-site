@@ -37,7 +37,7 @@ A blank cell is not a gap in the SDK. It is a primitive that example had no hone
 | `pay` / `onPayment` | ✅ (exchange desk) | ✅ (launch fee) | ✅ (exchange desk) |
 | `items.create` / `items.mint` | ✅ | | ✅ |
 | `commit` / `claims.add` | ✅ | | |
-| `market.sell` / `accept` / `cancel` | | ✅ | ✅ (`market.offer`, in the test — no screen yet) |
+| `market.sell` / `accept` / `cancel` | | ✅ | ✅ (`market.offer`, Browse / Sell / Mine) |
 | `market.price` / `trades` | | ✅ | |
 | `wallet.summary` | ✅ | ✅ | ✅ |
 | `faucet` | ✅ | ✅ | ✅ |
@@ -85,7 +85,7 @@ Named here as well as on each page, because a reader choosing one of these to fo
 | --- | --- | --- |
 | [Button](./button.md) | The balance on the pole is the chain's, with unbanked earnings shown separately beside it. Spending is graded against confirmed, available funds. | Presses are still counted by the client. It is single-player; nothing else can see them. |
 | [Carpet Markets](./carpet-markets.md) | The client is a Next.js static export, and a card leads with the transfer policy and the creator's remaining share rather than a market cap. | The book is only as complete as the registry's account list, and the replies are the one piece of state here that is not a block. |
-| [World of Wonder](./world-of-wonder.md) | The auction house's **mechanism**: one player lists, another buys, both legs settle in one block, and there is a test that says so. | The auction house's **screen**. Equipping, loot and quest rewards still run on upstream's inventory tables, and the trainer still spends `player_data.gold`. |
+| [World of Wonder](./world-of-wonder.md) | The auction house's **screen and mechanism**: Browse, Sell and Mine over player-signed offers, with both legs settling in one block and an end-to-end test that says so. | Equipping, loot and quest rewards still run on upstream's inventory tables, and the trainer still spends `player_data.gold`. The hall's in-memory roster is bounded and incomplete by design. |
 
 ## Continue
 
