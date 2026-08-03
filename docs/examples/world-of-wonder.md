@@ -11,6 +11,17 @@ It is a fork of [`orion3dgames/t5c`](https://github.com/orion3dgames/t5c) — a 
 
 [Play it](https://mmo.keicoin.org), or read [the source](https://github.com/keicoin-org/world-of-wonder). **This is the example to start from if you are building something rather than reading something.**
 
+![World of Wonder gameplay view with character, village, combat hotbar, chat, and HUD](/img/docs/world-of-wonder-gameplay.webp)
+
+*Gameplay screenshot from the maintained World of Wonder repository. It shows the world and HUD, not the Auction House.*
+
+## One task, end to end
+
+This page is the tour. If you came for one piece of it:
+
+- [Auction house integration](./world-of-wonder/auction-house.md) — put a player-to-player auction house in your own fork: the wallet calls that list, buy and cancel, the two routes the server answers, and the check that has to be there before an accept is signed.
+- [Loot and drops](./world-of-wonder/loot-and-drops.md) — where a kill's gold and items actually go today, why they never reach the chain-backed bag, and what a commit-and-claim migration would have to prove first.
+
 | | |
 | --- | --- |
 | Client | Babylon.js, webpack |
