@@ -84,6 +84,20 @@ There is deliberately no `POST /kei/sell`. The server can mint this world's curr
 Any server endpoint that pays out on request, rather than in reaction to something already settled on the chain, is a printing press. Make the player's side of the trade happen first, and react to it.
 :::
 
+## The auction house is a screen over player chains
+
+The Auction House panel has three views: Browse for offers from other players, Sell for choosing an item, quantity and asking price, and Mine for taking back your own open offers. `src/server/kei/Market.test.ts` holds the proof underneath it: one player lists a sword bought from the shop, another buys it, and the gold and the sword move in one settlement with the game server taking no part in it. The test also pins the part that is easy to get wrong later — a listed item cannot also be handed to somebody, and the ledger is what refuses it.
+
+::: warning It is `market.offer()`, not `market.sell()`
+`sell()` prices things in Kei. Gold is not Kei — it is an asset this world issues — so a listing is an item on one side and gold on the other. Writing it the other way compiles and quietly denominates the auction house in a currency the game does not use.
+:::
+
+Know the limit before designing around it — an offer lives on its author's chain and Kei ships no indexer, so there is no query for *every listing in the world*. This hall keeps a bounded, in-memory roster of accounts it has heard from and walks those chains. A restart empties the roster until wallets return; an unheard-of seller is invisible without ever losing custody of the listed item. That is bookkeeping about where to look rather than about who owns what. [Carpet Markets](./carpet-markets.md) does the same job in its registry.
+
+Nothing the hall reports is trusted at signing time. The wallet re-reads the offer by hash and binds its seller, item asset, quantity, quote asset and price to what was displayed before accepting it. Names come from the client's local catalogue, so a dishonest hall can hide or advertise a dead offer, but cannot substitute another item.
+
+A database-backed auction house instead would look identical to a player and mean the opposite thing, since this server can already mint gold.
+
 ## Where things are
 
 ```
@@ -91,8 +105,11 @@ src/server/kei/Economy.ts                                the issuer: gold, items
 src/server/kei/api.ts                                    the HTTP surface. Nothing here can move a player's money.
 src/server/kei/node.ts                                   which chain, and which account issues the money
 src/server/kei/Economy.test.ts                           the rules, against a chain in-process
+src/server/kei/Hall.ts                                   the bounded roster and chain walk behind Browse
+src/server/kei/Market.test.ts                            listing, acceptance, cancellation, history and trust-boundary checks
 src/server/kei/endtoend.test.ts                          the same thing across a URL, the way a browser does it
 src/client/Controllers/Wallet.ts                         the player's key, and the only thing that spends their gold
+src/client/Controllers/UI/Panels/Panel_Auction.ts        Browse, Sell and Mine, as a player sees them
 src/client/Controllers/UI/Panels/Dialog/VendorDialog.ts  the shop, as a player sees it
 src/client/Utils/index.ts                                where the client looks for the server
 ```
@@ -131,6 +148,8 @@ npm run test:e2e        # the same thing over HTTP, sharing no memory with the s
 
 ## Known limits
 
+- **The hall is deliberately incomplete.** It only reads the bounded set of player chains this server has heard from, and that roster is in memory. A restart empties it until wallets announce themselves again; Kei ships no global offer index.
+- **Equipping, loot and quest rewards still use upstream inventory state.** The bag and the vendor read the chain, so anything bought or sold is consistent in both. Gameplay rewards and equipped gear have not moved across, and are deliberately not merged into the bag — that would make database rows look like on-chain ownership. The trainer still spends `player_data.gold`, which is no longer money.
 - The [hosted copy](https://mmo.keicoin.org) is live, not production-ready: it runs a process-local mock chain, so nothing on it survives a restart. The repository settles on the public testnet by default.
 - Consensus is weak until the validator set is distributed. Until then this is a testnet with branding, and not somewhere to put real value.
 - Per-instance mutable item state — durability ticking every second, live stack counts — is not what an asset is for. Model the archetype on-chain and keep that state local.

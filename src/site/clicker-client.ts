@@ -1,8 +1,10 @@
 import {
   UPGRADES,
   creditConfirmedPress,
+  creditReadout,
   pressValue,
   purchaseUpgrade,
+  readoutAnnouncement,
   sanitizeClickerState,
   type ClickerState,
 } from './clicker-state.js'
@@ -26,11 +28,18 @@ const rig = byId<HTMLElement>('press-rig')
 const image = byId<HTMLImageElement>('press-image')
 const count = byId<HTMLElement>('press-count')
 const countUnit = byId<HTMLElement>('press-count-unit')
+const available = byId<HTMLElement>('press-available')
+const pendingOut = byId<HTMLElement>('press-pending')
+const split = byId<HTMLElement>('press-split')
+const creditStatus = byId<HTMLElement>('press-credit-status')
 const networkStatus = byId<HTMLElement>('press-network-status')
 const localStatus = byId<HTMLElement>('press-local-status')
 const shop = byId<HTMLElement>('press-shop')
 
-if (cap && rig && image && count && countUnit && networkStatus && localStatus && shop) {
+if (
+  cap && rig && image && count && countUnit && available && pendingOut && split &&
+  creditStatus && networkStatus && localStatus && shop
+) {
   let state = loadState()
   let client: NetworkClient | undefined
   let connecting: Promise<NetworkClient> | undefined
@@ -58,8 +67,19 @@ if (cap && rig && image && count && countUnit && networkStatus && localStatus &&
   }
 
   const render = (): void => {
-    count.textContent = String(state.credits)
-    countUnit.textContent = state.credits === 1 ? 'click credit' : 'click credits'
+    // The big number moves the moment a press is made, so the button feels like
+    // it did something; the split under it is what keeps that honest, naming
+    // how much of the total the testnet has actually accepted. The visual
+    // numbers are aria-hidden and a single composed sentence goes to the live
+    // region instead, so three changing nodes are not announced three times.
+    const readout = creditReadout(state, pendingCredits)
+    count.textContent = String(readout.total)
+    countUnit.textContent = readout.unit
+    available.textContent = String(readout.available)
+    pendingOut.textContent = String(readout.pending)
+    split.classList.toggle('has-pending', readout.pending > 0)
+    const announcement = readoutAnnouncement(readout)
+    if (creditStatus.textContent !== announcement) creditStatus.textContent = announcement
     const value = pressValue(state)
     for (const upgrade of UPGRADES) {
       const button = shop.querySelector<HTMLButtonElement>(`[data-upgrade="${upgrade.id}"]`)
@@ -72,11 +92,9 @@ if (cap && rig && image && count && countUnit && networkStatus && localStatus &&
         owned ? `${upgrade.name} installed` : `Buy ${upgrade.name} for ${upgrade.cost} click credits`,
       )
     }
-    const waiting =
-      pendingCredits > 0
-        ? `${pendingCredits} credit${pendingCredits === 1 ? '' : 's'} waiting on the testnet. `
-        : ''
-    localStatus.textContent = `${waiting}Manual press value: ${value}. Shop credits and upgrades stay in this browser.`
+    // No pending count here — the split above says it, and repeating it in a
+    // second place is what makes a readout read as noise.
+    localStatus.textContent = `Manual press value: ${value}. Only available credits can be spent in the workshop; pending ones are still with the testnet.`
     revealShop()
   }
 
@@ -181,14 +199,12 @@ if (cap && rig && image && count && countUnit && networkStatus && localStatus &&
     if (now < cooldownUntil) return
     cooldownUntil = now + PRESS_COOLDOWN_MS
 
-    // No credit here. A press is worth something once the testnet has accepted
-    // the block it writes, and this button exists to say exactly that — so
-    // granting the credit first and unwinding it later gives away the only
-    // claim the page is making. It also cannot be unwound honestly: the
-    // workshop spends credits, and a spent credit will not come back.
-    //
-    // What is instant is the press itself (`setHeld`) and the count of what is
-    // in flight. `submit` credits it when the chain agrees.
+    // The reward joins `pendingCredits`, not `state.credits`. The big number
+    // moves now — a press that changes nothing on screen feels broken — but it
+    // moves by adding to the *pending* half of the split, which is labelled as
+    // still being with the testnet. Nothing spendable is granted here, because
+    // a granted credit cannot be unwound honestly once the workshop has spent
+    // it. `submit` settles it when the chain agrees.
     const reward = pressValue(state)
     pendingCredits += reward
     setPending(1)
@@ -202,9 +218,12 @@ if (cap && rig && image && count && countUnit && networkStatus && localStatus &&
       const kei = await connect()
       networkStatus.textContent = 'Generating work and sending testnet-only Kei to the null account…'
       const receipt = await kei.send(CLICK_SINK_ADDRESS, CLICK_SEND_AMOUNT)
-      // The block is on the chain, so the credit is earned. Credited by what
-      // this press was worth when it was made rather than what it would be
-      // worth now, because an upgrade can be installed while it is in flight.
+      // The block is on the chain, so the credit is earned. Exactly this
+      // press's reward moves from pending to confirmed in one step, so the
+      // visible total neither jumps twice nor dips while other presses are
+      // still in flight. Credited by what this press was worth when it was
+      // made rather than what it would be worth now, because an upgrade can be
+      // installed while it is in flight.
       pendingCredits -= reward
       state = creditConfirmedPress(state, reward)
       save()
@@ -214,8 +233,9 @@ if (cap && rig && image && count && countUnit && networkStatus && localStatus &&
       networkStatus.title = receipt.hash
     } catch (error) {
       client = undefined
-      // Nothing was written, so nothing is owed — and nothing has to be taken
-      // back, because nothing was given.
+      // Nothing was written, so nothing is owed. Only the pending half rolls
+      // back; confirmed credits are untouched, and the total falls by exactly
+      // what this press had been showing as unsettled.
       pendingCredits -= reward
       render()
       const message = error instanceof Error ? error.message : 'Unknown testnet error.'

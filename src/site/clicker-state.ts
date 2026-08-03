@@ -66,6 +66,38 @@ export function creditConfirmedPress(state: ClickerState, reward: number): Click
   }
 }
 
+/**
+ * What the readout shows. `available` is `state.credits` — settled, spendable,
+ * saved. `pending` is what has been pressed for and not yet accepted, held by
+ * the caller outside `ClickerState` so it can never be spent or persisted.
+ * `total` is the two added up, and is only ever a display figure: the workshop
+ * reads `state.credits`, never this.
+ */
+export interface CreditReadout {
+  total: number
+  available: number
+  pending: number
+  unit: string
+}
+
+export function creditReadout(state: ClickerState, pendingCredits: number): CreditReadout {
+  const total = state.credits + pendingCredits
+  return {
+    total,
+    available: state.credits,
+    pending: pendingCredits,
+    unit: total === 1 ? 'click credit' : 'click credits',
+  }
+}
+
+/** One sentence for the live region, so a press announces once and not thrice. */
+export function readoutAnnouncement(readout: CreditReadout): string {
+  const settled = `${readout.available} available`
+  return readout.pending > 0
+    ? `${readout.total} ${readout.unit}: ${settled}, ${readout.pending} awaiting the testnet.`
+    : `${readout.total} ${readout.unit}, ${settled}.`
+}
+
 export type PurchaseResult =
   | { ok: true; state: ClickerState; upgrade: Upgrade }
   | { ok: false; reason: 'unknown' | 'owned' | 'cost' }

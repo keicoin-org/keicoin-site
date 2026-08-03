@@ -8,7 +8,10 @@ export default defineConfig({
   base: '/docs/',
   outDir: '../dist/docs',
   cleanUrls: true,
-  appearance: true,
+  // Dark first, like keicoin.org, rather than whatever the OS prefers: the
+  // visual system is built around an olive black, and the toggle stays for
+  // anyone who wants paper.
+  appearance: 'dark',
   lastUpdated: true,
   sitemap: {
     hostname: 'https://keicoin.org/docs/',
@@ -17,7 +20,7 @@ export default defineConfig({
     ['link', { rel: 'icon', href: '/favicon.ico', sizes: 'any' }],
     ['meta', { name: 'color-scheme', content: 'light dark' }],
     ['meta', { name: 'theme-color', content: '#e9e6da', media: '(prefers-color-scheme: light)' }],
-    ['meta', { name: 'theme-color', content: '#141613', media: '(prefers-color-scheme: dark)' }],
+    ['meta', { name: 'theme-color', content: '#0a0b09', media: '(prefers-color-scheme: dark)' }],
   ],
   markdown: {
     lineNumbers: true,

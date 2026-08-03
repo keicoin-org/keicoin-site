@@ -43,9 +43,14 @@ disclaimer:
   published dev keys, and no monetary value. Until the validator set is
   meaningfully distributed, nothing should hold value.
 - **The design needs smart contracts.** There is no VM and there will not be one.
-- **The market or the standalone wallet is required today.** The market and the
-  in-game wallet panel have open pull requests, not merged ones. A standalone
-  wallet is in progress in a separate repository.
+- **A network-wide order book is required.** There is none, and there will not
+  be one: an offer lives on its author's chain and Kei ships no indexer. A front
+  end shows the offers of accounts it has heard of, and has to keep that list
+  itself. The market itself works — offers, locks and atomic settlement settle on
+  the public testnet as of 3 August 2026.
+- **The developer needs what is on \`master\` rather than what is on npm.** The
+  installable set is 0.3.0; \`master\` is 0.4.0 and unpublished, so item stats and
+  \`create-kei-game\`'s three templates cannot be installed yet.
 - **The economy needs per-instance mutable item state** (durability ticking every
   second, live stack counts). Model the item on-chain; keep that state local.
 - **Anything is on the critical path of a real-time loop.** A chain is not a
@@ -79,7 +84,7 @@ requirement, a database is simpler and you should say so.
 ## Install
 
 \`\`\`sh
-bun add ${SITE.npm}@0.2.0     # or npm / pnpm / yarn
+bun add ${SITE.npm}@0.3.0     # or npm / pnpm / yarn
 \`\`\`
 
 ESM. TypeScript types included. Runs in a browser and in Node or Bun. No signup,
@@ -170,13 +175,17 @@ Not enough Kei — balance is 0.4, tried to send 1.2.
 ## Pages
 
 ${[...USE_CASES.map((u) => `- [${u.label}](${SITE.origin}${u.path}): ${u.claim}`)].join('\n')}
-- [Quickstart and API](${SITE.origin}/docs): the full surface on one page.
 - [Status](${SITE.origin}/status): what works, what is scheduled, what is not true yet.
-- [Examples](${SITE.origin}/docs/examples): three working games, with the primitives each one exercises, how to run it, and what it gets wrong.
-- [Button](${SITE.origin}/docs/examples/button): a 3D clicker. Every primitive, including commit/claim. Playable at ${SITE.origin}/examples/button.
-- [Carpet Markets](${SITE.origin}/docs/examples/carpet-markets): a launchpad with a peer-to-peer order book. The worked demo of the market API. Playable at ${SITE.origin}/examples/carpet-markets.
-- [World of Wonder](${SITE.origin}/docs/examples/world-of-wonder): a Babylon.js + Colyseus MMO whose gold and items are chain assets. The one to fork.
+- [Documentation](${SITE.origin}/docs): the full surface on one page, and everything below it.
+  - [Examples](${SITE.origin}/docs/examples): three working games, with the primitives each one exercises, how to run it, and what it gets wrong. This is a section of the documentation, not a separate area of the site; \`${SITE.origin}/examples\` redirects here.
+    - [Button](${SITE.origin}/docs/examples/button): a 3D clicker. Every primitive, including commit/claim. Playable at ${SITE.origin}/examples/button.
+    - [Carpet Markets](${SITE.origin}/docs/examples/carpet-markets): a launchpad with a peer-to-peer order book. The worked demo of the market API. Playable at ${SITE.origin}/examples/carpet-markets.
+    - [World of Wonder](${SITE.origin}/docs/examples/world-of-wonder): a Babylon.js + Colyseus MMO whose gold and items are chain assets. The one to fork.
 - [AGENTS.md](${SITE.origin}/AGENTS.md): the integration procedure with failure modes.
+
+\`${SITE.origin}/examples/<name>\` is a running demo, served by that demo's own
+Worker. \`${SITE.origin}/docs/examples/<name>\` is the page about it. Link a human
+to the second one.
 `
 }
 
@@ -203,7 +212,7 @@ Answer these before writing code. Two of them cannot be changed later.
 
 ## Procedure
 
-1. **Install.** \`bun add ${SITE.npm}@0.2.0\`. Nothing to sign up for.
+1. **Install.** \`bun add ${SITE.npm}@0.3.0\`. Nothing to sign up for.
 2. **Generate an issuer seed** with \`randomSeed()\`. Put it in the server's
    environment. Never in the client bundle, never in a repo, never in a log.
 3. **Create the issuer** — \`Kei.server({ seed: process.env.KEI_SEED })\`. It
@@ -253,15 +262,18 @@ Answer these before writing code. Two of them cannot be changed later.
 - Do not hold player balances on your game server.
 - Do not mint in a loop for a batch reward.
 - Do not tell a user this is production-ready. It is ${SITE.milestone}: the
-  public testnet is one best-effort dev node, there is no mainnet, and the
-  public M4 deployment is not yet evidenced here.
+  public testnet is one best-effort dev node with weak consensus and published
+  dev keys, and there is no mainnet.
+- Do not promise a network-wide order book. An offer lives on its author's chain
+  and there is no indexer, so a front end reads the accounts it knows about.
 
 ## Verify your work
 
 The demo at ${SITE.origin}/examples/button exercises every primitive — issue,
 mint, transfer, items, balanceOf, commit and claim — and its source is written to
 be read. If your integration looks structurally different from it, check why
-before shipping.
+before shipping. The page about it, and about the other two examples, is
+${SITE.origin}/docs/examples.
 `
 }
 

@@ -15,11 +15,11 @@ They are ordered by how much they ask of you. **Button** is the SDK in one tab. 
 | --- | --- | --- | --- |
 | The argument | Every SDK primitive in one legible loop | A market is consensus, not a service you operate | An existing game keeps its database and loses its ledger |
 | Read it to learn | `commit` / `claim`, and the two-signature purchase | `@keicoin/market`, and what `transfer` policy actually enforces | How to retrofit an economy without rewriting a game |
-| Client | Babylon.js | DOM | Babylon.js + Colyseus |
+| Client | Babylon.js | Next.js, static export | Babylon.js + Colyseus |
 | Server | One Bun process | One Bun process | Node, Colyseus, SQLite or MySQL |
 | Database | None | None | Accounts, characters, positions — never money |
-| Default chain | In-process mock | In-process mock | Public M3 testnet |
-| Lines of Kei in the client | `src/economy.ts`, ~200 | `src/market-client.ts` | `src/client/Controllers/Wallet.ts` |
+| Default chain | In-process mock | In-process mock | The public testnet |
+| Lines of Kei in the client | `src/economy.ts`, ~200 | `lib/market.ts` | `src/client/Controllers/Wallet.ts` |
 | Play it | [/examples/button](https://keicoin.org/examples/button) | [/examples/carpet-markets](https://keicoin.org/examples/carpet-markets) | [mmo.keicoin.org](https://mmo.keicoin.org) |
 | Source | [keicoin-org/button](https://github.com/keicoin-org/button) | [keicoin-org/carpet-markets](https://github.com/keicoin-org/carpet-markets) | [keicoin-org/world-of-wonder](https://github.com/keicoin-org/world-of-wonder) |
 
@@ -37,7 +37,7 @@ A blank cell is not a gap in the SDK. It is a primitive that example had no hone
 | `pay` / `onPayment` | ✅ (exchange desk) | ✅ (launch fee) | ✅ (exchange desk) |
 | `items.create` / `items.mint` | ✅ | | ✅ |
 | `commit` / `claims.add` | ✅ | | |
-| `market.sell` / `accept` / `cancel` | | ✅ | |
+| `market.sell` / `accept` / `cancel` | | ✅ | ✅ (`market.offer`, Browse / Sell / Mine) |
 | `market.price` / `trades` | | ✅ | |
 | `wallet.summary` | ✅ | ✅ | ✅ |
 | `faucet` | ✅ | ✅ | ✅ |
@@ -53,6 +53,10 @@ npm create kei-game my-launchpad -- --template carpet-markets
 ```
 
 Cloning the repository directly gets you the same files under the original name.
+
+::: warning The three templates are merged, not published
+`create-kei-game` on npm is `0.1.2` and scaffolds the star-clicker only. The version carrying all three is `0.2.0` on `master`, and publishing is a manual step nobody has run yet. Until then, clone.
+:::
 
 ## What all three have in common
 
@@ -72,6 +76,16 @@ That is a design constraint rather than a disclaimer. There is no mainnet, and t
 - Carpet Markets has one open quote per address, because a Kei transfer carries no memo and an arriving payment says only who sent it and how much. Two browser tabs racing is a thing you can do to yourself.
 - Carpet Markets is a satire of a real pattern that has taken real money from real people. It is worth playing precisely because the coins are worthless; it is not worth copying anywhere they are not.
 - World of Wonder's hosted copy runs a process-local mock chain, so nothing on it survives a restart. The repository settles on the public testnet by default.
+
+## What is not finished in each
+
+Named here as well as on each page, because a reader choosing one of these to fork deserves to find the gap before they are inside it.
+
+| | Done | Not done |
+| --- | --- | --- |
+| [Button](./button.md) | The balance on the pole is the chain's, with unbanked earnings shown separately beside it. Spending is graded against confirmed, available funds. | Presses are still counted by the client. It is single-player; nothing else can see them. |
+| [Carpet Markets](./carpet-markets.md) | The client is a Next.js static export, and a card leads with the transfer policy and the creator's remaining share rather than a market cap. | The book is only as complete as the registry's account list, and the replies are the one piece of state here that is not a block. |
+| [World of Wonder](./world-of-wonder.md) | The auction house's **screen and mechanism**: Browse, Sell and Mine over player-signed offers, with both legs settling in one block and an end-to-end test that says so. | Equipping, loot and quest rewards still run on upstream's inventory tables, and the trainer still spends `player_data.gold`. The hall's in-memory roster is bounded and incomplete by design. |
 
 ## Continue
 
