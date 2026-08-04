@@ -604,7 +604,7 @@ The Surfaces done condition names it: a player opens the standalone wallet and s
 
 <Badge type="tip" text="shipped" /> · repositories `world-of-wonder`
 
-The t5c fork (Babylon.js plus Colyseus) with an auction house over player-signed offers: Browse, Sell, and Mine read listings from player chains, and buying moves the item and gold in one settlement with the game server taking no part. Honest limits: the hosted copy runs a process-local mock chain so nothing on it survives a restart, the hall only knows accounts it has heard from, and equipping, loot, and quest rewards still run on the upstream inventory tables. The repository settles on the public testnet by default.
+The t5c fork (Babylon.js plus Colyseus) with an auction house over player-signed offers: Browse, Sell, and Mine read listings from player chains, and buying moves the item and gold in one settlement with the game server taking no part. Honest limits: the hosted copy runs a process-local mock chain so nothing on it survives a restart, the hall only knows accounts it has heard from, and merged phase one makes legacy inventory and gold rows inert while gameplay economy actions refuse because the wallet-proof verifier is not built. The repository settles on the public testnet by default.
 
 **Depends on:** [`dl-node-swap-settlement`](#dl-node-swap-settlement).
 
