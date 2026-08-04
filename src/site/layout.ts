@@ -123,7 +123,7 @@ const THEME_SCRIPT = `
  * the misreading that had editorial pages living at `/examples` in the first
  * place. Here it renders as `Docs / Examples`, one group, one hierarchy.
  */
-const NAV_BEFORE: Array<[string, string]> = [['/use-cases', 'Use cases']]
+const NAV_BEFORE: Array<[string, string]> = [['/#use-cases', 'Use cases']]
 
 /** The one nested pair in the header, rendered as a single `Docs / Examples` group. */
 const NAV_DOCS: Array<[string, string]> = [
@@ -167,7 +167,7 @@ const FOOT_COLUMNS: Array<[string, FootLink[]]> = [
   [
     'Project',
     [
-      { href: '/use-cases', label: 'Use cases' },
+      { href: '/#use-cases', label: 'Use cases' },
       { href: '/status', label: 'Status' },
       { href: SITE.repo, label: 'GitHub' },
       { href: 'https://mmo.keicoin.org', label: 'World of Wonder' },

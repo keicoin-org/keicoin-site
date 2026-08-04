@@ -11,6 +11,38 @@ By the end of this page you can list an asset for Kei, accept somebody else's li
 
 An offer *is* a `swap_offer` block (SPEC §9.3). `sell()` writes the block that locks the seller's own asset, `accept()` writes one block that moves both legs or neither, and `cancel()` writes the block that gives the asset back. Everything you read here is read from account chains.
 
+| Concern | Authority |
+| --- | --- |
+| Offer terms and locked asset | The seller's signed `swap_offer` block. |
+| Settlement | One buyer-signed `swap_accept`; both legs move or neither does. |
+| Cancellation | The seller's `swap_cancel`; only the author can release the lock. |
+| Which seller accounts to inspect | Your app or registry. Kei ships no global indexer. |
+| Matching, curves, automated pricing | Not part of this API. |
+
+## Run the smallest complete market
+
+The playground below creates two wallets on `Kei.mock()`, mints a unique item,
+lists it for 5 Kei, discovers the listing from the seller's account, accepts it,
+and asserts ownership, balance, settled state, and median price.
+
+```sh
+bun install --frozen-lockfile
+bun run docs/playgrounds/market.ts
+# {"kind":"market","offer":"accepted","price":5,"buyerOwnsItem":true}
+```
+
+It is the checked-in file the command and docs-playground regression test both
+execute, not a shortened version maintained separately from its proof.
+
+<<< ../../playgrounds/market.ts
+
+![Protocol diagram of a seller publishing an offer, then exactly one atomic accept or seller cancellation, followed by reconciliation from the account chains.](/img/docs/carpet-offer-lifecycle.svg)
+
+*This is a protocol diagram, not a product screenshot. The running
+[Carpet Markets demo](/examples/carpet-markets) puts a deliberately incomplete
+interface around this flow on a no-value mock chain; the diagram and playground
+show the ledger behavior the interface is meant to expose.*
+
 ## Before you begin
 
 ```sh
