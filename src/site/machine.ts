@@ -121,7 +121,7 @@ anywhere, it refers to a plan that no longer exists; use the tracks above.
 ## Install
 
 \`\`\`sh
-bun add ${SITE.npm}@0.5.0     # or npm / pnpm / yarn
+bun add ${SITE.npm}@0.6.0     # or npm / pnpm / yarn
 \`\`\`
 
 ESM. TypeScript types included. Runs in a browser and in Node or Bun. No signup,
@@ -168,13 +168,37 @@ await gems.mint(to, amount)
 await gems.balanceOf(address)
 await gems.supply()
 
-// In the installable 0.5.0. It was master-only under 0.4.0.
+// Installable since 0.5.0. It was master-only under 0.4.0.
 await gems.burn(amount)
 
 // Player
 const gems = await kei.token('GEM', issuerAddress)
 await gems.balance()
 await gems.transfer(to, amount)    // no 'from' — the signer is the sender
+\`\`\`
+
+### Economy helpers — reachable from a plain install since 0.6.0
+
+\`\`\`js
+// Weighted loot-table drops. Not verifiable randomness: the roll happens on
+// your server, and nothing here proves the weights were honoured — only that
+// a claimed award is really an entry in a table your issuer published.
+const dragonHoard = defineDropTable({
+  id: 'dragon-hoard',
+  drops: [{ asset: { symbol: 'GOLD' }, amount: 50, weight: 60 }],
+  nothing: 30,
+  issuer: GAME_ADDRESS,
+})
+const drop = await game.economy.drop(dragonHoard, party)
+await kei.economy.verifyDrop(award)   // then kei.claims.add(award)
+
+// A player-owned shop, through the player's own key — never the game's.
+// Exercised against Kei.mock() and over HTTP between two clients sharing only
+// a URL; not yet run against the public testnet.
+await kei.shop.list({ item: 'sword', qty: 1, each: 120 })
+const shelves = await kei.shop.browse()
+await kei.shop.buy(shelves.listings[0])
+await kei.shop.gift({ to: friend, item: 'sword' })
 \`\`\`
 
 ### Items — supply-1 tokens, no separate type and no indexer
@@ -272,7 +296,7 @@ Answer these before writing code. Two of them cannot be changed later.
 
 ## Procedure
 
-1. **Install.** \`bun add ${SITE.npm}@0.5.0\`. Nothing to sign up for.
+1. **Install.** \`bun add ${SITE.npm}@0.6.0\`. Nothing to sign up for.
 2. **Generate an issuer seed** with \`randomSeed()\`. Put it in the server's
    environment. Never in the client bundle, never in a repo, never in a log.
 3. **Create the issuer** — \`Kei.server({ seed: process.env.KEI_SEED })\`. It

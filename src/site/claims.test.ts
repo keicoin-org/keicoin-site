@@ -166,51 +166,44 @@ describe('nothing implies the demos or the harness are finished', () => {
   })
 })
 
-describe('published and installed are kept apart', () => {
+describe('published and installed match again, since 0.6.0', () => {
   /**
-   * The gap this site gets wrong is not `master` versus npm. It is npm versus
-   * what `bun add kei-transaction` resolves, and the two stopped being the same
-   * question on 4 August 2026, when `@keicoin/market@0.2.0` and
-   * `@keicoin/player-economy@0.1.0` published against an umbrella that had gone
-   * out ninety minutes earlier pinning `^0.1.1` and taking no dependency on
-   * player-economy. Every package is published and an install still resolves
-   * neither, so "is it on npm" no longer answers "can the reader call it".
+   * The gap this site once got wrong was not `master` versus npm. It was npm
+   * versus what `bun add kei-transaction` resolves, and the two stopped being
+   * the same question for a few hours on 4 August 2026, when
+   * `@keicoin/market@0.2.0` and `@keicoin/player-economy@0.1.0` published
+   * against an umbrella that had gone out ninety minutes earlier pinning
+   * `^0.1.1` and taking no dependency on player-economy. `kei-transaction@0.6.0`,
+   * published the same day, is the umbrella that took both — the site's job is
+   * now to say that plainly, not to keep holding the gap open after it closed.
    */
-  test('the status page separates the two, by name', () => {
+  test('the status page names the release that closed the gap', () => {
     expect(status).toContain('Published vs installed')
-    expect(status).toContain('@keicoin/economy')
-    expect(status).toContain('0.1.1')
+    expect(status).toContain('kei-transaction@0.6.0')
+    expect(status).toContain('@keicoin/player-economy')
   })
 
   /**
-   * Every mention of a call an install does not reach has to sit within sight
-   * of the reason — before it or after it, since a table row states the caveat
-   * first and a code block states it second.
-   *
-   * The list is the point of maintenance, and it tracks reachability rather
-   * than the registry. `burn(` was on it until `@keicoin/tokens@0.5.0` shipped;
-   * leaving it would have warned readers off a call they can make. On it now:
-   * `kei.shop`, published but not a dependency of the umbrella, and the market
-   * aggregation, published at `0.2.0` behind a `^0.1.1` pin.
+   * The failure this file exists to catch in this direction: once something
+   * publishes and installs, the present-tense warning has to come off. A page
+   * that still calls `kei.shop` unreachable, or the market aggregation stuck at
+   * `0.1.1`, is as wrong as one that claimed them reachable too early — and
+   * describing the resolved incident in the past tense (see the row above)
+   * must stay legal, so this only refuses the present-tense claim.
    */
-  test('nothing offers an unreachable call without saying so nearby', () => {
-    const disclaimer = /not in the installable|NOT in the installable|not published|unpublished|does not depend on it|undefined|predates|resolves? (?:the market at |a |still )?0\.1\.1|still resolves/i
-    const unreachable = /kei\.shop|\.book\(|\.series\(|\.candles\(/g
+  test('nothing claims kei.shop or the market aggregation are still unreachable', () => {
     for (const surface of [...everyPage, ...machine]) {
-      for (const match of surface.matchAll(unreachable)) {
-        const from = Math.max(0, match.index - 400)
-        expect(surface.slice(from, match.index + 400)).toMatch(disclaimer)
-      }
+      expect(surface).not.toMatch(/kei\.shop`? is `?undefined/i)
+      expect(surface).not.toMatch(/plain (?:SDK )?install (?:still )?resolves (?:the market at )?`?0\.1\.1/i)
     }
   })
 
   /**
-   * The inverse, and the failure this file exists to catch in the other
-   * direction: once something publishes, the warning has to come off. A page
-   * that still calls `burn()` unpublished is as wrong as one that called it
-   * shipped too early, and only one of the two ever gets reported.
+   * The same inverse check for `burn()`, in place since `@keicoin/tokens@0.5.0`
+   * shipped: a page that still calls it unreachable is stale in the other
+   * direction, and only one of the two directions ever gets reported.
    */
-  test('nothing warns readers off a call that has since published', () => {
+  test('nothing warns readers off burn(), reachable since 0.5.0', () => {
     for (const surface of [...everyPage, ...machine]) {
       for (const match of surface.matchAll(/burn\(/g)) {
         const window = surface.slice(Math.max(0, match.index - 300), match.index + 300)

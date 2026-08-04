@@ -13,7 +13,7 @@ description: Open a player wallet, price presses on the server, commit a batch a
 
 | | |
 | --- | --- |
-| SDK | `bun add kei-transaction` — a plain dependency. That installs the current published release, `0.5.0`, which is what this page is written against. |
+| SDK | `bun add kei-transaction` — a plain dependency. That installs the current published release, `0.6.0`, which is what this page is written against. |
 | Runtime | Bun 1.3, or Node 20 or later. `Kei.server()` refuses to run in a browser. |
 | Chain | `MockNode` — in-memory, in this process, gone when it exits |
 | Seeds | Two. The issuer's, held by the server; the player's, held by the player. One key signs for one account and there is no `charge(someoneElse, …)`. |
