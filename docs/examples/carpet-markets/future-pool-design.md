@@ -14,11 +14,13 @@ Treat every code block below as a sketch of a shape somebody would have to build
 
 ## Status
 
-**Proposed. Not scheduled, not designed at the ledger, not implemented.** It sits
-behind the remaining v1 milestones and current higher-priority work (SPEC §14)
-and behind whatever the public testnet needs. It also runs
-against a standing non-goal: SPEC §3 rejects an "on-chain exchange, AMM, or order
-book," and §9.4 says the chain moves and records assets rather than pricing them.
+**Proposed. Not scheduled, not designed at the ledger, not implemented.** The
+SPEC carries this as explicit backlog in §9.5, which reaches the same two routes
+this page does and says the part worth reading first: the request keeps arriving
+"in a shape that sounds small and is not." It sits behind all four active tracks
+(SPEC §13) and behind whatever the public testnet needs. It also runs against a
+standing non-goal: SPEC §3 rejects an "on-chain exchange, AMM, or order book,"
+and §9.4 says the chain moves and records assets rather than pricing them.
 Nothing here can ship without that decision being deliberately revisited and the
 SPEC amended in the open. This page exists so the amendment argument is written
 down, not so the feature is assumed.
@@ -80,7 +82,7 @@ What is being borrowed and what is not:
 
 No claim in that README is repeated as a claim about Kei, and none of its code or
 mechanics are ported. Kei has no smart contract VM and is not getting one
-(SPEC §3, §15) — so anything below that resembles a "pool" has to be a ledger
+(SPEC §3, and §18 carries it as settled) — so anything below that resembles a "pool" has to be a ledger
 primitive or an off-chain service, and those are the two routes in this document.
 
 ## Pool semantics
@@ -109,9 +111,12 @@ The properties a proposal has to pin down before anyone writes code:
 
 ## Network and discovery
 
-**Discovery stays address- and registry-scoped.** SPEC §9.4 has no network-wide
-listing index, and `offers()` requires `from` on purpose. A pool does not change
-that: a pool would live on some account's chain, and finding pools would still
+**Discovery stays address- and registry-scoped.** Kei ships no network-wide
+listing index (SPEC §9.1), and `offers()` requires `from` on purpose. A pool does
+not change that, and SPEC §9.5 says so directly: finding pools stays explicit, by
+registry or account-scoped read, unless the no-global-indexer decision is
+reopened as its own separate question. A pool would live on some account's chain,
+and finding pools would still
 mean reading the accounts your app knows about — in Carpet Markets, the registry's
 list.
 
@@ -202,9 +207,8 @@ preferred on schedule.
 
 ## Migration plan
 
-Staged, and every stage is after the higher-priority milestones — this queues
-behind the remaining v1 milestones and current higher-priority work, plus a
-stable public testnet (SPEC §14, §12).
+Staged, and every stage is after higher-priority work — this queues behind all
+four active tracks (SPEC §13) and a stable public testnet.
 
 1. **Decide, in the SPEC.** An amendment that either admits a pool primitive as an
    exception to §3 with stated bounds, or closes the question. Nothing else starts
@@ -252,7 +256,9 @@ A stage is not done because it demoed. Concretely:
 ## Open decisions
 
 - Does SPEC §3's rejection of an "AMM or order book" get amended, bounded, or
-  upheld? Everything else is downstream of this.
+  upheld? Everything else is downstream of this, and §9.5 sets the bar for even
+  asking: name the feature that is impossible without a pool, rather than wanting
+  the interface that usually sits on one.
 - Is a withdrawable pool honest enough to ship, or does the seeder have to be
   locked in — and if locked in, for how long, on a chain with no clock?
 - One fixed quoting rule for the whole network, or parameters per pool? Anything
