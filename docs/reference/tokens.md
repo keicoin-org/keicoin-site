@@ -46,9 +46,10 @@ await gems.burn(500)   // issuer-only; burns from the issuer's own balance
 ```
 
 `burn()` shipped in `@keicoin/tokens@0.5.0` on 4 August 2026 and installs with
-`kei-transaction@0.5.0`. It was master-only for as long as 0.4.0 was the current
-release, and this page said so. [Status](https://keicoin.org/status) carries the
-installable-versus-merged line for what is still on the other side of it.
+the current `kei-transaction@0.6.0`. It was master-only for as long as 0.4.0 was
+the current release, and this page said so. [Status](https://keicoin.org/status)
+carries the installable-versus-merged line for what is still on the other side
+of it.
 
 ## Player methods
 
