@@ -45,9 +45,9 @@ await gems.supply()
 ```ts
 await gems.burn(500)   // on master; not in the installable 0.4.0
 ```
-It is on `kei-transaction`'s default branch and its version bump is an open
-release PR that still has to be approved. Installing the package today does not
-get you it. [Status](https://keicoin.org/status) carries the
+It is on `kei-transaction`'s default branch and its version bump is merged, but
+publishing is a separate approval that has not been given. Installing the package
+today does not get you it. [Status](https://keicoin.org/status) carries the
 installable-versus-merged line.
 :::
 
