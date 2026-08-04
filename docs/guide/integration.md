@@ -1,11 +1,38 @@
 ---
 title: Integration model
-description: Understand the player and issuer halves of a Kei integration.
+description: Separate player, issuer, ledger, game-state, indexing, and recovery authority in a Kei integration.
 ---
 
 # Integration model
 
-A Kei integration always has two signers. The player's browser controls the player's account. The game server controls the issuer account. Neither can sign for the other.
+## Outcome
+
+Build a purchase path where the player and issuer remain separate signers,
+orders and confirmed payments may arrive in either order, and one send hash can
+fulfill at most once. The executable proof runs both orderings through the same
+reconciliation function.
+
+## Run the integration proof
+
+```sh
+bun install --frozen-lockfile
+bun run docs/playgrounds/payment-reconciliation.ts
+# {"kind":"payment-reconciliation","scenarios":[{"ordering":"order-first","linkMatches":true,"deliveries":1},{"ordering":"payment-first","linkMatches":true,"deliveries":1}],"memoRefusal":"no-memo-yet"}
+```
+
+<<< ../playgrounds/payment-reconciliation.ts
+
+## Authority and trust boundary
+
+| Concern | Authority and limit |
+| --- | --- |
+| Player key | The player's wallet. The game may request a signature, never copy or use the key. |
+| Issuer key | Server-side secret storage used only by `Kei.server()`. It cannot debit a player. |
+| Balances and ownership | Accepted account-chain state. Application tables may cache, not replace it. |
+| Realtime game state | The game server or simulation authority: position, combat, presence, cooldowns, matchmaking. |
+| Market discovery/indexing | An application directory names bounded account chains to read. It cannot move assets or make a listing authoritative. |
+| Purchase meaning | The application's order table, joined to confirmed chain state by send hash. |
+| Recovery | Player-controlled seed backup or an explicitly chosen custody design. Kei has no automatic account-recovery service. |
 
 ## Player: browser
 
@@ -13,27 +40,19 @@ A Kei integration always has two signers. The player's browser controls the play
 import { Kei } from 'kei-transaction'
 
 const kei = await Kei.start()
-
-const order = await createOrder({ sku: 'sword' })
-const payment = await kei.pay({
-  to: gameAddress,
-  amount: 0.05,
-})
-
+const payment = await kei.pay({ to: gameAddress, amount: 0.05 })
 await attachPayment(order.id, payment.hash)
-
-const gems = await kei.token('GEM', gameAddress)
-const balance = await gems.balance()
 ```
 
-The player's seed stays with the player. A game asks the wallet to make a payment; it does not debit the player itself.
+The player's seed stays with the player. A game asks the wallet to make a
+payment; it does not debit the player itself.
 
 ## Issuer: server
 
 ```ts
 import { Kei } from 'kei-transaction'
 
-const game = await Kei.server({ seed: process.env.KEI_SEED })
+const game = await Kei.server({ seed: process.env.KEI_SEED! })
 
 const gems = await game.token.issue({
   name: 'Gems',
@@ -41,36 +60,59 @@ const gems = await game.token.issue({
   decimals: 0,
   transfer: 'open',
 })
-
-game.onPayment(async ({ from, amount }) => {
-  if (amount >= 0.05) await gems.mint(from, 100)
-})
 ```
 
-The issuer can issue assets and deliver them. It cannot authorize a payment from a player's account.
+The issuer can issue and deliver assets. It cannot authorize a payment from a
+player's account. Follow the [security rules](./security.md#authority-and-trust-boundary)
+before placing either signer in a process.
 
-## Purchase sequence
+## Purchase state transitions
 
 1. The player signs and publishes a payment.
-2. The player persists the returned send-block hash with the order over the game's normal server channel.
-3. The game observes the confirmed payment. `onPayment.hash` is its receive-block hash, so it resolves that block and uses its `link` as the player's send hash.
-4. The game validates the amount, recipient, and purchase context.
-5. The issuer signs delivery of currency or an item.
-6. The player observes the delivered asset in their wallet.
+2. The browser persists the returned send-block hash with the order over the
+   game's normal authenticated channel.
+3. The game observes a confirmed receive block. It resolves
+   `onPayment.hash`, then reads that block's `link` as the player's send hash.
+4. Order arrival and payment arrival each invoke the same reconciliation path.
+5. That path verifies recipient, sender, amount, and purchase context.
+6. One database transaction inserts a unique fulfillment keyed by send hash and
+   records the delivery request.
+7. The issuer signs delivery; the player later observes the asset in their own
+   account.
 
-Persist orders and confirmed payments independently by send hash, then invoke the same atomic, idempotent reconciliation path after either write. The payment can arrive before the browser attaches it to the order; a one-shot event handler would lose that purchase. A durable unique fulfillment record prevents the same confirmed payment from delivering twice.
-
-A Kei payment has no memo field in the current wire contract. The published SDK rejects `pay({ memo })`; use the confirmed payment hash as the exact purchase identifier.
+A payment can arrive before its order. An order can arrive before receiver
+processing. Neither is an error and neither justifies a one-shot event handler.
+A payment has no memo field in the current wire format; `no-memo-yet` forces the
+exact send hash to remain the identifier.
 
 ## What remains off-chain
 
-Kei replaces the ledger, not the game server. Keep real-time position, presence, combat rules, matchmaking, and per-instance mutable state in the systems already responsible for them.
+Kei replaces the ledger, not the game server. Keep position, presence, combat,
+matchmaking, cooldowns, and other fast-changing instance state in the system
+that owns the real-time loop. Keep account directories and catalogue search in
+bounded application indexes. Neither kind of application state may invent a
+balance or sign for a player.
 
-Use the chain for facts that benefit from durable ownership and settlement:
+## Failure cases
 
-- balances;
-- ownership;
-- transfers;
-- mint and burn history;
-- committed reward claims;
-- payment settlement.
+- A mismatched sender, recipient, amount, or order context is a refusal, not a
+  best-effort fulfillment.
+- A repeated callback or worker replay must encounter the existing unique
+  fulfillment record.
+- A lost reply after a signed write requires chain reconciliation before any
+  resubmission.
+- Lost player keys are not repaired by an issuer database. Make custody and
+  backup status visible before the wallet holds anything.
+- A global market or item browse view needs an explicit bounded index; do not
+  imply that one account-chain read discovers the network.
+
+Use the stable [error recovery categories](../reference/errors.md#recovery-categories)
+for control flow.
+
+## What `Kei.mock()` proves
+
+The proof runs the released player and issuer clients, creates real mock-chain
+send and receive blocks, resolves their hash link, exercises both application
+event orderings, refuses a memo, and proves exactly-once behavior in its sample
+store. It does not prove public-network consensus, database durability, wallet
+recovery, application authentication, or production readiness.
