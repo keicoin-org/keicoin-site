@@ -193,7 +193,7 @@ export function homePage(): string {
       'History on the chain',
       'No payment processor',
     ])}
-    ${jump('/use-cases', 'See what people ask for')}
+    ${jump('#use-cases', 'See what people ask for')}
   </div>
 
   <div class="split-evidence">
@@ -237,7 +237,7 @@ export function homePage(): string {
   </div>
 </div></section>
 
-<section><div class="wrap split">
+<section id="use-cases"><div class="wrap split">
   <div class="split-copy">
     <p class="eyebrow">Use cases</p>
     <h2>Find the one you were actually asked for.</h2>
@@ -245,7 +245,7 @@ export function homePage(): string {
       Each of these answers the request in the words it usually arrives in, with
       the API that satisfies it and the part that does not work yet named.
     </p>
-    ${jump('/use-cases', 'All use cases')}
+    ${jump('/docs', 'Browse the documentation')}
   </div>
 
   <div class="split-evidence">

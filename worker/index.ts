@@ -36,9 +36,13 @@ import { LocalWorkProvider, workRpcHandler } from '@keicoin/work'
 import { CLICK_NETWORK, CLICK_NODE_URL, CLICK_WORK_PATH } from '../src/site/clicker-network.js'
 
 interface Env {
-  ASSETS: Fetcher
+  ASSETS: { fetch(request: Request): Promise<Response> }
   /** Overrides the node the work server reads proof-of-work thresholds from. */
   KEI_NODE_URL?: string
+}
+
+interface WorkerHandler {
+  fetch(request: Request, env: Env): Promise<Response>
 }
 
 let handler: ((request: Request) => Promise<Response>) | undefined
@@ -56,16 +60,30 @@ function workHandler(env: Env): (request: Request) => Promise<Response> {
 }
 
 /**
- * The examples page moved into the documentation, where the rest of the writing
- * lives. `/examples/<demo>` is untouched — those are the demos themselves, on
- * their own Workers' path routes, and this Worker never sees them. Only the
- * bare index is matched, so the redirect cannot swallow a running demo.
+ * Editorial pages that moved keep permanent redirects to their canonical docs
+ * destinations. `/examples/<demo>` is untouched — those are the demos
+ * themselves, on their own Workers' path routes, and this Worker never sees
+ * them. Exact matches prevent a redirect from swallowing a running demo.
  */
 // The trailing slash is VitePress's own canonical form for a directory index,
 // so this lands on a 200 rather than on the asset binding's second redirect.
-const MOVED = new Map([
+export const MOVED = new Map([
   ['/examples', '/docs/examples/'],
   ['/examples/', '/docs/examples/'],
+  ['/use-cases', '/#use-cases'],
+  ['/use-cases/', '/#use-cases'],
+  ['/use-cases/in-game-currency', '/docs/reference/tokens'],
+  ['/use-cases/in-game-currency/', '/docs/reference/tokens'],
+  ['/use-cases/inventory-system', '/docs/reference/items'],
+  ['/use-cases/inventory-system/', '/docs/reference/items'],
+  ['/use-cases/community-market', '/docs/examples/carpet-markets/api'],
+  ['/use-cases/community-market/', '/docs/examples/carpet-markets/api'],
+  ['/use-cases/mmo-economy', '/docs/examples/world-of-wonder/auction-house'],
+  ['/use-cases/mmo-economy/', '/docs/examples/world-of-wonder/auction-house'],
+  ['/use-cases/loot-drops', '/docs/examples/world-of-wonder/loot-and-drops'],
+  ['/use-cases/loot-drops/', '/docs/examples/world-of-wonder/loot-and-drops'],
+  ['/use-cases/micropayments', '/docs/reference/wallet#payments'],
+  ['/use-cases/micropayments/', '/docs/reference/wallet#payments'],
 ])
 
 export default {
@@ -76,4 +94,4 @@ export default {
     if (moved) return Response.redirect(new URL(moved, url).toString(), 301)
     return env.ASSETS.fetch(request)
   },
-} satisfies ExportedHandler<Env>
+} satisfies WorkerHandler

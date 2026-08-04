@@ -37,7 +37,7 @@ async function write(path: string, contents: string): Promise<void> {
   await Bun.write(target, contents)
 }
 
-/** `/use-cases/inventory-system` → `use-cases/inventory-system/index.html`. */
+/** `/status` → `status/index.html`. */
 const fileFor = (path: string): string => (path === '/' ? 'index.html' : `${path.replace(/^\//, '')}/index.html`)
 
 await write('index.html', homePage())
