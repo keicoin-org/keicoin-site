@@ -104,6 +104,14 @@ export default defineConfig({
           },
         ],
       },
+      {
+        text: 'Project direction',
+        items: [
+          // Generated from docs/future/spec-sheet.yaml by `bun run spec:write`;
+          // the YAML is canonical and spec-sheet.test.ts fails on drift.
+          { text: 'Future spec sheet', link: '/future/spec-sheet' },
+        ],
+      },
     ],
     search: {
       provider: 'local',
