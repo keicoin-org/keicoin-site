@@ -41,15 +41,14 @@ await gems.balanceOf(playerAddress)
 await gems.supply()
 ```
 
-::: warning `burn()` is merged, not published
 ```ts
-await gems.burn(500)   // on master; not in the installable 0.4.0
+await gems.burn(500)   // issuer-only; burns from the issuer's own balance
 ```
-It is on `kei-transaction`'s default branch and its version bump is merged, but
-publishing is a separate approval that has not been given. Installing the package
-today does not get you it. [Status](https://keicoin.org/status) carries the
-installable-versus-merged line.
-:::
+
+`burn()` shipped in `@keicoin/tokens@0.5.0` on 4 August 2026 and installs with
+`kei-transaction@0.5.0`. It was master-only for as long as 0.4.0 was the current
+release, and this page said so. [Status](https://keicoin.org/status) carries the
+installable-versus-merged line for what is still on the other side of it.
 
 ## Player methods
 

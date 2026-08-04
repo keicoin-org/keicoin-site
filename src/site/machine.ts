@@ -117,7 +117,7 @@ anywhere, it refers to a plan that no longer exists; use the tracks above.
 ## Install
 
 \`\`\`sh
-bun add ${SITE.npm}@0.4.0     # or npm / pnpm / yarn
+bun add ${SITE.npm}@0.5.0     # or npm / pnpm / yarn
 \`\`\`
 
 ESM. TypeScript types included. Runs in a browser and in Node or Bun. No signup,
@@ -164,8 +164,7 @@ await gems.mint(to, amount)
 await gems.balanceOf(address)
 await gems.supply()
 
-// Merged on master, NOT in the installable 0.4.0. Do not write against it
-// without checking ${SITE.origin}/status first.
+// In the installable 0.5.0. It was master-only under 0.4.0.
 await gems.burn(amount)
 
 // Player
@@ -269,7 +268,7 @@ Answer these before writing code. Two of them cannot be changed later.
 
 ## Procedure
 
-1. **Install.** \`bun add ${SITE.npm}@0.4.0\`. Nothing to sign up for.
+1. **Install.** \`bun add ${SITE.npm}@0.5.0\`. Nothing to sign up for.
 2. **Generate an issuer seed** with \`randomSeed()\`. Put it in the server's
    environment. Never in the client bundle, never in a repo, never in a log.
 3. **Create the issuer** — \`Kei.server({ seed: process.env.KEI_SEED })\`. It

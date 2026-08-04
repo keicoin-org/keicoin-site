@@ -306,7 +306,7 @@ export function homePage(): string {
     <div class="limits">
       <h4>${escapeHtml(SITE.milestone)}</h4>
       <ul>
-        <li><strong>What you can install is SDK 0.4.0</strong>, and every <code>@keicoin/*</code> package with it. Item stats and the roll-supply fix are included, and the market is <code>0.1.1</code>.</li>
+        <li><strong>What you can install is <code>kei-transaction@0.5.0</code></strong>, and the <code>@keicoin/*</code> packages npm resolves under it. Item stats, the roll-supply fix, <code>token.burn()</code> and <code>kei.economy</code> recipes are included; the market is <code>0.1.1</code>, and <code>kei.shop</code> is not there at all — <code>@keicoin/player-economy</code> is unpublished.</li>
         <li><strong><code>Kei.start()</code> defaults to the public testnet.</strong> It is one rate-limited, best-effort dev node with weak consensus, no uptime promise, and no monetary value; <code>Kei.mock()</code> remains available for tests.</li>
         <li><strong>Rooted claims and atomic swaps settle on that testnet</strong>, measured on 3 August 2026 rather than inferred from CI: a claim lands, a double claim is refused, an offer locks its units, and one accept moves both legs — over the public URL. Run it yourself with <code>bun run test:m3-live</code>.</li>
         <li><strong>The demos are demos.</strong> <a href="/docs/examples/carpet-markets">Carpet Markets</a> and the hosted <a href="https://mmo.keicoin.org">World of Wonder</a> both run mock chains that reset. Carpet Markets in particular is weaker than the launchpads it is modelled on, and it is not production-ready or mainnet-ready — deliberately, because a launchpad is the worst possible first thing to put on a real network.</li>

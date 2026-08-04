@@ -134,13 +134,36 @@ describe('installable and merged are kept apart', () => {
    * Every mention of an unpublished call, wherever it appears, has to sit
    * within sight of the reason it will not work — before it or after it, since
    * a table row states the caveat first and a code block states it second.
+   *
+   * The list is the point of maintenance, and it moves with the registry rather
+   * than with `master`. `burn(` was on it until `@keicoin/tokens@0.5.0` shipped
+   * on 4 August 2026; leaving it here after that would have made the site warn
+   * readers away from a call they can make. What is on it now is `kei.shop`,
+   * from the unpublished `@keicoin/player-economy`, and the market aggregation
+   * that is `@keicoin/market@0.2.0` while npm serves `0.1.1`.
    */
   test('nothing offers an unpublished call without saying so nearby', () => {
-    const disclaimer = /not in the installable|NOT in the installable|not published/i
+    const disclaimer = /not in the installable|NOT in the installable|not published|unpublished|does not depend on it/i
+    const unpublished = /kei\.shop|\.book\(|\.series\(|\.candles\(/g
+    for (const surface of [...everyPage, ...machine]) {
+      for (const match of surface.matchAll(unpublished)) {
+        const from = Math.max(0, match.index - 400)
+        expect(surface.slice(from, match.index + 400)).toMatch(disclaimer)
+      }
+    }
+  })
+
+  /**
+   * The inverse, and the failure this file exists to catch in the other
+   * direction: once something publishes, the warning has to come off. A page
+   * that still calls `burn()` unpublished is as wrong as one that called it
+   * shipped too early, and only one of the two ever gets reported.
+   */
+  test('nothing warns readers off a call that has since published', () => {
     for (const surface of [...everyPage, ...machine]) {
       for (const match of surface.matchAll(/burn\(/g)) {
-        const from = Math.max(0, match.index - 300)
-        expect(surface.slice(from, match.index + 300)).toMatch(disclaimer)
+        const window = surface.slice(Math.max(0, match.index - 300), match.index + 300)
+        expect(window).not.toMatch(/not in the installable|NOT in the installable/i)
       }
     }
   })
