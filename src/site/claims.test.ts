@@ -117,36 +117,38 @@ describe('nothing implies the demos or the harness are finished', () => {
   })
 })
 
-describe('installable and merged are kept apart', () => {
+describe('published and installed are kept apart', () => {
   /**
-   * The gap between `master` and npm is where this site's wrong claims come
-   * from: `burn()` was listed as shipping in 0.4.0 for as long as it existed on
-   * a branch. A reader installing the package and calling it gets a
-   * `TypeError`, which reads as a broken SDK rather than as a wrong page.
+   * The gap this site gets wrong is not `master` versus npm. It is npm versus
+   * what `bun add kei-transaction` resolves, and the two stopped being the same
+   * question on 4 August 2026, when `@keicoin/market@0.2.0` and
+   * `@keicoin/player-economy@0.1.0` published against an umbrella that had gone
+   * out ninety minutes earlier pinning `^0.1.1` and taking no dependency on
+   * player-economy. Every package is published and an install still resolves
+   * neither, so "is it on npm" no longer answers "can the reader call it".
    */
   test('the status page separates the two, by name', () => {
-    expect(status).toContain('Installable vs merged')
-    expect(status).toContain('not published')
+    expect(status).toContain('Published vs installed')
     expect(status).toContain('@keicoin/economy')
+    expect(status).toContain('0.1.1')
   })
 
   /**
-   * Every mention of an unpublished call, wherever it appears, has to sit
-   * within sight of the reason it will not work — before it or after it, since
-   * a table row states the caveat first and a code block states it second.
+   * Every mention of a call an install does not reach has to sit within sight
+   * of the reason — before it or after it, since a table row states the caveat
+   * first and a code block states it second.
    *
-   * The list is the point of maintenance, and it moves with the registry rather
-   * than with `master`. `burn(` was on it until `@keicoin/tokens@0.5.0` shipped
-   * on 4 August 2026; leaving it here after that would have made the site warn
-   * readers away from a call they can make. What is on it now is `kei.shop`,
-   * from the unpublished `@keicoin/player-economy`, and the market aggregation
-   * that is `@keicoin/market@0.2.0` while npm serves `0.1.1`.
+   * The list is the point of maintenance, and it tracks reachability rather
+   * than the registry. `burn(` was on it until `@keicoin/tokens@0.5.0` shipped;
+   * leaving it would have warned readers off a call they can make. On it now:
+   * `kei.shop`, published but not a dependency of the umbrella, and the market
+   * aggregation, published at `0.2.0` behind a `^0.1.1` pin.
    */
-  test('nothing offers an unpublished call without saying so nearby', () => {
-    const disclaimer = /not in the installable|NOT in the installable|not published|unpublished|does not depend on it/i
-    const unpublished = /kei\.shop|\.book\(|\.series\(|\.candles\(/g
+  test('nothing offers an unreachable call without saying so nearby', () => {
+    const disclaimer = /not in the installable|NOT in the installable|not published|unpublished|does not depend on it|undefined|predates|resolves? (?:the market at |a |still )?0\.1\.1|still resolves/i
+    const unreachable = /kei\.shop|\.book\(|\.series\(|\.candles\(/g
     for (const surface of [...everyPage, ...machine]) {
-      for (const match of surface.matchAll(unpublished)) {
+      for (const match of surface.matchAll(unreachable)) {
         const from = Math.max(0, match.index - 400)
         expect(surface.slice(from, match.index + 400)).toMatch(disclaimer)
       }
