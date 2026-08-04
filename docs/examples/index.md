@@ -65,22 +65,36 @@ workspace-scoped tools, at most 24 model round-trips and thirty minutes — and
 stops.
 
 Measured against the [nine criteria on the status
-page](https://keicoin.org/status), criterion 1 partly holds and criteria 2–4 are
+page](https://keicoin.org/status), criterion 1 partly holds and criteria 2–4 and 6 are
 met for fresh blank 2D and Babylon.js 3D projects at unpublished draft
-integration checkpoint `60af518`: they install, build, start a loopback-only
+integration checkpoint `9d1e60a`: they install, build, start a loopback-only
 authoritative 20 Hz game server, and prove two headless clients observe each
 other move through the same connection module the browser uses. The committed
 smoke also refuses stale input, forged authority, protocol mismatch, foreign
 origins, and rate exhaustion.
 
-That is the **First Shared Encounter**, not a complete MMO. Criteria 5, 6, 8,
-and 9 remain open: position and progression do not survive a restart; no Kei
-currency, item, or player-to-player trade settles; the incomplete criteria
-cannot yet keep passing after harness deletion; and there is no release-quality
-30-second presentation proof. Criterion 7 remains open end to end. There is no
-Kei terminal UI, no session past that one pass, and no package published under
-either name. **If you want a running Kei MMO today, fork World of Wonder** —
-that is a real one.
+That is the **First Shared Encounter**, not a complete MMO. The generated
+`bun run economy:check` proof also uses the published `kei-transaction@0.6.0`
+package to provision GOLD and a Founder’s Sword directly to two player wallets.
+A mismatched expectation signs nothing and moves neither leg; the correct
+player-signed acceptance settles both legs atomically. The issuer finishes with
+none of either trade asset, and the game server imports no Kei package, holds no
+balance, and receives no credential. That is deterministic construction proof
+on one private `Kei.mock()` chain, not a runtime trade UI or public deployment.
+
+Criterion 5 and criteria 1, 7, 8, and 9 remain open. Position and progression do
+not survive a restart at this integration head; [draft PR
+#16](https://github.com/keicoin-org/create-kei-game/pull/16) is pending
+reconciliation. One invocation still stops after its first plan step, capability
+coverage remains open end to end, the incomplete criteria cannot yet keep
+passing after harness deletion, and there is no release-quality 30-second
+presentation proof. A socket character is not cryptographically bound to a Kei
+wallet. [Issue #17](https://github.com/keicoin-org/create-kei-game/issues/17) is
+the detailed presentation target: one recordable encounter with admitted art,
+blended motion, real audio, synchronized feedback, and a declared frame budget.
+There is no Kei terminal UI, no session past that one pass, and no package
+published under either name. **If you want a running Kei MMO today, fork World
+of Wonder** — that is a real one.
 :::
 
 ### See what it would decide, before it decides anything
@@ -92,10 +106,11 @@ anything is written.
 ```sh
 git clone -b codex/m9-game-harness https://github.com/keicoin-org/create-kei-game
 cd create-kei-game
-git checkout 60af518
+git checkout 9d1e60a
 bun install
 
-# Exact protocol checks plus the generated 2D/3D shared-encounter smoke.
+# Exact protocol checks plus the generated 2D/3D shared-encounter smoke. Each
+# clean generated project runs its own `bun run economy:check` proof.
 bun run test:generated
 
 bun run src/index.ts -- "Salvage Run" --3d \

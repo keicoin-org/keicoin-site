@@ -133,19 +133,22 @@ describe('nothing implies the demos or the harness are finished', () => {
       }
     })
 
-    test('the shared-encounter checkpoint closes 2–4 and keeps 5, 6, 8, and 9 open', () => {
+    test('the economy checkpoint closes 2–4 and 6 while keeping the remaining product gates open', () => {
       expect(HARNESS_CRITERIA[0]?.today).toContain('Partly')
       expect(HARNESS_CRITERIA[1]?.today).toBe('Met for fresh blank 2D and 3D projects')
       expect(HARNESS_CRITERIA[2]?.today).toContain('headless client connects')
       expect(HARNESS_CRITERIA[3]?.today).toContain('each headless client observes the other')
       expect(HARNESS_CRITERIA[4]?.today).toContain('do not survive a restart')
-      expect(HARNESS_CRITERIA[5]?.today).toBe('Open')
+      expect(HARNESS_CRITERIA[5]?.today).toContain('published `kei-transaction@0.6.0`')
+      expect(HARNESS_CRITERIA[5]?.today).toContain('direct player custody')
       expect(HARNESS_CRITERIA[6]?.today).toContain('Open end to end')
       expect(HARNESS_CRITERIA[7]?.today).toContain('Advanced, not met')
       expect(HARNESS_CRITERIA[8]?.today).toBe('Open')
-      expect(status).toContain('60af518')
-      expect(status).toContain('Criteria 2, 3, and 4 are met')
-      expect(status).toContain('Criteria 5, 6, 8, and 9 remain open')
+      expect(status).toContain('9d1e60a')
+      expect(status).toContain('Criteria 2, 3, 4, and 6 are met')
+      expect(status).toContain('Criterion 5 and criteria 1, 7, 8, and 9 remain open')
+      expect(status).toContain('bun run economy:check')
+      expect(status).toContain('Issue #17')
       expect(status).toContain('First Shared Encounter')
     })
 
