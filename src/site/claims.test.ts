@@ -237,16 +237,18 @@ describe('the published and installed graph matches', () => {
   test('the status page names both the current release and the release that closed the gap', () => {
     expect(status).toContain('Published vs installed')
     expect(status).toContain('kei-transaction@0.6.0')
-    expect(status).toContain('bun add kei-transaction gets you 0.7.0')
-    expect(status).toContain('@keicoin/market@0.3.0')
+    expect(status).toContain('bun add kei-transaction gets you 0.8.0')
+    expect(status).toContain('@keicoin/market@0.4.0')
     expect(status).toContain('@keicoin/player-economy')
+    expect(status).toContain('exact cross-multiplied raw ratios')
+    expect(status).toContain('unitPrice and spread fields remain numbers')
     for (const release of [
       'tokens at 0.5.2',
       'claims at 0.5.1',
       'wallet at 0.5.0',
-      'economy at 0.2.1',
-      'market at 0.3.0',
-      'player-economy at 0.1.1',
+      'economy at 0.2.2',
+      'market at 0.4.0',
+      'player-economy at 0.1.2',
       'core at 0.5.0',
       'work at 0.4.1',
     ]) expect(status).toContain(release)

@@ -194,7 +194,7 @@ Client-side proof-of-work is otherwise a visible pause mid-game, so precomputed 
 
 **Acceptance**
 
-- Verified: @keicoin/work is published at 0.4.1 and resolves from the kei-transaction@0.7.0 umbrella, per the npm registry; the site Worker's one route is the same-origin work endpoint, per keicoin-site/README.md.
+- Verified: @keicoin/work is published at 0.4.1 and resolves from the kei-transaction@0.8.0 umbrella, per the npm registry; the site Worker's one route is the same-origin work endpoint, per keicoin-site/README.md.
 
 ## Create Kei MMO: all nine one-shot criteria hold {#ms-create-kei-mmo-one-shot}
 
@@ -329,13 +329,13 @@ One skill per task (add a currency, sell an item from an NPC, accept a top-up, m
 
 <Badge type="tip" text="shipped" /> · repositories `kei-transaction`
 
-@keicoin/economy 0.2.1 ships declarative recipes with a dry run before anything is signed, plus weighted loot-table drops bound into the same claim root as an ordinary reward — with the honest caveat that drops are not verifiable randomness, because the roll happens on the game's server. @keicoin/player-economy 0.1.1 ships the player-owned shop that lists, buys, cancels, and gifts through the player's own key.
+@keicoin/economy 0.2.2 ships declarative recipes with a dry run before anything is signed, plus weighted loot-table drops bound into the same claim root as an ordinary reward — with the honest caveat that drops are not verifiable randomness, because the roll happens on the game's server. @keicoin/player-economy 0.1.2 ships the player-owned shop that lists, buys, cancels, and gifts through the player's own key.
 
 **Depends on:** [`dl-node-rooted-claims`](#dl-node-rooted-claims), [`dl-node-swap-settlement`](#dl-node-swap-settlement).
 
 **Acceptance**
 
-- Verified: @keicoin/economy is published at 0.2.1 and @keicoin/player-economy at 0.1.1, both reachable from a plain install of kei-transaction@0.7.0, per the npm registry.
+- Verified: @keicoin/economy is published at 0.2.2 and @keicoin/player-economy at 0.1.2, both reachable from a plain install of kei-transaction@0.8.0, per the npm registry.
 
 ### Errors that state their own fix, across the grown surface {#dl-sdk-error-fixes}
 
@@ -367,15 +367,15 @@ Wallet creation, send, and a confirmed payment with no signup, key, or extension
 
 - Verified: wallet, send, and confirmed payment work from a clean install against https://testnet.keicoin.org/rpc with no signup, key, or extension, and automatic receive works, measured 3 August 2026, per the kei umbrella README.md.
 
-### kei-transaction@0.7.0: the coordinated umbrella release {#dl-sdk-umbrella-release}
+### kei-transaction@0.8.0: the coordinated umbrella release {#dl-sdk-umbrella-release}
 
 <Badge type="tip" text="shipped" /> · repositories `kei-transaction`
 
-Every package is on npm and kei-transaction 0.7.0 reaches the coordinated graph: tokens 0.5.2, claims 0.5.1, wallet 0.5.0, economy 0.2.1, market 0.3.0, player-economy 0.1.1, core 0.5.0, and work 0.4.1. The earlier 0.6.0 umbrella first closed the 0.5.0 gap where kei.shop was undefined and the newer market was unreachable.
+Every package is on npm and kei-transaction 0.8.0 reaches the coordinated graph: tokens 0.5.2, claims 0.5.1, wallet 0.5.0, economy 0.2.2, market 0.4.0, player-economy 0.1.2, core 0.5.0, and work 0.4.1. Market 0.4.0 adds defensive read bounds and ranks book levels by exact cross-multiplied price ratios; the earlier 0.6.0 umbrella first closed the 0.5.0 gap where kei.shop was undefined and the newer market was unreachable.
 
 **Acceptance**
 
-- Verified: kei-transaction@0.7.0 is published with dependencies on @keicoin/core@^0.5.0, work@^0.4.1, claims@^0.5.1, tokens@^0.5.2, market@^0.3.0, wallet@^0.5.0, economy@^0.2.1, and player-economy@^0.1.1, verified against the npm registry on 4 August 2026.
+- Verified: kei-transaction@0.8.0 is published with dependencies on @keicoin/core@^0.5.0, work@^0.4.1, claims@^0.5.1, tokens@^0.5.2, market@^0.4.0, wallet@^0.5.0, economy@^0.2.2, and player-economy@^0.1.2, verified against the npm registry on 4 August 2026.
 
 ## Mainnet readiness — explicitly not a build task {#ms-mainnet-readiness}
 
@@ -574,7 +574,7 @@ The embeddable panel a game mounts inside itself — balance, inventory, pending
 
 **Acceptance**
 
-- Verified: @keicoin/wallet is published at 0.5.0 and ships in kei-transaction@0.7.0, per the npm registry.
+- Verified: @keicoin/wallet is published at 0.5.0 and ships in kei-transaction@0.8.0, per the npm registry.
 
 ### The standalone wallet (kei-wallet), merged {#dl-wallet-standalone}
 

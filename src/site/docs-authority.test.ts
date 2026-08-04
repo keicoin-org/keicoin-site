@@ -16,7 +16,7 @@ const root = join(import.meta.dir, '..', '..')
 const read = (...path: string[]): string => readFileSync(join(root, ...path), 'utf8').replace(/\r\n/g, '\n')
 
 const REQUIRED_HUMAN_CLAIMS = [
-  'kei-transaction@0.7.0',
+  'kei-transaction@0.8.0',
   'defineDropTable',
   'game.economy.drop',
   'kei.economy.verifyDrop',
@@ -61,8 +61,17 @@ describe('/docs has one deployed human source', () => {
   test('example prerequisites distinguish the current SDK from release history', () => {
     const fundamentals = read('docs', 'examples', 'button', 'fundamentals.md')
 
-    expect(fundamentals).toContain('current published release, `0.7.0`')
+    expect(fundamentals).toContain('current published release, `0.8.0`')
     expect(fundamentals).not.toContain('current published release, `0.6.0`')
+  })
+
+  test('the market guide distinguishes exact book ranking from number-valued display fields', () => {
+    const market = read('docs', 'examples', 'carpet-markets', 'api.md')
+
+    expect(market).toContain('@keicoin/market@0.4.0')
+    expect(market).toContain('raw quote/base')
+    expect(market).toContain('`unitPrice` and `spread` remain')
+    expect(market).toContain('`spread` can display as zero')
   })
 
   test(

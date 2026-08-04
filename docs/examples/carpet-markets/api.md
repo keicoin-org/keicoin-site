@@ -140,6 +140,7 @@ cancelExpired(): Promise<Cancellation[]>
 trades(options?: TradeOptions): Promise<Trade[]>
 medianPrice(asset, options?): Promise<number | null>
 price(asset, options?): Promise<PriceSummary | null>
+book(options: BookOptions): Promise<Book>
 ```
 
 An offer's hash **is** its id — the `swap_offer` block's hash. Read it from `offers()` rather than typing one:
@@ -165,6 +166,25 @@ cancellation.returned.asset   // back in alice's spendable balance
 ```
 
 `get()` reads one offer by hash and returns `null` for one that never existed. `mine()` is this wallet's own offers — it includes expired ones by default, because those are exactly the ones you need to see; pass `{ state: null }` for every state.
+
+`book()` turns one bounded walk of the accounts you name into consistently oriented asks and bids:
+
+```ts
+const book = await bob.market.book({
+  from: [alice.address, bob.address],
+  asset: sword,
+})
+
+book.asks[0]?.unitPrice // quote units per sword; cheapest ask first
+book.bids[0]?.unitPrice // the same units; highest bid first
+book.coverage           // what the bounded account walk read, missed, or truncated
+```
+
+Since `@keicoin/market@0.4.0`, best-level selection compares the raw quote/base
+ratios exactly, including asset decimal scaling. `unitPrice` and `spread` remain
+plain-number display fields, so two different exact prices can display the same
+number and `spread` can display as zero. The ordering still uses the exact
+ledger ratios.
 
 Price history is settled offers, nothing else:
 
