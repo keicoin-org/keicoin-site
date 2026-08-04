@@ -57,7 +57,7 @@ These are the current, live corrections — not general caution.
   network. Point readers at `lib/market.ts`, not at the interface around it.
 - **Create Kei MMO does not produce a complete working MMO.** It is an
   unpublished draft that plans a project and runs one bounded engine pass at
-  the first step of that plan. At draft integration head `12b5753`, fresh blank
+  the first step of that plan. At draft integration head `60af518`, fresh blank
   2D and 3D projects install, build, start an authoritative game server, and
   prove two headless clients see each other move, closing criteria 2–4. Restart
   persistence, Kei settlement, harness-deletion proof, and presentation remain

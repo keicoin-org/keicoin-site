@@ -92,7 +92,7 @@ describe('Create Kei MMO documentation boundary', () => {
     expect(publicCopy).not.toMatch(/eight (?:written )?criteria/i)
   })
 
-  test('states the 12b5753 shared-encounter checkpoint without implying a complete MMO', () => {
+  test('states the 60af518 shared-encounter checkpoint without implying a complete MMO', () => {
     expect(examplesProse).toContain('criteria 2–4 are met for fresh blank 2D and Babylon.js 3D projects')
     expect(examplesProse).toContain('two headless clients observe each other move')
     expect(examplesProse).toContain('Criteria 5, 6, 8, and 9 remain open')

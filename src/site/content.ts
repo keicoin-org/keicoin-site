@@ -85,7 +85,7 @@ export const TRACKS: Track[] = [
   {
     name: 'Create Kei MMO',
     where: 'The creation harness. **An unpublished draft, and far from its own claim** — fresh blank 2D and 3D projects now install, build, and prove a first shared authoritative encounter, but the one bounded harness pass still stops at the first plan step.',
-    state: '**An unpublished draft. At integration checkpoint `12b5753`, criteria 2–4 are met for fresh blank 2D and 3D projects; criteria 5, 6, 8, and 9 remain open.** See below.',
+    state: '**An unpublished draft. At integration checkpoint `60af518`, criteria 2–4 are met for fresh blank 2D and 3D projects; criteria 5, 6, 8, and 9 remain open.** See below.',
     done: 'One invocation produces a project that installs, builds, runs, shows two clients each other, persists, trades, and presents one 30-second core loop at release quality — and keeps working after the harness is deleted.',
   },
   {
@@ -388,7 +388,7 @@ await kei.items.ownedBy(address)    // [ item, ... ]`,
             MOCK_CAVEAT,
             '**The [hosted World of Wonder](https://mmo.keicoin.org) is live, not production-ready.** That copy runs a process-local mock chain, so nothing on it survives a restart. The source is public at [world-of-wonder](https://github.com/keicoin-org/world-of-wonder) and settles on the testnet by default.',
             '**Its auction house now has the screen and the settlement underneath it.** Browse, Sell and Mine read listings from player chains; buying moves the item and gold in one settlement with the game server taking no part. The hall only knows accounts it has heard from, and equipping, loot and quest rewards still run on the upstream inventory tables.',
-            `**Create Kei MMO does not build the complete MMO for you yet, and is not close.** The harness is an unpublished draft: it plans the project and then runs one bounded engine pass over the first step of that plan. At draft integration checkpoint \`12b5753\`, fresh blank 2D and 3D projects install, build, start an authoritative server, and prove two headless clients see each other move. Restart persistence, Kei trade, harness-deletion proof, and presentation remain open. Fork World of Wonder if you want a running MMO today — see [status](/status) for the ${HARNESS_CRITERIA_COUNT} criteria the harness is measured against.`,
+            `**Create Kei MMO does not build the complete MMO for you yet, and is not close.** The harness is an unpublished draft: it plans the project and then runs one bounded engine pass over the first step of that plan. At draft integration checkpoint \`60af518\`, fresh blank 2D and 3D projects install, build, start an authoritative server, and prove two headless clients see each other move. Restart persistence, Kei trade, harness-deletion proof, and presentation remain open. Fork World of Wonder if you want a running MMO today — see [status](/status) for the ${HARNESS_CRITERIA_COUNT} criteria the harness is measured against.`,
             'A chain is not a low-latency datastore. Do not put anything on the critical path of a 60 Hz loop on it.',
             'Consensus is weak until the validator set is distributed. Until then this is a testnet with branding, and it is not somewhere to put real value.',
           ],
@@ -607,7 +607,7 @@ export const PAGES: Page[] = [
 
       { kind: 'heading', text: 'Create Kei MMO does not build a complete MMO yet' },
       { kind: 'prose', text: `The harness’s headline promise is that you describe an MMO and get one. **That promise is currently far from met**, and "early" was not a thing anybody could check, so it now has ${HARNESS_CRITERIA_COUNT} criteria that are.` },
-      { kind: 'prose', text: 'Where it actually is at draft integration head `12b5753`: the repository’s default branch still carries the **retired three-template scaffolder**. The unpublished work behind [PR #1](https://github.com/keicoin-org/create-kei-game/pull/1) resolves an intent, plans it, prepares the project, and then runs **one bounded engine pass over the first step of that plan** — a real provider call, three workspace-scoped tools, at most 24 model round-trips and thirty minutes — and stops. Fresh blank 2D and Babylon.js 3D generated projects now install, build, and start a loopback-only authoritative 20 Hz game server. The [First Shared Encounter](https://github.com/keicoin-org/create-kei-game/pull/12) uses the generated project’s shared browser/headless connection, assigns player IDs on the server, and proves two headless clients observe each other move. There is no Kei terminal UI, no session past that one pass, and no package published under either name.' },
+      { kind: 'prose', text: 'Where it actually is at draft integration head `60af518`: the repository’s default branch still carries the **retired three-template scaffolder**. The unpublished work behind [PR #1](https://github.com/keicoin-org/create-kei-game/pull/1) resolves an intent, plans it, prepares the project, and then runs **one bounded engine pass over the first step of that plan** — a real provider call, three workspace-scoped tools, at most 24 model round-trips and thirty minutes — and stops. Fresh blank 2D and Babylon.js 3D generated projects now install, build, and start a loopback-only authoritative 20 Hz game server. The [First Shared Encounter](https://github.com/keicoin-org/create-kei-game/pull/12) uses the generated project’s shared browser/headless connection, assigns player IDs on the server, and proves two headless clients observe each other move. There is no Kei terminal UI, no session past that one pass, and no package published under either name.' },
       {
         kind: 'table',
         head: ['#', 'One invocation, no edits, must produce…', 'Today'],
@@ -651,9 +651,9 @@ cd create-kei-game
 
 # Pin the unpublished integration checkpoint described above and run its
 # exact protocol plus generated-project smoke.
-git checkout 12b5753
+git checkout 60af518
 bun install
-bun test test/scaffold-network.test.ts test/scaffold-smoke.test.ts --max-concurrency=1
+bun run test:generated
 
 # --plan-only needs no provider, no credential, and touches no directory.
 bun run src/index.ts -- "Salvage Run" --3d \\

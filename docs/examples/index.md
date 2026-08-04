@@ -67,7 +67,7 @@ stops.
 Measured against the [nine criteria on the status
 page](https://keicoin.org/status), criterion 1 partly holds and criteria 2–4 are
 met for fresh blank 2D and Babylon.js 3D projects at unpublished draft
-integration checkpoint `12b5753`: they install, build, start a loopback-only
+integration checkpoint `60af518`: they install, build, start a loopback-only
 authoritative 20 Hz game server, and prove two headless clients observe each
 other move through the same connection module the browser uses. The committed
 smoke also refuses stale input, forged authority, protocol mismatch, foreign
@@ -92,11 +92,11 @@ anything is written.
 ```sh
 git clone -b codex/m9-game-harness https://github.com/keicoin-org/create-kei-game
 cd create-kei-game
-git checkout 12b5753
+git checkout 60af518
 bun install
 
 # Exact protocol checks plus the generated 2D/3D shared-encounter smoke.
-bun test test/scaffold-network.test.ts test/scaffold-smoke.test.ts --max-concurrency=1
+bun run test:generated
 
 bun run src/index.ts -- "Salvage Run" --3d \
   --gameplay "Crews salvage derelict stations and haul cargo home." \

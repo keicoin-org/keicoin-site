@@ -143,7 +143,7 @@ describe('nothing implies the demos or the harness are finished', () => {
       expect(HARNESS_CRITERIA[6]?.today).toContain('Open end to end')
       expect(HARNESS_CRITERIA[7]?.today).toContain('Advanced, not met')
       expect(HARNESS_CRITERIA[8]?.today).toBe('Open')
-      expect(status).toContain('12b5753')
+      expect(status).toContain('60af518')
       expect(status).toContain('Criteria 2, 3, and 4 are met')
       expect(status).toContain('Criteria 5, 6, 8, and 9 remain open')
       expect(status).toContain('First Shared Encounter')

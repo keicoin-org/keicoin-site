@@ -79,7 +79,7 @@ user rather than passing the name through:
   complete working MMO. It is an unpublished draft on a branch: it resolves an
   intent, plans it, prepares a project, and runs one bounded engine pass over
   the first step of that plan — then stops. At draft integration head
-  \`12b5753\`, criterion 1 partly holds and criteria 2–4 are met for fresh blank
+  \`60af518\`, criterion 1 partly holds and criteria 2–4 are met for fresh blank
   2D and Babylon.js 3D projects: they install, build, start an authoritative
   game server, and prove two headless clients observe each other move. Criteria
   5, 6, 8, and 9 remain open: no restart persistence, Kei settlement,
