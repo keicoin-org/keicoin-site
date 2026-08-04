@@ -64,7 +64,9 @@ assert.equal(recoveryFor(noMemo, 'write'), 'permanent')
 
 const offline = new HttpNode({
   url: 'https://offline.invalid/rpc',
-  fetch: async () => { throw new Error('offline by construction') },
+  // A stub that only ever throws still has to satisfy `typeof fetch`, which
+  // carries `preconnect` on this runtime. The cast is the stub saying so.
+  fetch: (async () => { throw new Error('offline by construction') }) as unknown as typeof globalThis.fetch,
 })
 const unavailable = await refused(() => offline.accountInfo(buyer.address))
 assert.equal(unavailable.code, 'node-unreachable')

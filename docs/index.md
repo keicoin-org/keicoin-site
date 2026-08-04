@@ -137,6 +137,10 @@ to the table the player saw and that the award is an entry owed to that player;
 it does not prove the server rolled fairly.
 :::
 
+The [loot tables reference](./reference/drops.md) runs the whole batch — roll,
+verify, claim, the refusal of a rewritten table, and the close — as one file you
+can execute.
+
 ### Player-owned shop
 
 The player's own key lists, buys, cancels, or gifts. The game never takes
@@ -156,10 +160,14 @@ testnet**. Do not infer public-testnet shop settlement from the rooted-claim and
 swap conformance results above.
 :::
 
+The [player shop reference](./reference/shop.md) runs a whole stall — list,
+browse, buy, the refusals, cancel, and gift — and asserts that the game server
+ends holding none of it.
+
 ## Continue
 
 - Read the [integration model](./guide/integration.md) before building a purchase flow.
 - Treat the [security rules](./guide/security.md) as requirements, not recommendations.
-- Use the [wallet](./reference/wallet.md), [token](./reference/tokens.md), and [item](./reference/items.md) references while integrating.
+- Use the [wallet](./reference/wallet.md), [token](./reference/tokens.md), and [item](./reference/items.md) references while integrating, and the [loot table](./reference/drops.md) and [player shop](./reference/shop.md) references for the economy surface above.
 - Read a working game: the [examples](./examples/index.md) are three of them, each one structurally different.
 - Check the [current milestone and known gaps](https://keicoin.org/status).

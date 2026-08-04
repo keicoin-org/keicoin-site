@@ -219,6 +219,13 @@ await kei.shop.buy(shelves.listings[0])
 await kei.shop.gift({ to: friend, item: 'sword' })
 \`\`\`
 
+Both halves have a reference page whose snippet is a checked-in file rather than
+an illustration: ${SITE.origin}/docs/reference/drops runs one batch end to end —
+the roll, verification, the claim, the refusal of a rewritten table, and the
+close — and ${SITE.origin}/docs/reference/shop runs a whole stall and asserts the
+game server ends holding none of it. Both execute against \`Kei.mock()\` with no
+network, and each states what its mock does not prove.
+
 ### Items — supply-1 tokens, no separate type and no indexer
 
 \`\`\`js

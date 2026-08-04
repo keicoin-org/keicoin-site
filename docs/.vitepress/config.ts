@@ -64,6 +64,8 @@ export default defineConfig({
           { text: 'Tokens', link: '/reference/tokens' },
           { text: 'Items', link: '/reference/items' },
           { text: 'Batch rewards', link: '/reference/claims' },
+          { text: 'Loot tables', link: '/reference/drops' },
+          { text: 'Player shop', link: '/reference/shop' },
           { text: 'Errors', link: '/reference/errors' },
         ],
       },
