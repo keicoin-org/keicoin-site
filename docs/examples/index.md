@@ -65,9 +65,9 @@ workspace-scoped tools, at most 24 model round-trips and thirty minutes — and
 stops.
 
 Measured against the [nine criteria on the status
-page](https://keicoin.org/status), criterion 1 partly holds and criteria 2–4 and 6 are
-met for fresh blank 2D and Babylon.js 3D projects at unpublished draft
-integration checkpoint `9d1e60a`: they install, build, start a loopback-only
+page](https://keicoin.org/status), criterion 1 partly holds and criteria 2–6 are
+met only for fresh blank 2D and Babylon.js 3D construction scope at unpublished
+draft integration checkpoint `b6edae7`: they install, build, start a loopback-only
 authoritative 20 Hz game server, and prove two headless clients observe each
 other move through the same connection module the browser uses. The committed
 smoke also refuses stale input, forged authority, protocol mismatch, foreign
@@ -82,14 +82,21 @@ none of either trade asset, and the game server imports no Kei package, holds no
 balance, and receives no credential. That is deterministic construction proof
 on one private `Kei.mock()` chain, not a runtime trade UI or public deployment.
 
-Criterion 5 and criteria 1, 7, 8, and 9 remain open. Position and progression do
-not survive a restart at this integration head; [draft PR
-#16](https://github.com/keicoin-org/create-kei-game/pull/16) is pending
-reconciliation. One invocation still stops after its first plan step, capability
-coverage remains open end to end, the incomplete criteria cannot yet keep
-passing after harness deletion, and there is no release-quality 30-second
-presentation proof. A socket character is not cryptographically bound to a Kei
-wallet. [Issue #17](https://github.com/keicoin-org/create-kei-game/issues/17) is
+The generated `bun run restart-proof` also shuts the server down cleanly and
+restarts it on the same SQLite database. The exact server-assigned player ID,
+position, XP, and server-derived level survive; forged identity, position,
+progression, inventory, balance, currency, and settlement fields change neither
+memory nor SQLite. The browser receives an opaque resume token, while SQLite
+stores only its SHA-256 hash and the character fields — no Kei economy state.
+
+Criteria 1, 7, 8, and 9 remain open. One invocation still stops after its first
+plan step, capability coverage remains open end to end, the incomplete criteria
+cannot yet keep passing after harness deletion, and there is no release-quality
+30-second presentation proof. A resume token is not account recovery, and a
+socket character is not cryptographically bound to a Kei wallet. SQLite WAL is
+not a multi-writer store or a guarantee against crash loss. Scale, public
+hosting, prediction/reconciliation, and cross-shard migration remain outside
+this checkpoint. [Issue #17](https://github.com/keicoin-org/create-kei-game/issues/17) is
 the detailed presentation target: one recordable encounter with admitted art,
 blended motion, real audio, synchronized feedback, and a declared frame budget.
 There is no Kei terminal UI, no session past that one pass, and no package
@@ -106,11 +113,11 @@ anything is written.
 ```sh
 git clone -b codex/m9-game-harness https://github.com/keicoin-org/create-kei-game
 cd create-kei-game
-git checkout 9d1e60a
+git checkout b6edae7
 bun install
 
-# Exact protocol checks plus the generated 2D/3D shared-encounter smoke. Each
-# clean generated project runs its own `bun run economy:check` proof.
+# Exact protocol checks plus the generated 2D/3D construction smoke. Each clean
+# generated project runs its own `bun run restart-proof` and `economy:check`.
 bun run test:generated
 
 bun run src/index.ts -- "Salvage Run" --3d \

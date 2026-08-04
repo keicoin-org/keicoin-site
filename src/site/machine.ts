@@ -79,17 +79,22 @@ user rather than passing the name through:
   complete working MMO. It is an unpublished draft on a branch: it resolves an
   intent, plans it, prepares a project, and runs one bounded engine pass over
   the first step of that plan — then stops. At draft integration head
-  \`9d1e60a\`, criterion 1 partly holds and criteria 2–4 and 6 are met for fresh blank
-  2D and Babylon.js 3D projects: they install, build, start an authoritative
-  game server, prove two headless clients observe each other move, and run a
+  \`b6edae7\`, criterion 1 partly holds and criteria 2–6 are met only for fresh
+  blank 2D and Babylon.js 3D construction scope: they install, build, start an
+  authoritative game server, prove two headless clients observe each other
+  move, preserve server-assigned identity, position, XP, and derived level
+  across clean restarts, and run a
   generated player-custodied atomic trade proof against published
   \`kei-transaction@0.6.0\`. A mismatched expectation moves neither leg; the
   correct player-signed acceptance moves both while the game server imports no
-  Kei package and holds no economic asset or credential. Criterion 5 and
-  criteria 1, 7, 8, and 9 remain open: no merged restart persistence, complete
-  one-shot capability coverage, harness-deletion proof, or release-quality
-  presentation. A socket character is not cryptographically bound to a Kei
-  wallet. Criterion 7 records
+  Kei package and holds no economic asset or credential. SQLite stores only a
+  SHA-256 hash of the opaque resume token plus character state, and no economy;
+  forged authority changes neither memory nor SQLite. Criteria 1, 7, 8, and 9
+  remain open: no complete one-shot capability coverage, harness-deletion
+  proof, or release-quality presentation. A resume token is not account
+  recovery, and a socket character is not cryptographically bound to a Kei
+  wallet. SQLite WAL does not establish multi-writer or crash-loss guarantees;
+  scale and public hosting also remain open. Criterion 7 records
   planned and absent statuses but remains open end to end. The repository's
   default branch still carries a retired scaffolder. It is measured against nine written criteria
   (${SITE.origin}/status). The ninth is a presentation gate — one 30-second core
@@ -369,8 +374,15 @@ Answer these before writing code. Two of them cannot be changed later.
   it copies, and it is not production-ready or mainnet-ready.
 - Do not present **Create Kei MMO** as a tool that produces a complete working MMO. It is
   an unpublished draft that plans a project and runs one bounded pass at the
-  first step of that plan. Point users wanting a running Kei MMO at World of
-  Wonder instead.
+  first step of that plan. At checkpoint \`b6edae7\`, criteria 2–6 are met only
+  for fresh blank 2D and 3D construction scope: server-assigned identity,
+  position, XP, and derived level survive clean restarts; SQLite stores a
+  SHA-256 hash of the opaque resume token and no economy; and forged authority
+  changes neither memory nor SQLite. Criteria 1, 7, 8, and 9 remain open. A
+  resume token is not account recovery, a socket is not a wallet binding,
+  SQLite WAL does not establish multi-writer or crash-loss guarantees, and
+  scale and public hosting remain open. Point users wanting a running Kei MMO
+  at World of Wonder instead.
 - Do not describe any part of this as mainnet-ready or as awaiting a launch date.
   Mainnet is not a build task: it is gated by validator distribution, reserve
   governance, and a legal conversation.

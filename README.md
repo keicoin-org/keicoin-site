@@ -57,11 +57,13 @@ These are the current, live corrections — not general caution.
   network. Point readers at `lib/market.ts`, not at the interface around it.
 - **Create Kei MMO does not produce a complete working MMO.** It is an
   unpublished draft that plans a project and runs one bounded engine pass at
-  the first step of that plan. At draft integration head `9d1e60a`, fresh blank
-  2D and 3D projects close criteria 2–4 and 6: they install, build, prove two
-  headless clients see each other move, and run one player-custodied atomic Kei
-  trade. Criterion 5 remains open while draft PR #16 is reconciled; criteria 1,
-  7, 8, and 9 and socket-to-wallet proof also remain open. The
+  the first step of that plan. At draft integration head `b6edae7`, fresh blank
+  2D and 3D projects close criteria 2–6 at construction scope: they install,
+  build, prove two headless clients see each other move, preserve exact
+  server-assigned character state across clean restarts, and run one
+  player-custodied atomic Kei trade. Criteria 1, 7, 8, and 9, account recovery,
+  socket-to-wallet proof, multi-writer and crash-loss guarantees beyond SQLite
+  WAL, scale, and public hosting remain open. The
   `create-kei-game@0.2.0` package on npm is a retired scaffolder and a different
   product.
 - **No milestone numbers.** The M0–M10 ladder was retired on 3 August 2026 and

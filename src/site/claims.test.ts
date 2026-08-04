@@ -133,23 +133,45 @@ describe('nothing implies the demos or the harness are finished', () => {
       }
     })
 
-    test('the economy checkpoint closes 2–4 and 6 while keeping the remaining product gates open', () => {
+    test('the persistence and economy checkpoint closes 2–6 at construction scope while keeping the remaining product gates open', () => {
       expect(HARNESS_CRITERIA[0]?.today).toContain('Partly')
       expect(HARNESS_CRITERIA[1]?.today).toBe('Met for fresh blank 2D and 3D projects')
       expect(HARNESS_CRITERIA[2]?.today).toContain('headless client connects')
       expect(HARNESS_CRITERIA[3]?.today).toContain('each headless client observes the other')
-      expect(HARNESS_CRITERIA[4]?.today).toContain('do not survive a restart')
+      expect(HARNESS_CRITERIA[4]?.today).toContain('server-assigned identity, position, XP, and derived level survive clean restarts')
+      expect(HARNESS_CRITERIA[4]?.today).toContain('forged authority changes neither memory nor SQLite')
       expect(HARNESS_CRITERIA[5]?.today).toContain('published `kei-transaction@0.6.0`')
       expect(HARNESS_CRITERIA[5]?.today).toContain('direct player custody')
       expect(HARNESS_CRITERIA[6]?.today).toContain('Open end to end')
       expect(HARNESS_CRITERIA[7]?.today).toContain('Advanced, not met')
       expect(HARNESS_CRITERIA[8]?.today).toBe('Open')
-      expect(status).toContain('9d1e60a')
-      expect(status).toContain('Criteria 2, 3, 4, and 6 are met')
-      expect(status).toContain('Criterion 5 and criteria 1, 7, 8, and 9 remain open')
+      expect(status).toContain('b6edae7')
+      expect(status).toContain('Criteria 2, 3, 4, 5, and 6 are met')
+      expect(status).toContain('Criteria 1, 7, 8, and 9 remain open')
+      expect(status).toContain('bun run restart-proof')
       expect(status).toContain('bun run economy:check')
+      expect(status).toContain('SHA-256 hash')
+      expect(status).toContain('database schema stores no Kei economy state')
+      expect(status).toContain('not account recovery')
+      expect(status).toContain('not a multi-writer store or a guarantee against crash loss')
+      expect(status).toContain('Scale, public hosting')
       expect(status).toContain('Issue #17')
       expect(status).toContain('First Shared Encounter')
+    })
+
+    test('both machine-readable surfaces carry the exact persistence boundary', () => {
+      for (const surface of machine) {
+        const prose = surface.replace(/\s+/g, ' ')
+        expect(prose).toContain('b6edae7')
+        expect(prose).toContain('criteria 2–6 are met only for fresh')
+        expect(prose).toContain('server-assigned identity, position, XP, and derived level')
+        expect(prose).toContain('SHA-256 hash of the opaque resume token')
+        expect(prose).toContain('forged authority changes neither memory nor SQLite')
+        expect(prose).toContain('Criteria 1, 7, 8, and 9 remain open')
+        expect(prose).toContain('not account recovery')
+        expect(prose).toContain('multi-writer or crash-loss guarantees')
+        expect(prose).toContain('scale and public hosting')
+      }
     })
 
     test('the two criteria that decide the product are named as such', () => {
