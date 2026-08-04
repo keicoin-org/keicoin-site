@@ -107,7 +107,10 @@ balance or sign for a player.
   imply that one account-chain read discovers the network.
 
 Use the stable [error recovery categories](../reference/errors.md#recovery-categories)
-for control flow.
+for control flow, and check
+[where each code comes from](../reference/errors.md#where-the-code-comes-from-decides-whether-it-is-stable)
+before branching on one: a refusal raised by the node arrives as `node-error`,
+not as the granular code `Kei.mock()` returns for the same attempt.
 
 ## What `Kei.mock()` proves
 
@@ -116,3 +119,7 @@ send and receive blocks, resolves their hash link, exercises both application
 event orderings, refuses a memo, and proves exactly-once behavior in its sample
 store. It does not prove public-network consensus, database durability, wallet
 recovery, application authentication, or production readiness.
+
+For the parts that only a real node can settle — a rooted claim, an atomic swap,
+and the refusal codes the node actually sends — run the
+[public testnet proof](../reference/testnet.md).

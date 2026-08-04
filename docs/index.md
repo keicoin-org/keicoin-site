@@ -9,6 +9,8 @@ Kei has two entry points: one for a player's browser and one for the game's serv
 
 ::: info Live on the public testnet
 The installable SDK is **`kei-transaction@0.8.0`**, and it defaults to the public testnet at `https://testnet.keicoin.org/rpc`. Since 3 August 2026 that node accepts rooted-claim and swap blocks: a rooted claim lands, a second claim from the same account is refused, an offer locks its units, and one accept moves both legs — measured over the public URL, not inferred from CI.
+
+Every sentence above is one command: `bun run docs/playgrounds/testnet-live.ts` publishes those blocks to that URL and asserts each of them. It is the [public testnet proof](./reference/testnet.md), and it is the only playground on this site that uses the network.
 :::
 
 ::: warning It is still one node

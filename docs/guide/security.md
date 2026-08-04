@@ -105,7 +105,10 @@ silently dropping application identity; the send hash is the exact key.
 | Player loses an unrecoverable seed | State the custody loss honestly; the issuer cannot forge ownership recovery. |
 
 The executable classifier in [Errors](../reference/errors.md#recovery-categories)
-keeps retry, refresh, and permanent refusal separate.
+keeps retry, refresh, and permanent refusal separate. Before you branch on a
+code, check [where that code comes from](../reference/errors.md#where-the-code-comes-from-decides-whether-it-is-stable):
+a refusal the node raised arrives as `node-error`, and the granular codes the
+mock returns for the same attempt are not sent over the wire.
 
 ## Screenshot evidence
 
@@ -123,6 +126,12 @@ send/receive linkage, stable memo refusal, both event orderings, and one
 idempotent reconciliation path. It does not prove secret-store isolation,
 database atomicity, browser compromise resistance, account recovery,
 public-network durability, distributed consensus, or monetary value.
+
+The [public testnet proof](../reference/testnet.md) is the one playground here
+that does publish blocks to `https://testnet.keicoin.org/rpc`. It settles a
+rooted claim and an atomic swap there, and it records where the node's refusals
+differ from the mock's. It still proves nothing about production readiness: one
+node accepting blocks is a working API, not consensus.
 
 ::: warning Pre-release network
 The public testnet is one rate-limited, best-effort dev node with weak consensus,
