@@ -16,7 +16,7 @@ const root = join(import.meta.dir, '..', '..')
 const read = (...path: string[]): string => readFileSync(join(root, ...path), 'utf8').replace(/\r\n/g, '\n')
 
 const REQUIRED_HUMAN_CLAIMS = [
-  'kei-transaction@0.6.0',
+  'kei-transaction@0.7.0',
   'defineDropTable',
   'game.economy.drop',
   'kei.economy.verifyDrop',
@@ -56,6 +56,13 @@ describe('/docs has one deployed human source', () => {
     for (const api of REQUIRED_HUMAN_CLAIMS.slice(1, 8)) expect(machine).toContain(api)
     expect(machine).toContain('Not verifiable randomness')
     expect(machine).toContain('not yet run against the public testnet')
+  })
+
+  test('example prerequisites distinguish the current SDK from release history', () => {
+    const fundamentals = read('docs', 'examples', 'button', 'fundamentals.md')
+
+    expect(fundamentals).toContain('current published release, `0.7.0`')
+    expect(fundamentals).not.toContain('current published release, `0.6.0`')
   })
 
   test(

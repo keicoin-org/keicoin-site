@@ -64,9 +64,10 @@ describe('the machine-readable pages', () => {
   })
 
   test('the install line is the version that is actually installable', () => {
-    expect(llmsTxt()).toContain('kei-transaction@0.6.0')
-    expect(agentsMd()).toContain('kei-transaction@0.6.0')
-    expect(llmsTxt()).not.toContain('kei-transaction@0.5.0')
+    for (const file of [llmsTxt(), agentsMd()]) {
+      expect(file).toContain('kei-transaction@0.7.0')
+      expect(file).not.toContain('bun add kei-transaction@0.6.0')
+    }
   })
 })
 

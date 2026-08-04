@@ -214,7 +214,7 @@ describe('nothing implies the demos or the harness are finished', () => {
   })
 })
 
-describe('published and installed match again, since 0.6.0', () => {
+describe('the published and installed graph matches', () => {
   /**
    * The gap this site once got wrong was not `master` versus npm. It was npm
    * versus what `bun add kei-transaction` resolves, and the two stopped being
@@ -225,10 +225,22 @@ describe('published and installed match again, since 0.6.0', () => {
    * published the same day, is the umbrella that took both — the site's job is
    * now to say that plainly, not to keep holding the gap open after it closed.
    */
-  test('the status page names the release that closed the gap', () => {
+  test('the status page names both the current release and the release that closed the gap', () => {
     expect(status).toContain('Published vs installed')
     expect(status).toContain('kei-transaction@0.6.0')
+    expect(status).toContain('bun add kei-transaction gets you 0.7.0')
+    expect(status).toContain('@keicoin/market@0.3.0')
     expect(status).toContain('@keicoin/player-economy')
+    for (const release of [
+      'tokens at 0.5.2',
+      'claims at 0.5.1',
+      'wallet at 0.5.0',
+      'economy at 0.2.1',
+      'market at 0.3.0',
+      'player-economy at 0.1.1',
+      'core at 0.5.0',
+      'work at 0.4.1',
+    ]) expect(status).toContain(release)
   })
 
   /**
