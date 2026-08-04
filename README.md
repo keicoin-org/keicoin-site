@@ -71,7 +71,10 @@ These are the current, live corrections — not general caution.
   that no longer exists.
 
 `src/site/claims.test.ts` and `src/site/harness-docs.test.ts` hold all four down.
-If one fails, the copy is wrong — not the test.
+The claims test also pins the current published package graph across the human
+and machine-readable surfaces, so a coordinated SDK release requires updating
+the record and its assertions together. If one fails, the copy is wrong — not
+the test.
 
 ## Layout
 

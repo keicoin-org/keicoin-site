@@ -8,7 +8,7 @@ description: Install the Kei SDK and send a confirmed payment.
 Kei has two entry points: one for a player's browser and one for the game's server. A key signs only for its own account, so those roles never collapse into one.
 
 ::: info Live on the public testnet
-The installable SDK is **`kei-transaction@0.7.0`**, and it defaults to the public testnet at `https://testnet.keicoin.org/rpc`. Since 3 August 2026 that node accepts rooted-claim and swap blocks: a rooted claim lands, a second claim from the same account is refused, an offer locks its units, and one accept moves both legs — measured over the public URL, not inferred from CI.
+The installable SDK is **`kei-transaction@0.8.0`**, and it defaults to the public testnet at `https://testnet.keicoin.org/rpc`. Since 3 August 2026 that node accepts rooted-claim and swap blocks: a rooted claim lands, a second claim from the same account is refused, an offer locks its units, and one accept moves both legs — measured over the public URL, not inferred from CI.
 :::
 
 ::: warning It is still one node
@@ -95,8 +95,8 @@ A Kei payment has no memo field in the current wire contract. The SDK rejects `p
 
 ## Economy helpers in the current umbrella
 
-`kei-transaction@0.7.0` depends on `@keicoin/economy@0.2.1` and
-`@keicoin/player-economy@0.1.1`. A plain install reaches weighted loot-table
+`kei-transaction@0.8.0` depends on `@keicoin/economy@0.2.2` and
+`@keicoin/player-economy@0.1.2`. A plain install reaches weighted loot-table
 drops through `kei.economy` and the player-owned stall through `kei.shop`. The
 earlier `0.6.0` umbrella first closed that installation gap; `0.5.0` did not
 reach the shop.
