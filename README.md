@@ -55,12 +55,14 @@ These are the current, live corrections — not general caution.
   weaker than the launchpads it is modelled on, and it cannot become
   mainnet-ready — a launchpad is the worst possible first thing to put on a real
   network. Point readers at `lib/market.ts`, not at the interface around it.
-- **Create Kei MMO does not produce a working game.** It is an unpublished draft
-  that plans a project and runs one bounded engine pass at the first step of that
-  plan. At draft head `a9270a1`, fresh blank 2D and 3D projects install and build,
-  closing criterion 2 only; static HTTP probes do not execute a headless client
-  or prove criterion 3's game connection. The `create-kei-game@0.2.0` package on
-  npm is a retired scaffolder and a different product.
+- **Create Kei MMO does not produce a complete working MMO.** It is an
+  unpublished draft that plans a project and runs one bounded engine pass at
+  the first step of that plan. At draft integration head `12b5753`, fresh blank
+  2D and 3D projects install, build, start an authoritative game server, and
+  prove two headless clients see each other move, closing criteria 2–4. Restart
+  persistence, Kei settlement, harness-deletion proof, and presentation remain
+  open (criteria 5, 6, 8, and 9). The `create-kei-game@0.2.0` package on npm is a
+  retired scaffolder and a different product.
 - **No milestone numbers.** The M0–M10 ladder was retired on 3 August 2026 and
   replaced by four concurrent tracks. A page still saying "M5" describes a plan
   that no longer exists.

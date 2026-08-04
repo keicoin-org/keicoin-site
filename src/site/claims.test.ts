@@ -103,8 +103,8 @@ describe('nothing implies the demos or the harness are finished', () => {
     expect(status).toContain('append-only')
   })
 
-  test('the status page says the harness does not build an MMO yet', () => {
-    expect(status).toContain('Create Kei MMO does not build an MMO yet')
+  test('the status page says the harness does not build a complete MMO yet', () => {
+    expect(status).toContain('Create Kei MMO does not build a complete MMO yet')
     expect(status).toContain('unpublished draft')
     // The criterion that decides whether the product exists.
     expect(status).toContain('Two clients seeing each other move')
@@ -133,15 +133,20 @@ describe('nothing implies the demos or the harness are finished', () => {
       }
     })
 
-    test('the checkpoint closes only criterion 2 and states why 3 and 8 stay open', () => {
+    test('the shared-encounter checkpoint closes 2–4 and keeps 5, 6, 8, and 9 open', () => {
       expect(HARNESS_CRITERIA[0]?.today).toContain('Partly')
       expect(HARNESS_CRITERIA[1]?.today).toBe('Met for fresh blank 2D and 3D projects')
-      expect(HARNESS_CRITERIA[2]?.today).toContain('static HTTP probes do not execute a client')
+      expect(HARNESS_CRITERIA[2]?.today).toContain('headless client connects')
+      expect(HARNESS_CRITERIA[3]?.today).toContain('each headless client observes the other')
+      expect(HARNESS_CRITERIA[4]?.today).toContain('do not survive a restart')
+      expect(HARNESS_CRITERIA[5]?.today).toBe('Open')
       expect(HARNESS_CRITERIA[6]?.today).toContain('Open end to end')
       expect(HARNESS_CRITERIA[7]?.today).toContain('Advanced, not met')
       expect(HARNESS_CRITERIA[8]?.today).toBe('Open')
-      expect(status).toContain('a9270a1')
-      expect(status).toContain('Criterion 2 is the only criterion met')
+      expect(status).toContain('12b5753')
+      expect(status).toContain('Criteria 2, 3, and 4 are met')
+      expect(status).toContain('Criteria 5, 6, 8, and 9 remain open')
+      expect(status).toContain('First Shared Encounter')
     })
 
     test('the two criteria that decide the product are named as such', () => {
@@ -178,9 +183,9 @@ describe('nothing implies the demos or the harness are finished', () => {
     expect(llmsTxt()).toContain('not production-ready and cannot become mainnet-ready')
     expect(llmsTxt()).toContain('replays a versioned Durable\n  Object event log across eviction')
     expect(agentsMd()).toContain('replays an append-only Durable\n  Object event log across eviction')
-    expect(llmsTxt()).toContain('does **not** produce a\n  working MMO')
+    expect(llmsTxt()).toContain('does **not** produce a\n  complete working MMO')
     expect(agentsMd()).toContain('Do not present **Carpet Markets** as a market a user could operate')
-    expect(agentsMd()).toContain('Do not present **Create Kei MMO** as a tool that produces a working game')
+    expect(agentsMd()).toContain('Do not present **Create Kei MMO** as a tool that produces a complete working MMO')
   })
 })
 

@@ -54,7 +54,7 @@ in `kei-mmo/plan.json` rather than asked.
 The three examples on this page are among the candidates it scores. Starting
 blank is a normal outcome, not a fallback.
 
-::: danger Create Kei MMO does not produce a working game yet
+::: danger Create Kei MMO does not produce a complete MMO yet
 This is a draft, and a long way from its own headline. Its repository's default
 branch still carries a **retired three-template scaffolder**; the current work is
 an unpublished branch behind
@@ -65,15 +65,22 @@ workspace-scoped tools, at most 24 model round-trips and thirty minutes — and
 stops.
 
 Measured against the [nine criteria on the status
-page](https://keicoin.org/status), criterion 1 partly holds and criterion 2 is
-met for fresh blank 2D and Babylon.js 3D projects: both install and build with
-no edit. Criterion 3 remains open because the committed smoke only fetches the
-static page, bundle, and status endpoint; it never executes a headless client or
-connects to a game server. Criteria 4–6 and 9 remain open. Criterion 7 is open
-end to end, and criterion 8 is structurally advanced by zero harness runtime
-imports but is not met. There is no Kei terminal UI, no session past that one
-pass, and no package published under either name. **If
-you want a running Kei MMO today, fork World of Wonder** — that is a real one.
+page](https://keicoin.org/status), criterion 1 partly holds and criteria 2–4 are
+met for fresh blank 2D and Babylon.js 3D projects at unpublished draft
+integration checkpoint `12b5753`: they install, build, start a loopback-only
+authoritative 20 Hz game server, and prove two headless clients observe each
+other move through the same connection module the browser uses. The committed
+smoke also refuses stale input, forged authority, protocol mismatch, foreign
+origins, and rate exhaustion.
+
+That is the **First Shared Encounter**, not a complete MMO. Criteria 5, 6, 8,
+and 9 remain open: position and progression do not survive a restart; no Kei
+currency, item, or player-to-player trade settles; the incomplete criteria
+cannot yet keep passing after harness deletion; and there is no release-quality
+30-second presentation proof. Criterion 7 remains open end to end. There is no
+Kei terminal UI, no session past that one pass, and no package published under
+either name. **If you want a running Kei MMO today, fork World of Wonder** —
+that is a real one.
 :::
 
 ### See what it would decide, before it decides anything
@@ -84,7 +91,12 @@ anything is written.
 
 ```sh
 git clone -b codex/m9-game-harness https://github.com/keicoin-org/create-kei-game
-cd create-kei-game && bun install
+cd create-kei-game
+git checkout 12b5753
+bun install
+
+# Exact protocol checks plus the generated 2D/3D shared-encounter smoke.
+bun test test/scaffold-network.test.ts test/scaffold-smoke.test.ts --max-concurrency=1
 
 bun run src/index.ts -- "Salvage Run" --3d \
   --gameplay "Crews salvage derelict stations and haul cargo home." \
