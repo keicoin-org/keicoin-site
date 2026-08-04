@@ -79,7 +79,8 @@ to catch.
 - Do not describe anything as mainnet-ready, launching, or awaiting a date.
   Mainnet is not a build task.
 - Do not present Carpet Markets as an operable market, or Create Kei MMO as a
-  tool that produces a working game. Both are named accurately in `README.md`.
+  tool that produces a complete working MMO. Both are named accurately in
+  `README.md`.
 - Do not restate the API on a page as if this site owned it. Link the package and
   `SPEC.md`; the site is never the source of truth for the API.
 - Do not add a claim to `llms.txt` or `AGENTS.md` that is not also on a page. The

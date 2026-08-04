@@ -73,8 +73,8 @@ describe('Create Kei MMO documentation boundary', () => {
     expect(examplesProse).toContain('there is no `create-kei-mmo` package on npm')
   })
 
-  test('says plainly that it does not produce a working game yet', () => {
-    expect(examplesProse).toContain('Create Kei MMO does not produce a working game yet')
+  test('says plainly that it does not produce a complete MMO yet', () => {
+    expect(examplesProse).toContain('Create Kei MMO does not produce a complete MMO yet')
     expect(examplesProse).toContain('one bounded engine pass over the first step of that plan')
     // The reader who wanted a running MMO is sent to one that exists rather
     // than left waiting for this.
@@ -92,11 +92,13 @@ describe('Create Kei MMO documentation boundary', () => {
     expect(publicCopy).not.toMatch(/eight (?:written )?criteria/i)
   })
 
-  test('states the a9270a1 checkpoint without turning a static probe into criterion 3', () => {
-    expect(examplesProse).toContain('criterion 2 is met for fresh blank 2D and Babylon.js 3D projects')
-    expect(examplesProse).toContain('never executes a headless client or connects to a game server')
-    expect(examplesProse).toContain('Criterion 7 is open end to end')
-    expect(examplesProse).toContain('criterion 8 is structurally advanced')
+  test('states the 60af518 shared-encounter checkpoint without implying a complete MMO', () => {
+    expect(examplesProse).toContain('criteria 2–4 are met for fresh blank 2D and Babylon.js 3D projects')
+    expect(examplesProse).toContain('two headless clients observe each other move')
+    expect(examplesProse).toContain('Criteria 5, 6, 8, and 9 remain open')
+    expect(examplesProse).toContain('Criterion 7 remains open end to end')
+    expect(examplesProse).toContain('First Shared Encounter')
+    expect(examplesProse).toContain('not a complete MMO')
   })
 
   test('leads with the command that decides nothing on disk', () => {
