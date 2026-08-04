@@ -20,10 +20,13 @@ Kei is not.
 Four, and every one of them has been broken here at least once.
 
 **A claim is written once and rendered many ways.** `src/site/content.ts` is the
-source record: the landing page, the use-case pages, `/status`, `llms.txt` and
-`AGENTS.md` all come out of it. Three hand-written copies of a fact is three
-chances to publish one that stopped being true — and the copy that drifts is
-always the one an agent quotes.
+source record for the landing page, use-case pages, `/status`, `llms.txt` and
+`AGENTS.md`. VitePress is the source owner for `/docs`, with `docs/index.md` as
+its human quickstart; there is deliberately no non-rendered `/docs` record in
+`PAGES`. A build-level parity test keeps the machine-readable economy claims on
+that deployed human page. Three hand-written copies of a fact is three chances
+to publish one that stopped being true — and the copy that drifts is always the
+one an agent quotes.
 
 **Every page states its own limits, at the same volume as its capabilities.** An
 agent cannot detect overstatement and cannot ask a follow-up question, so a claim
@@ -54,8 +57,10 @@ These are the current, live corrections — not general caution.
   network. Point readers at `lib/market.ts`, not at the interface around it.
 - **Create Kei MMO does not produce a working game.** It is an unpublished draft
   that plans a project and runs one bounded engine pass at the first step of that
-  plan. The `create-kei-game@0.2.0` package on npm is a retired scaffolder and a
-  different product.
+  plan. At draft head `a9270a1`, fresh blank 2D and 3D projects install and build,
+  closing criterion 2 only; static HTTP probes do not execute a headless client
+  or prove criterion 3's game connection. The `create-kei-game@0.2.0` package on
+  npm is a retired scaffolder and a different product.
 - **No milestone numbers.** The M0–M10 ladder was retired on 3 August 2026 and
   replaced by four concurrent tracks. A page still saying "M5" describes a plan
   that no longer exists.
@@ -67,13 +72,13 @@ If one fails, the copy is wrong — not the test.
 
 | | |
 |---|---|
-| `src/site/content.ts` | **The source record.** The use cases, the four tracks, and `/status`. Start here. |
+| `src/site/content.ts` | **The generated-site source record.** The use cases, the four tracks, and `/status`. It never owns `/docs`. |
 | `src/site/layout.ts` | The page shell and the block renderer. `SITE` holds the status line that appears on every page. |
 | `src/site/home.ts` | The landing page, including the pressable hero button. |
 | `src/site/machine.ts` | `llms.txt`, `AGENTS.md`, `robots.txt`, the sitemap — the same facts, no prose. |
 | `src/site/clicker-*.ts` | The homepage clicker: the one hydrated island on the site. |
 | `src/site/demos.ts` | Where each demo's built client is, per demo, so a local `wrangler dev` serves what production serves. |
-| `docs/` | VitePress. The guides, the API reference, and the writing about the examples. |
+| `docs/` | VitePress and the sole owner of `/docs`. `docs/index.md` is the deployed quickstart; the directory also holds guides, API reference, and example writing. |
 | `worker/index.ts` | One route — the same-origin work endpoint the hero button needs — and the `/examples` redirect. Everything else is the asset binding. |
 | `build.ts` | Writes `dist/`. No framework, no bundler, no hydration. |
 

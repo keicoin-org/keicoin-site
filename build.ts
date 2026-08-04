@@ -41,11 +41,9 @@ async function write(path: string, contents: string): Promise<void> {
 const fileFor = (path: string): string => (path === '/' ? 'index.html' : `${path.replace(/^\//, '')}/index.html`)
 
 await write('index.html', homePage())
-// VitePress owns /docs. The source record remains in PAGES because machine-readable
-// outputs and cross-links still use its canonical URL.
-for (const page of PAGES) {
-  if (page.path !== '/docs') await write(fileFor(page.path), render(page))
-}
+// VitePress owns /docs from docs/index.md. PAGES contains only pages this loop
+// actually writes, so a non-rendered record cannot satisfy a source-parity test.
+for (const page of PAGES) await write(fileFor(page.path), render(page))
 
 await write('styles.css', await Bun.file(here('src/site/styles.css')).text())
 
@@ -81,6 +79,7 @@ await write(
   sitemapXml([
     '/',
     ...PAGES.map((page) => page.path),
+    '/docs',
     '/docs/examples',
     '/examples/button',
     '/examples/carpet-markets',

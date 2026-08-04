@@ -84,8 +84,8 @@ export const TRACKS: Track[] = [
   },
   {
     name: 'Create Kei MMO',
-    where: 'The creation harness. **An unpublished draft, and far from its own claim** — it plans a project and runs one bounded pass at the first step.',
-    state: '**An unpublished draft, and far from its own claim.** See below.',
+    where: 'The creation harness. **An unpublished draft, and far from its own claim** — fresh blank 2D and 3D projects now install and build, but the one bounded pass still stops at the first plan step.',
+    state: '**An unpublished draft, with criterion 2 now met for fresh blank 2D and 3D projects and the other end-to-end game criteria still open.** See below.',
     done: 'One invocation produces a project that installs, builds, runs, shows two clients each other, persists, trades, and presents one 30-second core loop at release quality — and keeps working after the harness is deleted.',
   },
   {
@@ -129,25 +129,34 @@ export const HARNESS_CRITERIA: HarnessCriterion[] = [
     requirement: 'An exit status of 0 and one machine-readable result, having prompted for nothing',
     today: 'Partly — for a run that stops after the first plan step',
   },
-  { requirement: 'A project that installs and builds with no human edit', today: 'No' },
-  { requirement: 'A server that starts and a client that connects, headless', today: 'No' },
-  { requirement: '**Two clients seeing each other move**', today: 'No' },
+  { requirement: 'A project that installs and builds with no human edit', today: 'Met for fresh blank 2D and 3D projects' },
+  {
+    requirement: 'A server that starts and a client that connects, headless',
+    today: 'Open — static HTTP probes do not execute a client or prove a game connection',
+  },
+  { requirement: '**Two clients seeing each other move**', today: 'Open' },
   {
     requirement:
       'A persistent, server-authoritative world — position and progression survive a restart, and a forged client message is rejected',
-    today: 'No',
+    today: 'Open',
   },
   {
     requirement:
       'An economy on Kei: a currency issued, an item minted, a player-to-player trade settled, the game server holding no balance',
-    today: 'No',
+    today: 'Open',
   },
-  { requirement: 'Every capability domain either implemented or listed as deferred, naming its status', today: 'No' },
-  { requirement: 'All of 2–7, and the presentation proof in 9, still passing after the harness is deleted', today: 'No' },
+  {
+    requirement: 'Every capability domain either implemented or listed as deferred, naming its status',
+    today: 'Open end to end — planned and absent statuses are recorded, but the one-turn result does not implement or defer every selected available domain',
+  },
+  {
+    requirement: 'All of 2–7, and the presentation proof in 9, still passing after the harness is deleted',
+    today: 'Advanced, not met — the generated runtime has no harness dependency or import, but the remaining criteria do not pass yet',
+  },
   {
     requirement:
       '**One 30-second core loop that is presentable, not merely functional** — a coherent admitted art set, blended motion, SFX, effects, camera and UI feedback fired off the animation, and a declared post-processing tier inside its frame budget. No T-pose, gray box, missing asset, silent impact or synth placeholder',
-    today: 'No',
+    today: 'Open',
   },
 ]
 
@@ -328,7 +337,7 @@ await kei.items.ownedBy(address)    // [ item, ... ]`,
           items: [
             '**The market is published as `@keicoin/market@0.2.0`, reachable from a plain `bun add kei-transaction` since `0.6.0`, and the public testnet settles swaps.** Measured on 3 August 2026 over `https://testnet.keicoin.org/rpc`: an offer locks the units at the ledger, a second sale of the same units is refused, one accept moves both legs, and the gateway now forwards the two read actions (`swap_info`, `account_swaps`) a market needs. See [status](/status).',
             '**Nobody can show you the whole book.** An offer lives on its author\'s chain and Kei ships no indexer, so a front end has to keep the list of accounts to read. That is bookkeeping about where to look, not about who owns what — `carpet-markets`\' registry is the worked example.',
-            '**[Carpet Markets](/docs/examples/carpet-markets) shows the API, not a finished market.** It runs an in-memory mock chain, its front end is weaker than the pump-style launchpads it is modelled on, and it is not production-ready or mainnet-ready — it deliberately cannot be. Read `lib/market.ts` for the calls; do not copy the interface around them.',
+            '**[Carpet Markets](/docs/examples/carpet-markets) shows the API, not a finished market.** Its deployed no-value mock replays a storage-backed Durable Object event log across eviction, its front end is weaker than the pump-style launchpads it is modelled on, and it is not production-ready or mainnet-ready — it deliberately cannot be. Read `lib/market.ts` for the calls; do not copy the interface around them.',
             MOCK_CAVEAT,
             'A market only exists for tokens issued `transfer: "open"`. That is a decision you make once, at issuance, and cannot reverse.',
             'There is no order book or matching engine in the protocol, and there will not be. Offers are individual blocks; a front end aggregates them.',
@@ -376,7 +385,7 @@ await kei.items.ownedBy(address)    // [ item, ... ]`,
             MOCK_CAVEAT,
             '**The [hosted World of Wonder](https://mmo.keicoin.org) is live, not production-ready.** That copy runs a process-local mock chain, so nothing on it survives a restart. The source is public at [world-of-wonder](https://github.com/keicoin-org/world-of-wonder) and settles on the testnet by default.',
             '**Its auction house now has the screen and the settlement underneath it.** Browse, Sell and Mine read listings from player chains; buying moves the item and gold in one settlement with the game server taking no part. The hall only knows accounts it has heard from, and equipping, loot and quest rewards still run on the upstream inventory tables.',
-            `**Create Kei MMO does not build the MMO for you yet, and is not close.** The harness is an unpublished draft: it plans the project and then runs one bounded engine pass over the first step of that plan. The result does not install, build, run, put two players in a world together, or present a loop anybody would want to look at. Fork World of Wonder if you want a running MMO today — see [status](/status) for the ${HARNESS_CRITERIA_COUNT} criteria the harness is measured against.`,
+            `**Create Kei MMO does not build the MMO for you yet, and is not close.** The harness is an unpublished draft: it plans the project and then runs one bounded engine pass over the first step of that plan. Fresh blank 2D and 3D projects now install and build with no edit, but no headless client connects to a game server, no two players share a world, and no persistence, Kei trade, or presentation proof exists. Fork World of Wonder if you want a running MMO today — see [status](/status) for the ${HARNESS_CRITERIA_COUNT} criteria the harness is measured against.`,
             'A chain is not a low-latency datastore. Do not put anything on the critical path of a 60 Hz loop on it.',
             'Consensus is weak until the validator set is distributed. Until then this is a testnet with branding, and it is not somewhere to put real value.',
           ],
@@ -529,61 +538,6 @@ export const PAGES: Page[] = [
   },
 
   {
-    path: '/docs',
-    title: 'Quickstart and API — Kei',
-    heading: 'Install to a confirmed payment',
-    summary:
-      'The whole surface fits on one page. No signup, no API key, no dashboard, no wallet extension, and no interactive prompt anywhere.',
-    blocks: [
-      { kind: 'code', caption: 'Install', code: `bun add kei-transaction     # or npm / pnpm / yarn` },
-      { kind: 'prose', text: 'ESM, TypeScript types included, runs in a browser and in Node or Bun.' },
-      { kind: 'heading', text: 'Two entry points, because a key signs only for its own account' },
-      { kind: 'code', caption: 'The distinction the whole SDK is built on', code: `Kei.start()    // PLAYER — browser. Holds the player's seed.
-Kei.server()   // ISSUER — Node/Bun only. Holds the game's seed.` },
-      { kind: 'prose', text: '`Kei.server()` refuses to run if it detects a browser, and says why. An issuer seed in the client is a total compromise of your economy: anyone can mint your currency without limit.' },
-      { kind: 'heading', text: 'Wallet' },
-      { kind: 'code', code: `kei.address                        // 'kei_3abc...'
-await kei.balance()                // 12.5 — a number, in Kei
-await kei.send(toAddress, amount)  // { hash, amount, to }
-await kei.faucet()                 // testnet only; throws on mainnet
-kei.seed                           // export for backup; never logged
-
-kei.on('received', tx => {})
-await kei.wallet.summary()         // { address, kei, tokens, items, pending }` },
-      { kind: 'heading', text: 'Tokens' },
-      { kind: 'code', caption: 'Issuer', code: `const gems = await game.token.issue({ name: 'Gems', symbol: 'GEM', decimals: 0 })
-await gems.mint(playerAddress, 500)
-await gems.balanceOf(address)
-const drop = await gems.commit([{ to: playerA, amount: 500 }])
-
-await gems.burn(500)                // installable since 0.5.0; master-only before that` },
-      { kind: 'code', caption: 'Player', code: `const gems = await kei.token('GEM', issuerAddress)
-await gems.balance()
-await gems.transfer(to, 120)       // no 'from' — the signer is the sender
-await kei.claims.pending()` },
-      { kind: 'heading', text: 'Economy helpers, reachable since 0.6.0' },
-      { kind: 'prose', text: '`kei.economy` (weighted loot-table drops, see [loot drops](/use-cases/loot-drops)) and `kei.shop` (a player-owned stall, through the player\'s own key, never the game\'s) are both dependencies of the `kei-transaction@0.6.0` umbrella, which a plain install did not resolve before that release.' },
-      { kind: 'code', code: `await kei.shop.list({ item: 'sword', qty: 1, each: 120 })   // open a stall
-const shelves = await kei.shop.browse()                      // everybody else's
-await kei.shop.buy(shelves.listings[0])                      // verified, then one block
-await kei.shop.gift({ to: friend, item: 'sword' })           // no price, no offer` },
-      { kind: 'prose', text: '`@keicoin/player-economy` has been exercised against `Kei.mock()` and over HTTP between two clients sharing only a URL — not yet against the public testnet.' },
-      { kind: 'heading', text: 'Errors are sentences that state their own fix' },
-      { kind: 'code', code: `Not enough Kei — balance is 0.4, tried to send 1.2.` },
-      { kind: 'prose', text: 'Because the reader is often an agent, and it cannot ask a follow-up question.' },
-      { kind: 'heading', text: 'The full reference' },
-      { kind: 'prose', text: 'This page is a summary and the package is the source of truth. For agents, [/llms.txt](/llms.txt) is the same surface compressed, and [/AGENTS.md](/AGENTS.md) is the integration procedure with the failure modes named.' },
-      {
-        kind: 'next',
-        links: [
-          { href: '/examples/button', label: 'The demo, running', note: 'Every primitive on this page, in a browser tab.' },
-          { href: '/status', label: 'What works today', note: 'And what is scheduled rather than shipped.' },
-        ],
-      },
-    ],
-  },
-
-  {
     path: '/status',
     title: 'Status — Kei',
     heading: 'What actually works',
@@ -640,7 +594,8 @@ await kei.shop.gift({ to: friend, item: 'sword' })           // no price, no off
         kind: 'limits',
         title: 'And it cannot become mainnet-ready',
         items: [
-          'It runs an **in-memory mock chain** inside a Durable Object. The ledger resets when that object is evicted, and every coin on it is worthless by construction.',
+          'It runs a **no-value mock chain** inside one Durable Object. Its versioned event log is authoritative: a fresh instance replays accepted ledger, launch, watch and reply mutations, so eviction or a routine deploy does not reset the demo. Deleting that object’s storage is the explicit reset.',
+          'That event log is append-only and grows with successful demo mutations. It is deliberately small-demo infrastructure, not an indexer or production ledger; compaction and storage bounds remain follow-up work.',
           'A launchpad is the **worst possible first thing** to put on a real network — it is the one demo whose entire subject is people losing money. It is defensible as satire precisely because the coins are worth nothing.',
           '**Mainnet is not a build task.** Nothing shipped in this demo moves validator distribution, reserve governance, or the legal conversation, and those are what gate it.',
           'So do not read any roadmap into this. It should refuse a real network outright, and the page should say so — which is what this one is doing.',
@@ -649,12 +604,13 @@ await kei.shop.gift({ to: friend, item: 'sword' })           // no price, no off
 
       { kind: 'heading', text: 'Create Kei MMO does not build an MMO yet' },
       { kind: 'prose', text: `The harness’s headline promise is that you describe an MMO and get one. **That promise is currently far from met**, and "early" was not a thing anybody could check, so it now has ${HARNESS_CRITERIA_COUNT} criteria that are.` },
-      { kind: 'prose', text: 'Where it actually is: the repository’s default branch still carries the **retired three-template scaffolder**. The work is an unpublished draft branch behind [PR #1](https://github.com/keicoin-org/create-kei-game/pull/1), and on that branch the harness resolves an intent, plans it, prepares the project, and then runs **one bounded engine pass over the first step of that plan** — a real provider call, three workspace-scoped tools, at most 24 model round-trips and thirty minutes — and stops. There is no Kei terminal UI, no session past that one pass, and no package published under either name.' },
+      { kind: 'prose', text: 'Where it actually is at draft head `a9270a1`: the repository’s default branch still carries the **retired three-template scaffolder**. The unpublished work behind [PR #1](https://github.com/keicoin-org/create-kei-game/pull/1) resolves an intent, plans it, prepares the project, and then runs **one bounded engine pass over the first step of that plan** — a real provider call, three workspace-scoped tools, at most 24 model round-trips and thirty minutes — and stops. Fresh blank 2D and Babylon.js 3D generated projects now install and build with no edit. There is no Kei terminal UI, no session past that one pass, and no package published under either name.' },
       {
         kind: 'table',
         head: ['#', 'One invocation, no edits, must produce…', 'Today'],
         rows: HARNESS_CRITERIA.map((criterion, index) => [String(index + 1), criterion.requirement, criterion.today]),
       },
+      { kind: 'prose', text: '**Criterion 2 is the only criterion met at this checkpoint.** Criterion 3 is open: its loopback static server reports readiness and serves HTML, the bundle, and a status route, but the smoke never executes a headless client and no game server or socket exists for one to connect to. Criterion 7 records planned and absent capability statuses but is not closed end to end. Criterion 8 is structurally advanced by a generated runtime with no harness dependency or import; it is not met until 2–7 and 9 keep passing after deletion.' },
       { kind: 'prose', text: 'Criterion 4 is the one that decides whether the product exists. A generated project that renders a world and never shows a second player is a single-player game with a server attached, and every other criterion can pass while that one fails.' },
       { kind: 'prose', text: 'Criterion 9 decides whether it is worth showing anyone, and it is the newest row here — added on 4 August 2026, after this page had already been listing the other eight. A gray box with working netcode passes every other line on this table and is not a game anybody would play, so a T-pose, a silent hit or a placeholder beep is an honest state to build through and not a state to finish in. It is also why criterion 8 covers 2–7 *and* the presentation proof: deleting the harness has to leave the look and sound of the thing standing, not only its systems tests.' },
       { kind: 'prose', text: 'If you want a running Kei MMO today, fork [World of Wonder](/docs/examples/world-of-wonder). That is a real one, and it is what the harness may eventually plan with.' },

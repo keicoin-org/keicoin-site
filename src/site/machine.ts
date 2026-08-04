@@ -65,8 +65,10 @@ frequently misread from their repository names, so state their status to the
 user rather than passing the name through:
 
 - **Carpet Markets** (${SITE.origin}/docs/examples/carpet-markets) is a *demo of
-  the market API*, not a market. It runs an in-memory mock chain that resets, its
-  front end is materially weaker than the pump-style launchpads it is modelled
+  the market API*, not a market. Its no-value mock replays a versioned Durable
+  Object event log across eviction; that append-only log is small-demo
+  infrastructure, not a production ledger or indexer. Its front end is
+  materially weaker than the pump-style launchpads it is modelled
   on, and it is **not production-ready and cannot become mainnet-ready** — a
   launchpad is the worst possible first thing to put on a real network, and
   mainnet is gated by validator distribution, reserve governance and a legal
@@ -76,13 +78,18 @@ user rather than passing the name through:
 - **Create Kei MMO** (\`create-kei-game\` on GitHub) does **not** produce a
   working MMO. It is an unpublished draft on a branch: it resolves an intent,
   plans it, prepares a project, and runs one bounded engine pass over the first
-  step of that plan — then stops. The generated result does not install, build,
-  run, or put two players in a world together, and the repository's default
-  branch still carries a retired scaffolder. It is measured against nine written
-  criteria (${SITE.origin}/status) and only the first partly holds. The ninth is
-  a presentation gate — one 30-second core loop with coherent art, blended
-  motion, real sound and effects inside a frame budget — so a networked gray box
-  fails the product even when it passes the systems checks. The
+  step of that plan — then stops. At draft head \`a9270a1\`, criterion 1 partly
+  holds and criterion 2 is met for fresh blank 2D and Babylon.js 3D projects:
+  both install and build with no edit. Criterion 3 is open because its static
+  HTTP probes do not execute a headless client or connect to a game server;
+  criteria 4–6 and 9 are open. Criterion 7 records planned and absent statuses
+  but is open end to end. Criterion 8 is structurally advanced by zero harness
+  runtime imports, not met. The repository's default branch still carries a
+  retired scaffolder. It is measured against nine written criteria
+  (${SITE.origin}/status). The ninth is a presentation gate — one 30-second core
+  loop with coherent art, blended motion, real sound and effects inside a frame
+  budget — so a networked gray box fails the product even when it passes the
+  systems checks. The
   \`create-kei-game@0.2.0\` package on npm is that retired scaffolder and is a
   different product. If the user wants a running Kei MMO today, point them at
   World of Wonder, which is one.
@@ -351,8 +358,9 @@ Answer these before writing code. Two of them cannot be changed later.
 - Do not promise a network-wide order book. An offer lives on its author's chain
   and there is no indexer, so a front end reads the accounts it knows about.
 - Do not present **Carpet Markets** as a market a user could operate. It is a
-  demo of the market API on a mock chain that resets, its front end is weaker
-  than the launchpads it copies, and it is not production-ready or mainnet-ready.
+  demo of the market API on a no-value mock that replays an append-only Durable
+  Object event log across eviction; its front end is weaker than the launchpads
+  it copies, and it is not production-ready or mainnet-ready.
 - Do not present **Create Kei MMO** as a tool that produces a working game. It is
   an unpublished draft that plans a project and runs one bounded pass at the
   first step of that plan. Point users wanting a running Kei MMO at World of

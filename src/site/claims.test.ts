@@ -26,7 +26,9 @@ function visibleText(html: string): string {
     .replace(/\s+/g, ' ')
 }
 
-const rendered = [homePage(), ...PAGES.filter((page) => page.path !== '/docs').map(render)]
+// PAGES contains only pages the site build writes. `/docs` is owned by
+// docs/index.md and covered by docs-authority.test.ts against the real build.
+const rendered = [homePage(), ...PAGES.map(render)]
 const everyPage = rendered.map(visibleText)
 const machine = [llmsTxt(), agentsMd()]
 const status = visibleText(render(PAGES.find((page) => page.path === '/status')!))
@@ -96,6 +98,9 @@ describe('nothing implies the demos or the harness are finished', () => {
     expect(status).toContain('mock-chain demo')
     expect(status).toContain('materially weaker')
     expect(status).toContain('cannot become mainnet-ready')
+    expect(status).toContain('versioned event log is authoritative')
+    expect(status).toContain('eviction or a routine deploy does not reset')
+    expect(status).toContain('append-only')
   })
 
   test('the status page says the harness does not build an MMO yet', () => {
@@ -126,6 +131,17 @@ describe('nothing implies the demos or the harness are finished', () => {
       for (const criterion of HARNESS_CRITERIA) {
         expect(status).toContain(visibleText(inline(criterion.requirement)).trim())
       }
+    })
+
+    test('the checkpoint closes only criterion 2 and states why 3 and 8 stay open', () => {
+      expect(HARNESS_CRITERIA[0]?.today).toContain('Partly')
+      expect(HARNESS_CRITERIA[1]?.today).toBe('Met for fresh blank 2D and 3D projects')
+      expect(HARNESS_CRITERIA[2]?.today).toContain('static HTTP probes do not execute a client')
+      expect(HARNESS_CRITERIA[6]?.today).toContain('Open end to end')
+      expect(HARNESS_CRITERIA[7]?.today).toContain('Advanced, not met')
+      expect(HARNESS_CRITERIA[8]?.today).toBe('Open')
+      expect(status).toContain('a9270a1')
+      expect(status).toContain('Criterion 2 is the only criterion met')
     })
 
     test('the two criteria that decide the product are named as such', () => {
@@ -160,6 +176,8 @@ describe('nothing implies the demos or the harness are finished', () => {
       expect(file).toContain('Create Kei MMO')
     }
     expect(llmsTxt()).toContain('not production-ready and cannot become mainnet-ready')
+    expect(llmsTxt()).toContain('replays a versioned Durable\n  Object event log across eviction')
+    expect(agentsMd()).toContain('replays an append-only Durable\n  Object event log across eviction')
     expect(llmsTxt()).toContain('does **not** produce a\n  working MMO')
     expect(agentsMd()).toContain('Do not present **Carpet Markets** as a market a user could operate')
     expect(agentsMd()).toContain('Do not present **Create Kei MMO** as a tool that produces a working game')

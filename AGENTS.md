@@ -35,7 +35,9 @@ integration.
 - **The four tracks** → the `TRACKS` record in `content.ts`. The landing page,
   `/status` and `llms.txt` all render it; `src/site/claims.test.ts` asserts they
   all still do.
-- **A guide, a reference page, or the writing about a demo** → `docs/`.
+- **The `/docs` quickstart, a guide, a reference page, or the writing about a
+  demo** → `docs/`. `docs/index.md` is the only human source for `/docs`;
+  there is deliberately no `/docs` record in `PAGES`.
 - **A new top-level page** → add a `Page` to `PAGES` in `content.ts`. `build.ts`
   writes it and the sitemap picks it up; there is no route table to update.
 
@@ -65,6 +67,9 @@ Neither is stylistic. Both encode a claim that was wrong on the live site.
   `--source template --template button`, which the harness now refuses with a
   stable error code; a reader running it concludes the harness is broken rather
   than that the page is stale.
+- **`src/site/docs-authority.test.ts`** — `/docs` has one source owner, the real
+  VitePress build contains the economy/drop/shop claims machine-readable files
+  publish, and the public-testnet/randomness caveats survive the build.
 
 If one fails, fix the copy. Suppressing it republishes the claim it was written
 to catch.
