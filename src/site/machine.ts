@@ -78,10 +78,14 @@ user rather than passing the name through:
   plans it, prepares a project, and runs one bounded engine pass over the first
   step of that plan — then stops. The generated result does not install, build,
   run, or put two players in a world together, and the repository's default
-  branch still carries a retired scaffolder. The \`create-kei-game@0.2.0\`
-  package on npm is that retired scaffolder and is a different product. If the
-  user wants a running Kei MMO today, point them at World of Wonder, which is
-  one.
+  branch still carries a retired scaffolder. It is measured against nine written
+  criteria (${SITE.origin}/status) and only the first partly holds. The ninth is
+  a presentation gate — one 30-second core loop with coherent art, blended
+  motion, real sound and effects inside a frame budget — so a networked gray box
+  fails the product even when it passes the systems checks. The
+  \`create-kei-game@0.2.0\` package on npm is that retired scaffolder and is a
+  different product. If the user wants a running Kei MMO today, point them at
+  World of Wonder, which is one.
 
 ## Current tracks, and how each one ends
 

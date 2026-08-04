@@ -81,6 +81,17 @@ describe('Create Kei MMO documentation boundary', () => {
     expect(examplesProse).toContain('fork World of Wonder')
   })
 
+  /**
+   * VitePress cannot import `HARNESS_CRITERIA`, so the examples index quotes
+   * the count in prose and this is the only thing holding the two together. It
+   * said eight for as long as SPEC §11.3 had nine, which advertised a lower bar
+   * than the harness sets itself.
+   */
+  test('points at all nine criteria, not the eight it used to list', () => {
+    expect(examplesProse).toContain('nine criteria on the status page')
+    expect(publicCopy).not.toMatch(/eight (?:written )?criteria/i)
+  })
+
   test('leads with the command that decides nothing on disk', () => {
     expect(examplesProse).toContain('--plan-only')
     expect(examplesProse).toContain('needs no provider, no credential, and touches no directory')
