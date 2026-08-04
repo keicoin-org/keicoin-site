@@ -53,7 +53,7 @@ export const SITE = {
    */
   milestone: 'Public testnet · no mainnet · nothing here holds value',
   status:
-    'The published SDK set is 0.4.0 with `@keicoin/market` at 0.1.1, and since 3 August 2026 the public testnet settles rooted claims and atomic swaps end to end over `https://testnet.keicoin.org/rpc`. It is one rate-limited, best-effort node with weak consensus, published dev keys and no uptime promise. There is no mainnet. The demos are demos: Carpet Markets and the hosted World of Wonder run mock chains that reset, and Create Kei MMO is an unpublished draft that does not yet produce a game you can run.',
+    'The installable SDK is `kei-transaction@0.5.0` with `@keicoin/market` at 0.1.1, and since 3 August 2026 the public testnet settles rooted claims and atomic swaps end to end over `https://testnet.keicoin.org/rpc`. It is one rate-limited, best-effort node with weak consensus, published dev keys and no uptime promise. There is no mainnet. The demos are demos: Carpet Markets and the hosted World of Wonder run mock chains that reset, and Create Kei MMO is an unpublished draft that does not yet produce a game you can run.',
 } as const
 
 /**
