@@ -20,7 +20,7 @@ It is a fork of [`orion3dgames/t5c`](https://github.com/orion3dgames/t5c) — a 
 This page is the tour. If you came for one piece of it:
 
 - [Auction house integration](./world-of-wonder/auction-house.md) — put a player-to-player auction house in your own fork: the wallet calls that list, buy and cancel, the two routes the server answers, and the check that has to be there before an accept is signed.
-- [Loot and drops](./world-of-wonder/loot-and-drops.md) — where a kill's gold and items actually go today, why they never reach the chain-backed bag, and what a commit-and-claim migration would have to prove first.
+- [Loot and drops](./world-of-wonder/loot-and-drops.md) — why phase one now refuses rewards rather than writing a second inventory, what is already implemented behind that refusal, and the wallet-proof boundary still blocking it.
 
 | | |
 | --- | --- |
@@ -36,15 +36,14 @@ This page is the tour. If you came for one piece of it:
 git clone https://github.com/keicoin-org/world-of-wonder
 cd world-of-wonder
 npm ci
-cp .env.example .env                            # optional — everything has a default
-npm run server-build && npm run server-start    # http://localhost:3000
+KEI_NETWORK=mock npm run server-build && KEI_NETWORK=mock npm run server-start
 npm run client-dev                              # http://localhost:8080
 ```
 
 The released `kei-transaction` SDK is a normal npm dependency. A clean clone does not need a sibling checkout or a link step.
 
 ::: warning It settles on the public testnet by default
-That default is deliberate: a player's wallet is meant to outlive your server, and it cannot do that against a chain living inside it. The testnet is best-effort, has weak consensus, no uptime promise, and Kei that is worth nothing. `KEI_NETWORK=mock` gives you the in-process chain instead, which is right offline.
+That default is deliberate: a player's wallet is meant to outlive your server, and it cannot do that against a chain living inside it. The testnet is best-effort, has weak consensus, no uptime promise, and Kei that is worth nothing. Every persistent node, including the default testnet, requires a fixed `KEI_GAME_SEED`; startup refuses a missing or invalid one before touching the database or chain. The run command above uses `KEI_NETWORK=mock`, the only mode allowed to generate an ephemeral issuer, for a no-secret local start.
 :::
 
 ## What changed from upstream
@@ -59,6 +58,15 @@ t5c kept `gold` as a `uint32` on `PlayerSchema` and inventory in a `character_in
 | Selling | Server increments gold | Player signs the item away; the shop pays for what arrived |
 | The vendor panel | Sends a room message | Signs with the player's wallet, and reads the purse off the chain |
 | The bag panel | Reads `PlayerSchema.inventory` | Refreshes the player's on-chain item balances and purse |
+| Loot, quest rewards, equipping | Database rows are authority | Legacy rows are inert; gameplay asks the chain authority and currently refuses because wallet proof is unavailable |
+
+## There is one inventory, and phase one is a refusal
+
+The default branch no longer loads `character_inventory`, `character_equipment`, or `player_data.gold` into gameplay. It reads those legacy rows once on join only to tell the player that they exist and are inert; autosave does not rewrite them. A row inserted directly into SQLite authorizes nothing.
+
+`src/server/kei/Inventory.ts` is now the one place gameplay may ask what a character holds. It is designed to bind a character to an address through a server-issued, domain-separated, single-use challenge, then re-read chain holdings before an equip or consume and mint a server-authored reward once. The repository's server wiring uses `proofUnavailable`, because the SDK has no ownership-challenge signing helper yet. Therefore a fresh character has no usable inventory or gold, and equipping, consuming, dropping, pickups, and kill or quest payouts refuse out loud instead of falling back to database custody.
+
+That is [phase one of the migration](https://github.com/keicoin-org/world-of-wonder/pull/8), not the finished feature. `npm run test:inventory` proves the dormant boundary with a stub verifier: forged and reused challenges fail, a database sword authorizes nothing, a chain-held sword does, listing it locks it out of gameplay, and one reward id pays once across repeated messages and a fresh authority reading the same payment records.
 
 ## The database is still there, deliberately
 
@@ -113,9 +121,12 @@ A database-backed auction house instead would look identical to a player and mea
 
 ```
 src/server/kei/Economy.ts                                the issuer: gold, items, the shop. Read this one.
+src/server/kei/Inventory.ts                              the sole gameplay ownership and reward authority
+src/server/kei/Legacy.ts                                 reads old economy rows only to report that they are inert
 src/server/kei/api.ts                                    the HTTP surface. Nothing here can move a player's money.
 src/server/kei/node.ts                                   which chain, and which account issues the money
 src/server/kei/Economy.test.ts                           the rules, against a chain in-process
+src/server/kei/Inventory.test.ts                         proof, chain ownership, refusal, and reward idempotency
 src/server/kei/Hall.ts                                   the bounded roster and chain walk behind Browse
 src/server/kei/Market.test.ts                            listing, acceptance, cancellation, history and trust-boundary checks
 src/server/kei/endtoend.test.ts                          the same thing across a URL, the way a browser does it
@@ -131,7 +142,7 @@ Copy `.env.example` to `.env`. A real environment variable always wins over a li
 
 | Variable | Default | Effect |
 | --- | --- | --- |
-| `KEI_GAME_SEED` | generated per run | **This is the economy.** Whoever holds it can mint this world's currency without limit. Unset, a new issuer means new asset ids, so every balance and item from the previous run becomes unreachable. |
+| `KEI_GAME_SEED` | required on persistent nodes | **This is the economy.** Whoever holds it can mint this world's currency without limit. Testnet, mainnet, and every custom `KEI_NODE` refuse to start without one fixed 64-hex seed. Only an in-process `KEI_NETWORK=mock` may generate an ephemeral seed. |
 | `KEI_NETWORK` | `testnet` | `testnet`, `mainnet`, or `mock`. Selecting `mainnet` without a `KEI_NODE` stops the server with an explanation rather than settling somewhere else. |
 | `KEI_NODE` | — | Override the node URL for whichever network is selected. |
 | `KEI_EXCHANGE` | on | `off` disables paying Kei for gold. The game stays playable. |
@@ -151,16 +162,18 @@ Keep it out of the repository, out of logs, and out of the client. `mainnet` has
 
 ```sh
 npm run test:economy    # the rules, in-process
+npm run test:inventory  # the phase-one ownership/refusal boundary
+npm test                # startup, economy, market, and inventory
 npm run server-start &
 npm run test:e2e        # the same thing over HTTP, sharing no memory with the server
 ```
 
-`test:e2e` is the one worth trusting. It signs its own transfers against `/rpc` and waits for the item to arrive, so passing it means a hosted client can work rather than suggesting it might.
+`test:e2e` signs its own transfers against `/rpc` and waits for the item to arrive, so it is the auction-house proof across the browser-facing boundary. `test:inventory` owns the newer gameplay boundary; it is deterministic against a `MockNode` and temporary SQLite database because the production verifier is intentionally unavailable.
 
 ## Known limits
 
 - **The hall is deliberately incomplete.** It only reads the bounded set of player chains this server has heard from, and that roster is in memory. A restart empties it until wallets announce themselves again; Kei ships no global offer index.
-- **Equipping, loot and quest rewards still use upstream inventory state.** The bag and the vendor read the chain, so anything bought or sold is consistent in both. Gameplay rewards and equipped gear have not moved across, and are deliberately not merged into the bag — that would make database rows look like on-chain ownership. The trainer still spends `player_data.gold`, which is no longer money.
+- **Wallet proof is not built, so phase one refuses gameplay economy actions.** Legacy inventory, equipment, and gold rows are inert. The chain-backed authorization and idempotent mint paths are implemented and tested with a stub verifier, but the running server uses `proofUnavailable`; equipping, consuming, dropping, pickups, and gold or item rewards do not work today.
 - The [hosted copy](https://mmo.keicoin.org) is live, not production-ready: it runs a process-local mock chain, so nothing on it survives a restart. The repository settles on the public testnet by default.
 - Consensus is weak until the validator set is distributed. Until then this is a testnet with branding, and not somewhere to put real value.
 - Per-instance mutable item state — durability ticking every second, live stack counts — is not what an asset is for. Model the archetype on-chain and keep that state local.

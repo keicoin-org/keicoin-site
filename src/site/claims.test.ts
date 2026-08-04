@@ -101,6 +101,15 @@ describe('nothing implies the demos or the harness are finished', () => {
     expect(status).toContain('versioned event log is authoritative')
     expect(status).toContain('eviction or a routine deploy does not reset')
     expect(status).toContain('append-only')
+    expect(status).toContain('Six of its nine criteria now have committed checks')
+    expect(status).toContain('there is no Playwright dependency in the repository')
+  })
+
+  test('the status page carries World of Wonder phase one as a refusal, not a database fallback', () => {
+    expect(status).toContain('Merged phase one')
+    expect(status).toContain('legacy inventory, equipment, and gold rows inert')
+    expect(status).toContain('the wallet-proof verifier does not exist yet')
+    expect(status).toContain('gameplay currently refuses equipping, consuming, dropping, pickups, and gold or item rewards')
   })
 
   test('the status page says the harness does not build a complete MMO yet', () => {
