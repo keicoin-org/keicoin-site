@@ -79,7 +79,7 @@ export const TRACKS: Track[] = [
     name: 'Economy DX',
     where: 'The priority. The primitives ship and are measured; what is being closed is the distance between an economy you can describe in a sentence and the code that runs it.',
     state:
-      'The primitives are shipped and measured. What is being closed is the distance between an economy you can describe in a sentence and the code that runs it. `@keicoin/economy` — declarative recipes with a dry run before anything is signed, plus weighted loot-table drops (`economy.drop()` / `economy.verifyDrop()`, bound into the same claim root as an ordinary reward) — is published at 0.2.0. `@keicoin/player-economy` — the player-owned shop that lists, buys, cancels and gifts through the player\'s own key — is published at 0.1.0. **`kei-transaction@0.6.0`, published 4 August 2026, is the first umbrella release that depends on both**, closing the gap where every package was on npm but a plain `bun add kei-transaction` still resolved an older market and no shop at all. `kei.economy` and `kei.shop` are both reachable from a clean install now.',
+      'The primitives are shipped and measured. What is being closed is the distance between an economy you can describe in a sentence and the code that runs it. `@keicoin/economy` — declarative recipes with a dry run before anything is signed, plus weighted loot-table drops (`economy.drop()` / `economy.verifyDrop()`, bound into the same claim root as an ordinary reward) — is published at 0.2.1. `@keicoin/player-economy` — the player-owned shop that lists, buys, cancels and gifts through the player\'s own key — is published at 0.1.1. **The current `kei-transaction@0.7.0` umbrella depends on both.** The earlier `0.6.0` release was the first umbrella to close the gap where every package was on npm but a plain install still resolved an older market and no shop at all. `kei.economy` and `kei.shop` are both reachable from a clean install now.',
     done: 'Somebody who has never seen Kei describes an economy — currency, sink, item with stats, sale, resale — and has it running without reading a spec, operating a database, or exceeding the sixty-second path.',
   },
   {
@@ -338,7 +338,7 @@ await kei.items.ownedBy(address)    // [ item, ... ]`,
           kind: 'limits',
           title: 'Read this before choosing Kei for a market',
           items: [
-            '**The market is published as `@keicoin/market@0.2.0`, reachable from a plain `bun add kei-transaction` since `0.6.0`, and the public testnet settles swaps.** Measured on 3 August 2026 over `https://testnet.keicoin.org/rpc`: an offer locks the units at the ledger, a second sale of the same units is refused, one accept moves both legs, and the gateway now forwards the two read actions (`swap_info`, `account_swaps`) a market needs. See [status](/status).',
+            '**The market is published as `@keicoin/market@0.3.0`, reachable from a plain `bun add kei-transaction` since `0.6.0`, and the public testnet settles swaps.** Measured on 3 August 2026 over `https://testnet.keicoin.org/rpc`: an offer locks the units at the ledger, a second sale of the same units is refused, one accept moves both legs, and the gateway now forwards the two read actions (`swap_info`, `account_swaps`) a market needs. See [status](/status).',
             '**Nobody can show you the whole book.** An offer lives on its author\'s chain and Kei ships no indexer, so a front end has to keep the list of accounts to read. That is bookkeeping about where to look, not about who owns what — `carpet-markets`\' registry is the worked example.',
             '**[Carpet Markets](/docs/examples/carpet-markets) shows the API, not a finished market.** Its deployed no-value mock replays a storage-backed Durable Object event log across eviction, its front end is weaker than the pump-style launchpads it is modelled on, and it is not production-ready or mainnet-ready — it deliberately cannot be. Read `lib/market.ts` for the calls; do not copy the interface around them.',
             MOCK_CAVEAT,
@@ -438,7 +438,7 @@ send(playerA, drop.proofFor(playerA))   // plain JSON, hand it over however you 
         },
         { kind: 'prose', text: 'When a batch is old, close it: `await gems.close(drop.root)`. Closed roots take no further claims and become prunable. Nothing expires on a timer — this chain has no clock, deliberately.' },
         { kind: 'heading', text: 'Weighted tables, if you do not want to build the batch by hand' },
-        { kind: 'prose', text: '`@keicoin/economy` (0.2.0, reachable from a plain install since `kei-transaction@0.6.0`) turns a designer\'s loot table into the same commit under the hood — the table hashes into the root\'s salt, so a player folds one path proving the batch was published for this table and another proving it owes them this.' },
+        { kind: 'prose', text: '`@keicoin/economy` (currently 0.2.1, reachable from a plain install since `kei-transaction@0.6.0`) turns a designer\'s loot table into the same commit under the hood — the table hashes into the root\'s salt, so a player folds one path proving the batch was published for this table and another proving it owes them this.' },
         {
           kind: 'code',
           caption: 'A weighted table, one roll per player, still one commit block',
@@ -547,7 +547,7 @@ export const PAGES: Page[] = [
     summary:
       'Published early and updated as it changes, including the parts that say "not yet". A page that only becomes honest at launch was never honest.',
     blocks: [
-      { kind: 'prose', text: 'The installable SDK is **`kei-transaction@0.6.0`**, `@keicoin/market` is **0.2.0** and a plain install now reaches it, and since 3 August 2026 the public testnet settles rooted claims and atomic swaps end to end. Everything below is either something you can install, something you can run, or something this page says is not built.' },
+      { kind: 'prose', text: 'The installable SDK is **`kei-transaction@0.7.0`**, `@keicoin/market` is **0.3.0** and a plain install reaches it, and since 3 August 2026 the public testnet settles rooted claims and atomic swaps end to end. Everything below is either something you can install, something you can run, or something this page says is not built.' },
       { kind: 'prose', text: 'Milestone numbers are gone. The M0–M10 ladder was retired on 3 August 2026 because the work stopped being a sequence — four tracks now run at once, each finished by its own condition rather than by its turn.' },
 
       { kind: 'heading', text: 'The four tracks' },
@@ -563,13 +563,13 @@ export const PAGES: Page[] = [
         kind: 'table',
         head: ['', 'State'],
         rows: [
-          ['The SDK', '`bun add kei-transaction` gets you **0.6.0**. The `@keicoin/*` packages under it: `tokens` at 0.5.1, `claims` at 0.5.0, `wallet` at 0.4.2, `economy` at 0.2.0, `market` at 0.2.0, `player-economy` at 0.1.0, and `core` and `work` at 0.4.0 — the first umbrella release where a plain install matches the registry. Wallet, send, receive, issue, mint, transfer, `balanceOf`, `burn`, items and stats, commit, claim, the market, `kei.shop`, loot-table drops, and the in-game wallet panel ship with TypeScript types. Payment memos are not in the current wire contract; correlate purchases by payment hash.'],
+          ['The SDK', '`bun add kei-transaction` gets you **0.7.0**. The `@keicoin/*` packages under it: `tokens` at 0.5.2, `claims` at 0.5.1, `wallet` at 0.5.0, `economy` at 0.2.1, `market` at 0.3.0, `player-economy` at 0.1.1, `core` at 0.5.0, and `work` at 0.4.1. Wallet, send, receive, issue, mint, transfer, `balanceOf`, `burn`, items and stats, commit, claim, the market, `kei.shop`, loot-table drops, and the in-game wallet panel ship with TypeScript types. Payment memos are not in the current wire contract; correlate purchases by payment hash.'],
           ['Published vs installed', 'Not the same thing, and this row exists because the gap is where a wrong claim got made. For about three hours on 4 August 2026, every Kei package was on npm and a plain `bun add kei-transaction` still did not reach two of them: the `0.5.0` umbrella pinned `@keicoin/market@^0.1.1` — a range `0.2.0` falls outside — and took no `@keicoin/player-economy` dependency at all, so `kei.shop` was `undefined` and `market.book()`, `series()`, `candles()` and `accept({ expect })` were unreachable without adding the package yourself. **`kei-transaction@0.6.0`, published the same day, is the umbrella that took both dependencies.** The gap is closed, and a clean install now resolves the same versions the registry shows.'],
-          ['The market', 'Published as `@keicoin/market@0.2.0`, and reachable from a plain `bun add kei-transaction` since `0.6.0` — see the row above. **Settling on the public testnet.** An offer locks the units at the ledger, a second sale of the same units is refused, and one accept moves both legs — measured against the node, then again over the public URL once the gateway was taught to forward `swap_info` and `account_swaps`.'],
+          ['The market', 'Published as `@keicoin/market@0.3.0`, and reachable from a plain `bun add kei-transaction` since `0.6.0` — see the row above. **Settling on the public testnet.** An offer locks the units at the ledger, a second sale of the same units is refused, and one accept moves both legs — measured against the node, then again over the public URL once the gateway was taught to forward `swap_info` and `account_swaps`.'],
           ['The mock chain', 'Available explicitly through `Kei.mock()` for deterministic tests, and used by the hosted demos. It enforces the real ledger rules — one chain per account, derived asset ids, receivable arrivals, work tiers, the issuance burn, supply caps, transfer policy, and the double-claim index.'],
           ['The node', 'The public node was rebuilt onto `master` on 3 August 2026 and reports `store_version 24`. Before that, a claims-or-swaps binary could not open a ledger written by an earlier one at all — the new tables were added to an existing store version instead of getting their own, and only a fresh database, which is all CI ever starts from, was unaffected.'],
           ['The network', 'One rate-limited, best-effort public dev-network node at `https://testnet.keicoin.org/rpc`. It has weak consensus, no uptime promise, published dev keys, and no monetary value. There is no mainnet.'],
-          ['Wallets', 'Both merged. The in-game panel ships in `kei-transaction@0.6.0` (`@keicoin/wallet@0.4.2`); the standalone wallet, forked from BananoVault, is on [kei-wallet](https://github.com/keicoin-org/kei-wallet)’s default branch, and its market panel is wired to `kei.market` — it shows that wallet’s own offers, cancellable, and its settled trades. The network’s book stays unshowable: an offer lives on its author’s chain and Kei ships no indexer, so the panel says that rather than presenting a handful of offers as the market.'],
+          ['Wallets', 'Both merged. The in-game panel ships in `kei-transaction@0.7.0` (`@keicoin/wallet@0.5.0`); the standalone wallet, forked from BananoVault, is on [kei-wallet](https://github.com/keicoin-org/kei-wallet)’s default branch, and its market panel is wired to `kei.market` — it shows that wallet’s own offers, cancellable, and its settled trades. The network’s book stays unshowable: an offer lives on its author’s chain and Kei ships no indexer, so the panel says that rather than presenting a handful of offers as the market.'],
           ['Button — the demo', 'Playable at [/examples/button](/examples/button). Press a button, bank presses, claim them, buy upgrades that live on the ledger instead of in a save file. Its multiplayer draft is unmerged and has no authenticated wallet ownership, so the deployed single-player game is the honest one.'],
           ['World of Wonder', 'Published as [world-of-wonder](https://github.com/keicoin-org/world-of-wonder) and hosted at [mmo.keicoin.org](https://mmo.keicoin.org). Gold and items are chain assets; the database keeps accounts, characters and positions. The repository settles on the public testnet by default and `KEI_NETWORK=mock` runs it against a chain inside its own process — but **the hosted copy runs that mock**, so nothing on it survives a restart. Its auction house is implemented end to end; equipping, loot and quest rewards still run on upstream’s inventory tables.'],
         ],
@@ -624,7 +624,7 @@ export const PAGES: Page[] = [
       {
         kind: 'code',
         caption: 'The sixty-second path, and the live conformance run against the public node',
-        code: `bun add kei-transaction@0.6.0
+        code: `bun add kei-transaction@0.7.0
 
 git clone https://github.com/keicoin-org/kei-transaction
 cd kei-transaction && bun install
@@ -687,7 +687,7 @@ bun run src/index.ts -- "Salvage Run" --3d \\
           'Treat **Carpet Markets** as a market you could operate, or **Create Kei MMO** as a tool that produces a working game. Both are named above with what is actually true of them.',
         ],
       },
-      { kind: 'prose', text: 'What you **can** do today is build against the published 0.6.0 API and a public testnet that carries claims and swaps, keep tests deterministic with `Kei.mock()`, and fork a worked example that already runs.' },
+      { kind: 'prose', text: 'What you **can** do today is build against the published 0.7.0 API and a public testnet that carries claims and swaps, keep tests deterministic with `Kei.mock()`, and fork a worked example that already runs.' },
 
       { kind: 'heading', text: 'Known and stated plainly' },
       {
@@ -697,7 +697,7 @@ bun run src/index.ts -- "Salvage Run" --3d \\
           '**No inherited liquidity.** Kei launches with no users, no exchanges, and no market.',
           '**No global order book.** An offer lives on its author’s chain and there is no indexer, so discovery is explicit — a registry, or account-scoped reads. Every front end shows the accounts it has heard of, and says so.',
           '**No pool, curve, or AMM.** `@keicoin/market` is bilateral. A pump-style venue would need a node-enforced pool primitive, which means reopening a settled decision; it is backlog, not planned work.',
-          '**The 0.6.0 SDK release is installable, and it now is the whole registry.** Verified on 4 August 2026 against a clean `npm install kei-transaction@0.6.0` in an empty directory rather than read off a checkout: the umbrella resolves `@keicoin/market@0.2.0`, `@keicoin/player-economy@0.1.0`, `@keicoin/economy@0.2.0` and `@keicoin/claims@0.5.0` with one copy of each package in the tree. `0.5.0`, published earlier the same day, did not — that gap is what closing this release exists to fix. Create Kei MMO is not released; npm still serves the superseded `create-kei-game@0.2.0` scaffolder, which is a different product.',
+          '**The 0.7.0 SDK release is installable, and it reaches the whole registry.** Verified on 4 August 2026 against the published graph rather than read off a checkout: the umbrella resolves `@keicoin/market@0.3.0`, `@keicoin/player-economy@0.1.1`, `@keicoin/economy@0.2.1` and `@keicoin/claims@0.5.1`, alongside the other scoped packages. The `0.6.0` release was the first umbrella to close the split with the registry; `0.7.0` carries the coordinated durability and market update forward. Create Kei MMO is not released; npm still serves the superseded `create-kei-game@0.2.0` scaffolder, which is a different product.',
           '**No smart contract VM**, deliberately. If your design needs one, Kei is the wrong tool and this page would rather you found out here.',
         ],
       },
