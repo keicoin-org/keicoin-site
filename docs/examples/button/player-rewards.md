@@ -69,8 +69,8 @@ bank(address: string, presses: number): Promise<ClaimBundle>
    `Math.max(1, Math.ceil((since / 1_000) * rateCap) + rateCap)` where `since` is the ms
    since this address last banked; the counted presses are
    `Math.min(Math.floor(presses), allowed)`. A client claiming 1,000,000 presses at a cap
-   of 25 gets under 200 coins. The comment notes M8 puts Colyseus in the room so presses
-   become observed.
+   of 25 gets under 200 coins. The comment notes that putting Colyseus in the room is what
+   makes presses observed rather than asserted; that multiplayer work is still unmerged.
 2. **Prices the press.** `payoutFor()` is fed the player's holdings read off the chain
    via `kei.client.node.holdings(address)` — an empty wallet is `{ perPress: 1 }`, and
    e.g. two `knuckle` copies make it 9.
@@ -184,8 +184,9 @@ server never sees a player's key and cannot move their money.
 
 This is **not** a public, persistent network. `network: 'mock'`, the chain is in memory,
 and the startup banner says plainly: "Nothing here is worth anything, which is the point
-of M1." `/rpc` is a development tool — M2 is the real node, M3 points this URL at it and
-nothing above it changes. CORS is wide open (`access-control-allow-origin: *`).
+of M1" — a milestone label from before the ladder was retired, still in that source line.
+`/rpc` is a development tool; the real node exists and pointing this URL at it changes
+nothing above it. CORS is wide open (`access-control-allow-origin: *`).
 
 Endpoints:
 
@@ -225,7 +226,7 @@ zero presses; loot claim and loot retry; and — because delivery is asynchronou
 
 - Buy an upgrade and watch it change what the next press is worth, read off the chain.
 - Turn the exchange desk off (`BUTTON_EXCHANGE=off`) and confirm pressing still pays.
-- Point `/rpc` at a real node when M2 lands; nothing above it changes.
+- Point `/rpc` at the public node at `https://testnet.keicoin.org/rpc`; nothing above it changes.
 
 **Unknown from these files:** where `serialClaims` is wired into the client, the
 auto-clicker (`pressesPerSecond`) loop, the world/Babylon layer, and the exact

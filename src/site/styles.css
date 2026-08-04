@@ -997,6 +997,17 @@ table.data th, table.data td {
 .panel .next { margin: 0; border-top: 0; padding: 0 15px; }
 .panel .next a:last-child { border-bottom: 0; }
 
+/* The four tracks, in a .panel beside the argument about them. Deliberately not
+   links: a track is a state of the work rather than a destination, and the one
+   page that carries all four is /status, which the column's jump already goes
+   to. Making each row a link would offer four doors to the same room. */
+.tracks { margin: 0; padding: 0; max-width: none; list-style: none; }
+.tracks li { padding: 15px; border-bottom: 1px solid var(--rule); }
+.tracks li:last-child { border-bottom: 0; }
+.tracks b { display: block; font: 500 15px/1.4 var(--sans); color: var(--ink); }
+.tracks span { display: block; margin-top: 4px; font: 400 13.5px/1.5 var(--sans); color: var(--ink-dim); }
+.tracks strong { color: var(--ink); font-weight: 500; }
+
 /* ------------------------------------------------------------------- misc */
 
 .skip { position: absolute; left: -9999px; }

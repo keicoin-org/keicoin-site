@@ -27,7 +27,7 @@ This page is the tour. If you came for one piece of it:
 | Client | Babylon.js, webpack |
 | Server | Node 20.17+, Colyseus, SQLite or MySQL |
 | Database | Accounts, characters, positions. Never money. |
-| Default chain | The public M3 testnet |
+| Default chain | The public testnet |
 | Every line of Kei in the client | `src/client/Controllers/Wallet.ts` |
 
 ## Run it

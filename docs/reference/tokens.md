@@ -37,10 +37,19 @@ Issuance burns Kei because every asset creates permanent ledger state. Ordinary 
 
 ```ts
 await gems.mint(playerAddress, 500)
-await gems.burn(500)
 await gems.balanceOf(playerAddress)
 await gems.supply()
 ```
+
+::: warning `burn()` is merged, not published
+```ts
+await gems.burn(500)   // on master; not in the installable 0.4.0
+```
+It is on `kei-transaction`'s default branch and its version bump is an open
+release PR that still has to be approved. Installing the package today does not
+get you it. [Status](https://keicoin.org/status) carries the
+installable-versus-merged line.
+:::
 
 ## Player methods
 

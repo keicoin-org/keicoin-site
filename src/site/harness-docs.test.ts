@@ -1,15 +1,20 @@
 /**
- * Create Kei Game is a separate repository on an unmerged branch, so nothing in
+ * Create Kei MMO is a separate repository on an unmerged branch, so nothing in
  * this build can execute the commands this page prints. These are string checks
- * on the copy, aimed at the two ways it has actually been wrong: naming the
- * superseded npm scaffolder as if it were the harness, and printing an agent
- * command the harness refuses.
+ * on the copy, aimed at the three ways it has actually been wrong.
  *
- * That second one is the reason the shell blocks are parsed rather than matched
- * whole. `--agent` requires an explicit `--source`; `--template button` alone
- * only implies the source at a prompt or under plain flags. A documented agent
- * command missing `--source` exits 1 with `missing_inputs`, and reads as a
- * broken harness rather than as a wrong page.
+ * 1. **Naming the superseded npm scaffolder as if it were the harness.**
+ *    `create-kei-game@0.2.0` is a retired three-template scaffolder and a
+ *    different product; there is no `create-kei-mmo` on npm at all.
+ * 2. **Printing a command the harness refuses.** This page once documented
+ *    `--source template --template button`. Those inputs are now retired and
+ *    exit with an error rather than being ignored, so that command reads as a
+ *    broken harness rather than as a stale page. Shell blocks are therefore
+ *    parsed and inspected flag by flag rather than matched whole.
+ * 3. **Implying it produces a working game.** It does not, and it is not close:
+ *    it plans a project and runs one bounded engine pass at the first step of
+ *    that plan. An agent cannot discount enthusiasm (SPEC §12), so the page has
+ *    to say the distance rather than say "early".
  */
 
 import { describe, expect, test } from 'bun:test'
@@ -17,76 +22,111 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 
 const root = join(import.meta.dir, '..', '..')
-const examples = readFileSync(join(root, 'docs', 'examples', 'index.md'), 'utf8')
-const quickstart = readFileSync(join(root, 'docs', 'index.md'), 'utf8')
-const content = readFileSync(join(root, 'src', 'site', 'content.ts'), 'utf8')
-const home = readFileSync(join(root, 'src', 'site', 'home.ts'), 'utf8')
-const layout = readFileSync(join(root, 'src', 'site', 'layout.ts'), 'utf8')
-const publicCopy = [examples, quickstart, content, home, layout].join('\n')
+const read = (...path: string[]): string => readFileSync(join(root, ...path), 'utf8').replace(/\r\n/g, '\n')
+
+const examples = read('docs', 'examples', 'index.md')
+const quickstart = read('docs', 'index.md')
+const publicCopy = [
+  examples,
+  quickstart,
+  read('src', 'site', 'content.ts'),
+  read('src', 'site', 'home.ts'),
+  read('src', 'site', 'layout.ts'),
+].join('\n')
+
+/**
+ * Prose wraps, and a sentence this file cares about is usually broken across
+ * two lines. Matching against the wrapped form makes every assertion here fail
+ * the next time somebody reflows a paragraph, which trains people to delete the
+ * test rather than fix the copy. So prose is matched with its whitespace
+ * collapsed; only the shell blocks are read as written.
+ */
+const flat = (markdown: string): string => markdown.replace(/\s+/g, ' ')
+const examplesProse = flat(examples)
 
 /**
  * Fenced shell blocks, line continuations joined, so a flag list reads as one
- * command. Line endings are normalised first: this file is CRLF on disk, and a
- * `\n`-only pattern silently matches nothing at all rather than failing loudly.
+ * command. `read()` has already normalised line endings: these files are CRLF
+ * on disk, and a `\n`-only pattern silently matches nothing at all rather than
+ * failing loudly.
  */
 function shellCommands(markdown: string): string[] {
-  return [...markdown.replace(/\r\n/g, '\n').matchAll(/```sh\n([\s\S]*?)```/g)]
+  return [...markdown.matchAll(/```sh\n([\s\S]*?)```/g)]
     .map((block) => block[1]!.replace(/\\\n\s*/g, ' ').trim())
     .filter((command) => command.length > 0)
 }
 
-const agentCommands = shellCommands(examples).filter((command) => command.includes('--agent'))
+/** Every fenced shell block the site publishes, wherever it publishes it. */
+const allCommands = [examples, quickstart].flatMap(shellCommands)
+const agentCommands = allCommands.filter((command) => command.includes('--agent'))
 
-describe('Create Kei Game documentation boundary', () => {
-  test('does not advertise Starclickers or the legacy npm scaffolder as the harness', () => {
+describe('Create Kei MMO documentation boundary', () => {
+  test('does not advertise the retired scaffolder or its templates as the harness', () => {
     expect(publicCopy.toLowerCase()).not.toContain('star-clicker')
     expect(publicCopy.toLowerCase()).not.toContain('starclicker')
     expect(publicCopy).not.toContain('npm create kei-game')
     expect(publicCopy).not.toContain('npx create-kei-game')
   })
 
-  test('states that npm 0.2 is legacy and the standalone harness is unreleased', () => {
-    expect(examples).toContain('`create-kei-game@0.2.0` on npm is the superseded package')
-    expect(examples).toContain('unpublished development draft')
-    expect(examples).toContain('model/tool loop, Kei terminal UI, and persisted workflow are not released yet')
+  test('states that npm carries a different, retired product and nothing else', () => {
+    expect(examplesProse).toContain('`create-kei-game@0.2.0` on npm is the superseded scaffolder')
+    expect(examplesProse).toContain('there is no `create-kei-mmo` package on npm')
   })
 
-  test('documents both human onboarding and hard no-prompt agent mode', () => {
-    expect(examples).toContain('bun run src/index.ts --')
-    expect(examples).toContain('--agent --json')
-    expect(examples).toContain('--api-key-env OPENAI_API_KEY')
+  test('says plainly that it does not produce a working game yet', () => {
+    expect(examplesProse).toContain('Create Kei MMO does not produce a working game yet')
+    expect(examplesProse).toContain('one bounded engine pass over the first step of that plan')
+    // The reader who wanted a running MMO is sent to one that exists rather
+    // than left waiting for this.
+    expect(examplesProse).toContain('fork World of Wonder')
+  })
+
+  test('leads with the command that decides nothing on disk', () => {
+    expect(examplesProse).toContain('--plan-only')
+    expect(examplesProse).toContain('needs no provider, no credential, and touches no directory')
+  })
+
+  test('records that the harness asks no template question', () => {
+    expect(examplesProse).toContain('Create Kei MMO asks no template question')
+    expect(examplesProse).toContain('Starting blank is a normal outcome')
+  })
+
+  test('documents the hard no-prompt agent mode', () => {
+    expect(examplesProse).toContain('--agent --json')
+    expect(examplesProse).toContain('--api-key-env OPENAI_API_KEY')
+    expect(examplesProse).toContain('never as a value')
   })
 
   test('every agent command carries the inputs agent mode requires', () => {
     expect(agentCommands.length).toBeGreaterThan(0)
     for (const command of agentCommands) {
-      // The harness's own required set. `--yes` is the other no-prompt mode and
-      // the parser refuses the two together, so it must never appear here.
-      for (const flag of ['--source', '--provider', '--model', '--api-key-env', '--brief']) {
+      for (const flag of ['--gameplay', '--provider', '--model', '--api-key-env']) {
         expect(command).toContain(flag)
       }
+      // A dimension is required and never inferred; `--2d`/`--3d` are the short
+      // spellings of `--dimension`, and `--dimension auto` is a legitimate
+      // explicit answer. An omitted one is not.
+      expect(command).toMatch(/--(2d|3d|dimension)\b/)
+      // `--yes` is the other no-prompt mode and the parser refuses the pair.
       expect(command).not.toContain('--yes')
     }
   })
 
-  test('a documented --template agent command spells out --source template', () => {
-    for (const command of agentCommands.filter((one) => one.includes('--template'))) {
-      expect(command).toContain('--source template')
+  test('no published command uses an input the harness now refuses', () => {
+    for (const command of allCommands) {
+      expect(command).not.toMatch(/--source\b/)
+      expect(command).not.toMatch(/--template\b/)
+      expect(command).not.toMatch(/--from\b/)
     }
   })
 
-  test('says why agent mode needs the source that a prompt can infer', () => {
-    expect(examples).toContain('**Agent mode requires `--source` spelled out.**')
-    expect(examples).toContain('"missing":["source"]')
-  })
-
-  test('describes templates as clones of the real repositories, not bundled copies', () => {
-    expect(examples).toContain('the harness generates no game and carries no bundled template')
-    expect(examples).toContain('Choosing an example clones its real repository')
+  test('says those inputs are refused rather than ignored', () => {
+    expect(examplesProse).toContain('`--source` and `--template` are retired, and refused')
+    expect(examplesProse).toContain('They are not ignored')
   })
 
   test('states that the key environment variable must already hold a value', () => {
-    expect(examples).toContain('has to already hold a key')
-    expect(examples).toContain('the harness reads only the name')
+    expect(examplesProse).toContain('has to already hold a key')
+    expect(examplesProse).toContain('the harness reads only the name')
   })
 })
