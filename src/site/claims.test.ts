@@ -13,9 +13,9 @@
 
 import { describe, expect, test } from 'bun:test'
 
-import { PAGES, TRACKS } from './content.js'
+import { HARNESS_CRITERIA, HARNESS_CRITERIA_COUNT, PAGES, TRACKS } from './content.js'
 import { homePage } from './home.js'
-import { SITE, render } from './layout.js'
+import { SITE, inline, render } from './layout.js'
 import { agentsMd, llmsTxt } from './machine.js'
 
 /** What a reader actually reads: no tags, no script bodies, no SVG path data. */
@@ -103,6 +103,55 @@ describe('nothing implies the demos or the harness are finished', () => {
     expect(status).toContain('unpublished draft')
     // The criterion that decides whether the product exists.
     expect(status).toContain('Two clients seeing each other move')
+  })
+
+  /**
+   * SPEC §11.3 has nine one-shot criteria, and the ninth — one presentable
+   * 30-second core loop — arrived last, on 4 August 2026. A page that lists
+   * eight is not merely out of date: it publishes a lower bar than the harness
+   * sets itself, so an agent quoting it tells somebody a networked gray box
+   * would count as the product shipping.
+   */
+  describe('the harness is measured against all nine of its criteria', () => {
+    test('there are nine, each with a stated position today', () => {
+      expect(HARNESS_CRITERIA).toHaveLength(9)
+      expect(HARNESS_CRITERIA_COUNT).toBe('nine')
+      for (const criterion of HARNESS_CRITERIA) {
+        expect(criterion.requirement.length).toBeGreaterThan(20)
+        expect(criterion.today.length).toBeGreaterThan(1)
+      }
+    })
+
+    test('the status page renders every one of them', () => {
+      for (const criterion of HARNESS_CRITERIA) {
+        expect(status).toContain(visibleText(inline(criterion.requirement)).trim())
+      }
+    })
+
+    test('the two criteria that decide the product are named as such', () => {
+      // Four decides whether it is an MMO; nine decides whether it is a game
+      // anybody would look at. Either can fail while the other seven pass.
+      expect(status).toContain('Two clients seeing each other move')
+      expect(status).toContain('presentable, not merely functional')
+      expect(status).toContain('Criterion 9')
+    })
+
+    test('deleting the harness has to leave the presentation proof standing', () => {
+      const deletion = HARNESS_CRITERIA[7]!.requirement
+      expect(deletion).toContain('2–7')
+      expect(deletion).toContain('9')
+    })
+
+    test('no surface still quotes the retired count of eight', () => {
+      for (const surface of [...everyPage, ...machine]) {
+        expect(surface).not.toMatch(/eight (?:written )?criteria/i)
+      }
+    })
+
+    test('the track that ends with them says the loop has to be presentable', () => {
+      const harness = TRACKS.find((track) => track.name === 'Create Kei MMO')!
+      expect(harness.done).toMatch(/present/i)
+    })
   })
 
   test('the machine-readable surface names both drafts as drafts', () => {

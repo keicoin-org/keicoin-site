@@ -86,7 +86,7 @@ export const TRACKS: Track[] = [
     name: 'Create Kei MMO',
     where: 'The creation harness. **An unpublished draft, and far from its own claim** — it plans a project and runs one bounded pass at the first step.',
     state: '**An unpublished draft, and far from its own claim.** See below.',
-    done: 'One invocation produces a project that installs, builds, runs, shows two clients each other, persists, and trades — and keeps working after the harness is deleted.',
+    done: 'One invocation produces a project that installs, builds, runs, shows two clients each other, persists, trades, and presents one 30-second core loop at release quality — and keeps working after the harness is deleted.',
   },
   {
     name: 'Chain and public network',
@@ -102,6 +102,62 @@ export const TRACKS: Track[] = [
     done: 'Every claim on this site is checkable in one step from the page making it, the standalone wallet shows a player’s items from a game that is not running, and Carpet Markets meets its nine written criteria.',
   },
 ]
+
+export interface HarnessCriterion {
+  /** What one invocation, with no edits, has to produce. */
+  requirement: string
+  /** Where it stands today. A table cell, so one clause. */
+  today: string
+}
+
+/**
+ * The one-shot criteria Create Kei MMO is measured against (SPEC §11.3).
+ *
+ * There are **nine**. The site published eight, missing the presentation gate
+ * added on 4 August 2026 — an understatement of the harness's own bar in the
+ * direction that flatters it, because an agent reading the shorter list
+ * concludes a networked gray box would pass. Criterion 8 moved with it:
+ * deleting the harness has to leave the presentation proof standing too, not
+ * only the systems checks.
+ *
+ * Written here rather than per surface for the usual reason — the landing page,
+ * `/status` and the examples index all quote the count, and the copy that
+ * drifts is the one an agent ends up quoting.
+ */
+export const HARNESS_CRITERIA: HarnessCriterion[] = [
+  {
+    requirement: 'An exit status of 0 and one machine-readable result, having prompted for nothing',
+    today: 'Partly — for a run that stops after the first plan step',
+  },
+  { requirement: 'A project that installs and builds with no human edit', today: 'No' },
+  { requirement: 'A server that starts and a client that connects, headless', today: 'No' },
+  { requirement: '**Two clients seeing each other move**', today: 'No' },
+  {
+    requirement:
+      'A persistent, server-authoritative world — position and progression survive a restart, and a forged client message is rejected',
+    today: 'No',
+  },
+  {
+    requirement:
+      'An economy on Kei: a currency issued, an item minted, a player-to-player trade settled, the game server holding no balance',
+    today: 'No',
+  },
+  { requirement: 'Every capability domain either implemented or listed as deferred, naming its status', today: 'No' },
+  { requirement: 'All of 2–7, and the presentation proof in 9, still passing after the harness is deleted', today: 'No' },
+  {
+    requirement:
+      '**One 30-second core loop that is presentable, not merely functional** — a coherent admitted art set, blended motion, SFX, effects, camera and UI feedback fired off the animation, and a declared post-processing tier inside its frame budget. No T-pose, gray box, missing asset, silent impact or synth placeholder',
+    today: 'No',
+  },
+]
+
+/**
+ * Spelled out, because the prose around it says "nine criteria" and a bare
+ * digit in that sentence reads as one of the criterion numbers beside it.
+ */
+export const HARNESS_CRITERIA_COUNT: string =
+  ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'][HARNESS_CRITERIA.length] ??
+  String(HARNESS_CRITERIA.length)
 
 const NEXT_STEPS = {
   kind: 'next' as const,
@@ -320,7 +376,7 @@ await kei.items.ownedBy(address)    // [ item, ... ]`,
             MOCK_CAVEAT,
             '**The [hosted World of Wonder](https://mmo.keicoin.org) is live, not production-ready.** That copy runs a process-local mock chain, so nothing on it survives a restart. The source is public at [world-of-wonder](https://github.com/keicoin-org/world-of-wonder) and settles on the testnet by default.',
             '**Its auction house now has the screen and the settlement underneath it.** Browse, Sell and Mine read listings from player chains; buying moves the item and gold in one settlement with the game server taking no part. The hall only knows accounts it has heard from, and equipping, loot and quest rewards still run on the upstream inventory tables.',
-            '**Create Kei MMO does not build the MMO for you yet, and is not close.** The harness is an unpublished draft: it plans the project and then runs one bounded engine pass over the first step of that plan. The result does not install, build, run, or put two players in a world together. Fork World of Wonder if you want a running MMO today — see [status](/status) for the eight criteria the harness is measured against.',
+            `**Create Kei MMO does not build the MMO for you yet, and is not close.** The harness is an unpublished draft: it plans the project and then runs one bounded engine pass over the first step of that plan. The result does not install, build, run, put two players in a world together, or present a loop anybody would want to look at. Fork World of Wonder if you want a running MMO today — see [status](/status) for the ${HARNESS_CRITERIA_COUNT} criteria the harness is measured against.`,
             'A chain is not a low-latency datastore. Do not put anything on the critical path of a 60 Hz loop on it.',
             'Consensus is weak until the validator set is distributed. Until then this is a testnet with branding, and it is not somewhere to put real value.',
           ],
@@ -562,23 +618,15 @@ await kei.claims.pending()` },
       },
 
       { kind: 'heading', text: 'Create Kei MMO does not build an MMO yet' },
-      { kind: 'prose', text: 'The harness’s headline promise is that you describe an MMO and get one. **That promise is currently far from met**, and "early" was not a thing anybody could check, so it now has eight criteria that are.' },
+      { kind: 'prose', text: `The harness’s headline promise is that you describe an MMO and get one. **That promise is currently far from met**, and "early" was not a thing anybody could check, so it now has ${HARNESS_CRITERIA_COUNT} criteria that are.` },
       { kind: 'prose', text: 'Where it actually is: the repository’s default branch still carries the **retired three-template scaffolder**. The work is an unpublished draft branch behind [PR #1](https://github.com/keicoin-org/create-kei-game/pull/1), and on that branch the harness resolves an intent, plans it, prepares the project, and then runs **one bounded engine pass over the first step of that plan** — a real provider call, three workspace-scoped tools, at most 24 model round-trips and thirty minutes — and stops. There is no Kei terminal UI, no session past that one pass, and no package published under either name.' },
       {
         kind: 'table',
         head: ['#', 'One invocation, no edits, must produce…', 'Today'],
-        rows: [
-          ['1', 'An exit status of 0 and one machine-readable result, having prompted for nothing', 'Partly — for a run that stops after the first plan step'],
-          ['2', 'A project that installs and builds with no human edit', 'No'],
-          ['3', 'A server that starts and a client that connects, headless', 'No'],
-          ['4', '**Two clients seeing each other move**', 'No'],
-          ['5', 'A persistent, server-authoritative world — position and progression survive a restart, and a forged client message is rejected', 'No'],
-          ['6', 'An economy on Kei: a currency issued, an item minted, a player-to-player trade settled, the game server holding no balance', 'No'],
-          ['7', 'Every capability domain either implemented or listed as deferred, naming its status', 'No'],
-          ['8', 'All of 2–6 still passing after the harness is deleted', 'No'],
-        ],
+        rows: HARNESS_CRITERIA.map((criterion, index) => [String(index + 1), criterion.requirement, criterion.today]),
       },
       { kind: 'prose', text: 'Criterion 4 is the one that decides whether the product exists. A generated project that renders a world and never shows a second player is a single-player game with a server attached, and every other criterion can pass while that one fails.' },
+      { kind: 'prose', text: 'Criterion 9 decides whether it is worth showing anyone, and it is the newest row here — added on 4 August 2026, after this page had already been listing the other eight. A gray box with working netcode passes every other line on this table and is not a game anybody would play, so a T-pose, a silent hit or a placeholder beep is an honest state to build through and not a state to finish in. It is also why criterion 8 covers 2–7 *and* the presentation proof: deleting the harness has to leave the look and sound of the thing standing, not only its systems tests.' },
       { kind: 'prose', text: 'If you want a running Kei MMO today, fork [World of Wonder](/docs/examples/world-of-wonder). That is a real one, and it is what the harness may eventually plan with.' },
 
       { kind: 'heading', text: 'Run the evidence yourself' },

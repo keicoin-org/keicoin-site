@@ -64,12 +64,13 @@ engine pass over the first step of that plan** — a real provider call, three
 workspace-scoped tools, at most 24 model round-trips and thirty minutes — and
 stops.
 
-Measured against the [eight criteria on the status
+Measured against the [nine criteria on the status
 page](https://keicoin.org/status), only the first partly holds. The result does
-not install, build, run, or put two players in a world together. There is no Kei
-terminal UI, no session past that one pass, and no package published under either
-name. **If you want a running Kei MMO today, fork World of Wonder** — that is a
-real one.
+not install, build, run, or put two players in a world together, and the ninth
+criterion — one 30-second core loop that is presentable rather than merely
+functional — is not in reach of a gray box either. There is no Kei terminal UI,
+no session past that one pass, and no package published under either name. **If
+you want a running Kei MMO today, fork World of Wonder** — that is a real one.
 :::
 
 ### See what it would decide, before it decides anything
