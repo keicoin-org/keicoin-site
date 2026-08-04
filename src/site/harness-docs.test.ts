@@ -92,11 +92,17 @@ describe('Create Kei MMO documentation boundary', () => {
     expect(publicCopy).not.toMatch(/eight (?:written )?criteria/i)
   })
 
-  test('states the 60af518 shared-encounter checkpoint without implying a complete MMO', () => {
-    expect(examplesProse).toContain('criteria 2–4 are met for fresh blank 2D and Babylon.js 3D projects')
+  test('states the 9d1e60a shared-encounter and economy checkpoint without implying a complete MMO', () => {
+    expect(examplesProse).toContain('criteria 2–4 and 6 are met for fresh blank 2D and Babylon.js 3D projects')
     expect(examplesProse).toContain('two headless clients observe each other move')
-    expect(examplesProse).toContain('Criteria 5, 6, 8, and 9 remain open')
-    expect(examplesProse).toContain('Criterion 7 remains open end to end')
+    expect(examplesProse).toContain('`bun run economy:check`')
+    expect(examplesProse).toContain('published `kei-transaction@0.6.0`')
+    expect(examplesProse).toContain('mismatched expectation signs nothing and moves neither leg')
+    expect(examplesProse).toContain('correct player-signed acceptance settles both legs atomically')
+    expect(examplesProse).toContain('game server imports no Kei package, holds no balance, and receives no credential')
+    expect(examplesProse).toContain('Criterion 5 and criteria 1, 7, 8, and 9 remain open')
+    expect(examplesProse).toContain('socket character is not cryptographically bound to a Kei wallet')
+    expect(examplesProse).toContain('Issue #17')
     expect(examplesProse).toContain('First Shared Encounter')
     expect(examplesProse).toContain('not a complete MMO')
   })

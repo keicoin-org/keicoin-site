@@ -85,7 +85,7 @@ export const TRACKS: Track[] = [
   {
     name: 'Create Kei MMO',
     where: 'The creation harness. **An unpublished draft, and far from its own claim** — fresh blank 2D and 3D projects now install, build, and prove a first shared authoritative encounter, but the one bounded harness pass still stops at the first plan step.',
-    state: '**An unpublished draft. At integration checkpoint `60af518`, criteria 2–4 are met for fresh blank 2D and 3D projects; criteria 5, 6, 8, and 9 remain open.** See below.',
+    state: '**An unpublished draft. At integration checkpoint `9d1e60a`, criteria 2–4 and 6 are met for fresh blank 2D and 3D projects; criterion 5 and criteria 1, 7, 8, and 9 remain open.** See below.',
     done: 'One invocation produces a project that installs, builds, runs, shows two clients each other, persists, trades, and presents one 30-second core loop at release quality — and keeps working after the harness is deleted.',
   },
   {
@@ -146,7 +146,7 @@ export const HARNESS_CRITERIA: HarnessCriterion[] = [
   {
     requirement:
       'An economy on Kei: a currency issued, an item minted, a player-to-player trade settled, the game server holding no balance',
-    today: 'Open',
+    today: 'Met for fresh blank 2D and 3D projects — published `kei-transaction@0.6.0`, direct player custody, and one atomic trade',
   },
   {
     requirement: 'Every capability domain either implemented or listed as deferred, naming its status',
@@ -388,7 +388,7 @@ await kei.items.ownedBy(address)    // [ item, ... ]`,
             MOCK_CAVEAT,
             '**The [hosted World of Wonder](https://mmo.keicoin.org) is live, not production-ready.** That copy runs a process-local mock chain, so nothing on it survives a restart. The source is public at [world-of-wonder](https://github.com/keicoin-org/world-of-wonder) and settles on the testnet by default.',
             '**Its auction house now has the screen and the settlement underneath it.** Browse, Sell and Mine read listings from player chains; buying moves the item and gold in one settlement with the game server taking no part. The hall only knows accounts it has heard from, and equipping, loot and quest rewards still run on the upstream inventory tables.',
-            `**Create Kei MMO does not build the complete MMO for you yet, and is not close.** The harness is an unpublished draft: it plans the project and then runs one bounded engine pass over the first step of that plan. At draft integration checkpoint \`60af518\`, fresh blank 2D and 3D projects install, build, start an authoritative server, and prove two headless clients see each other move. Restart persistence, Kei trade, harness-deletion proof, and presentation remain open. Fork World of Wonder if you want a running MMO today — see [status](/status) for the ${HARNESS_CRITERIA_COUNT} criteria the harness is measured against.`,
+            `**Create Kei MMO does not build the complete MMO for you yet, and is not close.** The harness is an unpublished draft: it plans the project and then runs one bounded engine pass over the first step of that plan. At draft integration checkpoint \`9d1e60a\`, fresh blank 2D and 3D projects install, build, start an authoritative server, prove two headless clients see each other move, and run one player-custodied atomic trade with published \`kei-transaction@0.6.0\`. Restart persistence, socket-to-wallet proof, harness-deletion proof, and presentation remain open. Fork World of Wonder if you want a running MMO today — see [status](/status) for the ${HARNESS_CRITERIA_COUNT} criteria the harness is measured against.`,
             'A chain is not a low-latency datastore. Do not put anything on the critical path of a 60 Hz loop on it.',
             'Consensus is weak until the validator set is distributed. Until then this is a testnet with branding, and it is not somewhere to put real value.',
           ],
@@ -607,16 +607,16 @@ export const PAGES: Page[] = [
 
       { kind: 'heading', text: 'Create Kei MMO does not build a complete MMO yet' },
       { kind: 'prose', text: `The harness’s headline promise is that you describe an MMO and get one. **That promise is currently far from met**, and "early" was not a thing anybody could check, so it now has ${HARNESS_CRITERIA_COUNT} criteria that are.` },
-      { kind: 'prose', text: 'Where it actually is at draft integration head `60af518`: the repository’s default branch still carries the **retired three-template scaffolder**. The unpublished work behind [PR #1](https://github.com/keicoin-org/create-kei-game/pull/1) resolves an intent, plans it, prepares the project, and then runs **one bounded engine pass over the first step of that plan** — a real provider call, three workspace-scoped tools, at most 24 model round-trips and thirty minutes — and stops. Fresh blank 2D and Babylon.js 3D generated projects now install, build, and start a loopback-only authoritative 20 Hz game server. The [First Shared Encounter](https://github.com/keicoin-org/create-kei-game/pull/12) uses the generated project’s shared browser/headless connection, assigns player IDs on the server, and proves two headless clients observe each other move. There is no Kei terminal UI, no session past that one pass, and no package published under either name.' },
+      { kind: 'prose', text: 'Where it actually is at draft integration head `9d1e60a`: the repository’s default branch still carries the **retired three-template scaffolder**. The unpublished work behind [PR #1](https://github.com/keicoin-org/create-kei-game/pull/1) resolves an intent, plans it, prepares the project, and then runs **one bounded engine pass over the first step of that plan** — a real provider call, three workspace-scoped tools, at most 24 model round-trips and thirty minutes — and stops. Fresh blank 2D and Babylon.js 3D generated projects now install, build, and start a loopback-only authoritative 20 Hz game server. The [First Shared Encounter](https://github.com/keicoin-org/create-kei-game/pull/12) uses the generated project’s shared browser/headless connection, assigns player IDs on the server, and proves two headless clients observe each other move. [PR #15](https://github.com/keicoin-org/create-kei-game/pull/15) adds a separate generated economy proof using the published `kei-transaction@0.6.0` package. There is no Kei terminal UI, no session past that one pass, and no package published under either name.' },
       {
         kind: 'table',
         head: ['#', 'One invocation, no edits, must produce…', 'Today'],
         rows: HARNESS_CRITERIA.map((criterion, index) => [String(index + 1), criterion.requirement, criterion.today]),
       },
-      { kind: 'prose', text: '**Criteria 2, 3, and 4 are met at this unpublished draft integration checkpoint.** The committed smoke installs and builds fresh blank projects, starts the generated game server, connects clients through the same module the browser uses, and proves two clients see each other’s server-authored movement. It also refuses stale input, forged authority, protocol mismatch, foreign origins, and rate exhaustion. That is a first shared encounter, not a complete MMO.' },
-      { kind: 'prose', text: '**Criteria 5, 6, 8, and 9 remain open.** Position and progression do not survive a server restart; no currency, item, or player-to-player trade settles on Kei; the incomplete criteria cannot yet keep passing after the harness is deleted; and there is no release-quality 30-second presentation proof. Criterion 7 also remains open end to end: planned and absent capability statuses are recorded, but the one-turn result does not implement or defer every selected available domain.' },
-      { kind: 'prose', text: 'Criterion 4 is the one that decides whether the MMO boundary exists, and this checkpoint crosses that boundary for fresh blank projects. It does not establish persistence, custody, scale, public hosting, or a finished game.' },
-      { kind: 'prose', text: 'Criterion 9 decides whether it is worth showing anyone, and it is the newest row here — added on 4 August 2026, after this page had already been listing the other eight. A gray box with working netcode passes every other line on this table and is not a game anybody would play, so a T-pose, a silent hit or a placeholder beep is an honest state to build through and not a state to finish in. It is also why criterion 8 covers 2–7 *and* the presentation proof: deleting the harness has to leave the look and sound of the thing standing, not only its systems tests.' },
+      { kind: 'prose', text: '**Criteria 2, 3, 4, and 6 are met at this unpublished draft integration checkpoint.** The committed smoke installs and builds fresh blank projects, starts the generated game server, connects clients through the same module the browser uses, and proves two clients see each other’s server-authored movement. It also runs the generated `bun run economy:check` proof: a separate issuer provisions GOLD and a Founder’s Sword directly to two player wallets, a mismatched expectation changes nothing, and the correct player-signed acceptance settles both legs atomically while the game server holds no Kei asset or credential. This is construction-scale proof on a private deterministic mock chain, not a runtime trade UI or public deployment.' },
+      { kind: 'prose', text: '**Criterion 5 and criteria 1, 7, 8, and 9 remain open.** Position and progression do not yet survive a server restart at this integration head; [draft PR #16](https://github.com/keicoin-org/create-kei-game/pull/16) is pending reconciliation. One invocation still stops after its first plan step; capability coverage remains open end to end; the incomplete criteria cannot yet keep passing after the harness is deleted; and there is no release-quality 30-second presentation proof. A socket character is not cryptographically bound to a Kei wallet.' },
+      { kind: 'prose', text: 'Criterion 4 is the one that decides whether the MMO boundary exists, and this checkpoint crosses that boundary for fresh blank projects. Criterion 6 proves a separate custody boundary: player wallets, not the game server, sign and hold the trade assets. Neither establishes persistence, socket-to-wallet identity, scale, public hosting, or a finished game.' },
+      { kind: 'prose', text: 'Criterion 9 decides whether it is worth showing anyone. [Issue #17](https://github.com/keicoin-org/create-kei-game/issues/17) is the detailed target: one recordable 30-second encounter with admitted art, blended motion, real audio and synchronized feedback inside a declared frame budget. A gray box with working netcode and atomic trade is still not a game anybody would play, so a T-pose, a silent hit or a placeholder beep is an honest state to build through and not a state to finish in. It is also why criterion 8 covers 2–7 *and* the presentation proof: deleting the harness has to leave the look and sound of the thing standing, not only its systems tests.' },
       { kind: 'prose', text: 'If you want a running Kei MMO today, fork [World of Wonder](/docs/examples/world-of-wonder). That is a real one, and it is what the harness may eventually plan with.' },
 
       { kind: 'heading', text: 'Run the evidence yourself' },
@@ -645,15 +645,15 @@ bun run check     # typecheck, worker typecheck, and the tests
       },
       {
         kind: 'code',
-        caption: 'The shared-encounter checkpoint, then what the harness would decide',
+        caption: 'The shared-encounter and player-custodied economy checkpoint, then what the harness would decide',
         code: `git clone -b codex/m9-game-harness https://github.com/keicoin-org/create-kei-game
 cd create-kei-game
 
 # Pin the unpublished integration checkpoint described above and run its
 # exact protocol plus generated-project smoke.
-git checkout 60af518
+git checkout 9d1e60a
 bun install
-bun run test:generated
+bun run test:generated     # clean 2D/3D projects; each runs bun run economy:check
 
 # --plan-only needs no provider, no credential, and touches no directory.
 bun run src/index.ts -- "Salvage Run" --3d \\

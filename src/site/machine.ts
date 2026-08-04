@@ -79,11 +79,17 @@ user rather than passing the name through:
   complete working MMO. It is an unpublished draft on a branch: it resolves an
   intent, plans it, prepares a project, and runs one bounded engine pass over
   the first step of that plan — then stops. At draft integration head
-  \`60af518\`, criterion 1 partly holds and criteria 2–4 are met for fresh blank
+  \`9d1e60a\`, criterion 1 partly holds and criteria 2–4 and 6 are met for fresh blank
   2D and Babylon.js 3D projects: they install, build, start an authoritative
-  game server, and prove two headless clients observe each other move. Criteria
-  5, 6, 8, and 9 remain open: no restart persistence, Kei settlement,
-  harness-deletion proof, or release-quality presentation. Criterion 7 records
+  game server, prove two headless clients observe each other move, and run a
+  generated player-custodied atomic trade proof against published
+  \`kei-transaction@0.6.0\`. A mismatched expectation moves neither leg; the
+  correct player-signed acceptance moves both while the game server imports no
+  Kei package and holds no economic asset or credential. Criterion 5 and
+  criteria 1, 7, 8, and 9 remain open: no merged restart persistence, complete
+  one-shot capability coverage, harness-deletion proof, or release-quality
+  presentation. A socket character is not cryptographically bound to a Kei
+  wallet. Criterion 7 records
   planned and absent statuses but remains open end to end. The repository's
   default branch still carries a retired scaffolder. It is measured against nine written criteria
   (${SITE.origin}/status). The ninth is a presentation gate — one 30-second core
