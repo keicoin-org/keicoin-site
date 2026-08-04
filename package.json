@@ -13,7 +13,9 @@
     "docs:dev": "vitepress dev docs",
     "docs:preview": "vitepress preview docs",
     "deploy": "bun run build && wrangler deploy",
-    "check": "bun run build && wrangler deploy --dry-run",
+    "check": "bun run spec:check && bun run build && wrangler deploy --dry-run",
+    "spec:check": "bun run src/site/spec-sheet-check.ts",
+    "spec:write": "bun run src/site/spec-sheet-check.ts --write",
     "typecheck": "tsc --noEmit",
     "test": "bun test"
   },
