@@ -32,11 +32,19 @@ This page is the tour. If you came for one piece of it:
 
 ## Run it
 
+**Terminal 1 — server:**
+
 ```sh
 git clone https://github.com/keicoin-org/world-of-wonder
 cd world-of-wonder
 npm ci
 KEI_NETWORK=mock npm run server-build && KEI_NETWORK=mock npm run server-start
+```
+
+**Terminal 2 — client:**
+
+```sh
+cd world-of-wonder
 npm run client-dev                              # http://localhost:8080
 ```
 
@@ -164,7 +172,7 @@ Keep it out of the repository, out of logs, and out of the client. `mainnet` has
 npm run test:economy    # the rules, in-process
 npm run test:inventory  # the phase-one ownership/refusal boundary
 npm test                # startup, economy, market, and inventory
-npm run server-start &
+KEI_NETWORK=mock npm run server-start &
 npm run test:e2e        # the same thing over HTTP, sharing no memory with the server
 ```
 
