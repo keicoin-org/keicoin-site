@@ -65,11 +65,14 @@ workspace-scoped tools, at most 24 model round-trips and thirty minutes — and
 stops.
 
 Measured against the [nine criteria on the status
-page](https://keicoin.org/status), only the first partly holds. The result does
-not install, build, run, or put two players in a world together, and the ninth
-criterion — one 30-second core loop that is presentable rather than merely
-functional — is not in reach of a gray box either. There is no Kei terminal UI,
-no session past that one pass, and no package published under either name. **If
+page](https://keicoin.org/status), criterion 1 partly holds and criterion 2 is
+met for fresh blank 2D and Babylon.js 3D projects: both install and build with
+no edit. Criterion 3 remains open because the committed smoke only fetches the
+static page, bundle, and status endpoint; it never executes a headless client or
+connects to a game server. Criteria 4–6 and 9 remain open. Criterion 7 is open
+end to end, and criterion 8 is structurally advanced by zero harness runtime
+imports but is not met. There is no Kei terminal UI, no session past that one
+pass, and no package published under either name. **If
 you want a running Kei MMO today, fork World of Wonder** — that is a real one.
 :::
 

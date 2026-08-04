@@ -93,6 +93,68 @@ game.onPayment(async ({ from, amount, hash: receiveHash }) => {
 
 A Kei payment has no memo field in the current wire contract. The SDK rejects `pay({ memo })` rather than silently dropping it. There is also no `charge(someoneElse, amount)`: the player signs payment; the issuer signs delivery.
 
+## Economy helpers in the 0.6.0 umbrella
+
+`kei-transaction@0.6.0` is the first umbrella release that depends on both
+`@keicoin/economy@0.2.0` and `@keicoin/player-economy@0.1.0`. A plain install now
+reaches weighted loot-table drops through `kei.economy` and the player-owned
+stall through `kei.shop`; the earlier `0.5.0` umbrella did not reach the shop.
+
+### Weighted loot-table drops
+
+The server and browser import the same declared table:
+
+```ts
+import { defineDropTable } from 'kei-transaction'
+
+export const dragonHoard = defineDropTable({
+  id: 'dragon-hoard',
+  drops: [
+    { asset: { symbol: 'GOLD' }, amount: 50, weight: 60 },
+    { asset: { symbol: 'SWORD' }, weight: 10 },
+  ],
+  nothing: 30,
+  issuer: GAME_ADDRESS,
+})
+```
+
+The game publishes one drop batch for the party; each player verifies and then
+claims their own award:
+
+```ts
+const drop = await game.economy.drop(dragonHoard, party)
+send(playerA, drop.awardFor(playerA))
+
+const { symbol, quantity, chance } = await kei.economy.verifyDrop(award)
+await kei.claims.add(award)
+```
+
+::: warning Not verifiable randomness
+The roll happens on the game's server, and nothing here proves the declared
+weights were honoured. Verification proves that the published batch was bound
+to the table the player saw and that the award is an entry owed to that player;
+it does not prove the server rolled fairly.
+:::
+
+### Player-owned shop
+
+The player's own key lists, buys, cancels, or gifts. The game never takes
+custody of the item or the payment:
+
+```ts
+await kei.shop.list({ item: 'sword', qty: 2, each: 120 })
+const shelves = await kei.shop.browse()
+await kei.shop.buy(shelves.listings[0])
+await kei.shop.gift({ to: friend, item: 'sword' })
+```
+
+::: warning Current shop evidence
+This surface has been exercised against `Kei.mock()` and over HTTP between two
+clients sharing only a URL. It has **not yet been run against the public
+testnet**. Do not infer public-testnet shop settlement from the rooted-claim and
+swap conformance results above.
+:::
+
 ## Continue
 
 - Read the [integration model](./guide/integration.md) before building a purchase flow.

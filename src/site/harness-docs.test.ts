@@ -92,6 +92,13 @@ describe('Create Kei MMO documentation boundary', () => {
     expect(publicCopy).not.toMatch(/eight (?:written )?criteria/i)
   })
 
+  test('states the a9270a1 checkpoint without turning a static probe into criterion 3', () => {
+    expect(examplesProse).toContain('criterion 2 is met for fresh blank 2D and Babylon.js 3D projects')
+    expect(examplesProse).toContain('never executes a headless client or connects to a game server')
+    expect(examplesProse).toContain('Criterion 7 is open end to end')
+    expect(examplesProse).toContain('criterion 8 is structurally advanced')
+  })
+
   test('leads with the command that decides nothing on disk', () => {
     expect(examplesProse).toContain('--plan-only')
     expect(examplesProse).toContain('needs no provider, no credential, and touches no directory')

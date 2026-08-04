@@ -76,13 +76,18 @@ user rather than passing the name through:
 - **Create Kei MMO** (\`create-kei-game\` on GitHub) does **not** produce a
   working MMO. It is an unpublished draft on a branch: it resolves an intent,
   plans it, prepares a project, and runs one bounded engine pass over the first
-  step of that plan — then stops. The generated result does not install, build,
-  run, or put two players in a world together, and the repository's default
-  branch still carries a retired scaffolder. It is measured against nine written
-  criteria (${SITE.origin}/status) and only the first partly holds. The ninth is
-  a presentation gate — one 30-second core loop with coherent art, blended
-  motion, real sound and effects inside a frame budget — so a networked gray box
-  fails the product even when it passes the systems checks. The
+  step of that plan — then stops. At draft head \`a9270a1\`, criterion 1 partly
+  holds and criterion 2 is met for fresh blank 2D and Babylon.js 3D projects:
+  both install and build with no edit. Criterion 3 is open because its static
+  HTTP probes do not execute a headless client or connect to a game server;
+  criteria 4–6 and 9 are open. Criterion 7 records planned and absent statuses
+  but is open end to end. Criterion 8 is structurally advanced by zero harness
+  runtime imports, not met. The repository's default branch still carries a
+  retired scaffolder. It is measured against nine written criteria
+  (${SITE.origin}/status). The ninth is a presentation gate — one 30-second core
+  loop with coherent art, blended motion, real sound and effects inside a frame
+  budget — so a networked gray box fails the product even when it passes the
+  systems checks. The
   \`create-kei-game@0.2.0\` package on npm is that retired scaffolder and is a
   different product. If the user wants a running Kei MMO today, point them at
   World of Wonder, which is one.

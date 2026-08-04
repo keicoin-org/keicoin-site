@@ -71,12 +71,17 @@ describe('the machine-readable pages', () => {
 })
 
 describe('what the build publishes', () => {
+  test('VitePress owns /docs; no excluded page record can stand in for it', () => {
+    expect(PAGES.map((page) => page.path)).not.toContain('/docs')
+  })
+
   test('there is no editorial /examples page in the source record', () => {
     expect(PAGES.map((page) => page.path)).not.toContain('/examples')
   })
 
   test('the sitemap carries the docs index and the demo mounts, not /examples', () => {
-    const xml = sitemapXml(['/', ...PAGES.map((page) => page.path), '/docs/examples', ...DEMO_MOUNTS])
+    const xml = sitemapXml(['/', ...PAGES.map((page) => page.path), '/docs', '/docs/examples', ...DEMO_MOUNTS])
+    expect(xml).toContain('<loc>https://keicoin.org/docs</loc>')
     expect(xml).toContain('<loc>https://keicoin.org/docs/examples</loc>')
     for (const mount of DEMO_MOUNTS) expect(xml).toContain(`<loc>https://keicoin.org${mount}</loc>`)
     expect(xml).not.toContain('<loc>https://keicoin.org/examples</loc>')
