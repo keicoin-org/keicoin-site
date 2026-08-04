@@ -14,7 +14,7 @@ Two separate things are true, and the second one is usually left out.
 
 **The argument holds.** Every claim the interface makes about a coin is asserted at the ledger by a test, not in the client. `lib/market.ts` is a faithful reading of `@keicoin/market` and is the file to steal.
 
-**The interface around it does not.** Assessed against the pump-style launchpads it is modelled on, this front end is **materially weaker**, and its UX does not carry a first-time visitor through a trade. Seven of its [nine written criteria](https://keicoin.org/status) are unmet. It also runs an **in-memory mock chain that resets**, and it is **not production-ready and cannot become mainnet-ready** — mainnet is not a build task, and a launchpad is the worst possible first thing to put on a real network. Take the calls; leave the screen.
+**The interface around it does not.** Assessed against the pump-style launchpads it is modelled on, this front end is **materially weaker**, and its UX does not carry a first-time visitor through a trade. Seven of its [nine written criteria](https://keicoin.org/status) are unmet. Its hosted no-value mock now replays a storage-backed event log across Durable Object eviction, but that append-only log is small-demo infrastructure, not a production ledger or indexer. It is **not production-ready and cannot become mainnet-ready** — mainnet is not a build task, and a launchpad is the worst possible first thing to put on a real network. Take the calls; leave the screen.
 :::
 
 | | |
@@ -22,7 +22,7 @@ Two separate things are true, and the second one is usually left out.
 | Client | Next.js 16, React 19, Tailwind 4 — shipped as a **static export**, no Node server behind it |
 | Server | One Bun process — the mock node, the registry, and the dev proxy's target |
 | Database | None. No `users`, no `balances`, no `holdings` |
-| Chain | In-memory mock; a Durable Object in the hosted copy |
+| Chain | Local: in-memory mock. Hosted: the same mock rebuilt from a Durable Object event log after eviction |
 | Every line of Kei in the client | `lib/market.ts` |
 
 ## Run it
@@ -188,8 +188,9 @@ It is worth playing precisely because the coins are worthless. It is not worth c
 - **One open quote per address.** A Kei transfer carries no memo, so an arriving payment says only who sent it and how much. Two browser tabs racing is a thing you can do to yourself. The honest fix is a memo field in the wire format, not a cleverer guess on this side.
 - **The registry keeps unmatched payments.** Send it Kei answering no quote and it stays there. Reflexively refunding whoever sends money would make it return its own working capital to the faucet on startup.
 - **A creator selling their whole position is not an exploit.** It is the documented behaviour of `transfer: 'open'`. If you would like it to be impossible, that is the other radio button, and it is impossible at the ledger rather than in the app.
-- **The replies are not on the chain**, and they are the only thing here that is not. They go when the chain does.
-- The hosted copy runs an in-memory mock chain inside a Durable Object, so the ledger resets when that object is evicted. It does **not** run against the public testnet, even though the testnet has settled swaps since 3 August 2026 — this demo is a launchpad anybody can mint on, and that belongs on a chain nobody can mistake for one that matters.
+- **The replies are not on the chain**, and they are the only thing here that is not. The hosted copy persists their signed public inputs in the same event log and replays them after eviction; the local Bun mock still loses them when its process stops.
+- The hosted copy appends versioned public mutation inputs to Durable Object storage and replays accepted ledger, launch, watch and reply events after eviction. Eviction, a routine deploy, or a Worker restart does not reset it; deleting the named object’s storage does. The log is append-only and grows with successful mutations, so it remains small-demo infrastructure rather than a production ledger or indexer.
+- It does **not** run against the public testnet, even though the testnet has settled swaps since 3 August 2026 — this demo is a launchpad anybody can mint on, and that belongs on a chain nobody can mistake for one that matters.
 
 ## What is still wrong with it, in order
 

@@ -65,8 +65,10 @@ frequently misread from their repository names, so state their status to the
 user rather than passing the name through:
 
 - **Carpet Markets** (${SITE.origin}/docs/examples/carpet-markets) is a *demo of
-  the market API*, not a market. It runs an in-memory mock chain that resets, its
-  front end is materially weaker than the pump-style launchpads it is modelled
+  the market API*, not a market. Its no-value mock replays a versioned Durable
+  Object event log across eviction; that append-only log is small-demo
+  infrastructure, not a production ledger or indexer. Its front end is
+  materially weaker than the pump-style launchpads it is modelled
   on, and it is **not production-ready and cannot become mainnet-ready** — a
   launchpad is the worst possible first thing to put on a real network, and
   mainnet is gated by validator distribution, reserve governance and a legal
@@ -356,8 +358,9 @@ Answer these before writing code. Two of them cannot be changed later.
 - Do not promise a network-wide order book. An offer lives on its author's chain
   and there is no indexer, so a front end reads the accounts it knows about.
 - Do not present **Carpet Markets** as a market a user could operate. It is a
-  demo of the market API on a mock chain that resets, its front end is weaker
-  than the launchpads it copies, and it is not production-ready or mainnet-ready.
+  demo of the market API on a no-value mock that replays an append-only Durable
+  Object event log across eviction; its front end is weaker than the launchpads
+  it copies, and it is not production-ready or mainnet-ready.
 - Do not present **Create Kei MMO** as a tool that produces a working game. It is
   an unpublished draft that plans a project and runs one bounded pass at the
   first step of that plan. Point users wanting a running Kei MMO at World of

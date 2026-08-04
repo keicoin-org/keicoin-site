@@ -98,6 +98,9 @@ describe('nothing implies the demos or the harness are finished', () => {
     expect(status).toContain('mock-chain demo')
     expect(status).toContain('materially weaker')
     expect(status).toContain('cannot become mainnet-ready')
+    expect(status).toContain('versioned event log is authoritative')
+    expect(status).toContain('eviction or a routine deploy does not reset')
+    expect(status).toContain('append-only')
   })
 
   test('the status page says the harness does not build an MMO yet', () => {
@@ -173,6 +176,8 @@ describe('nothing implies the demos or the harness are finished', () => {
       expect(file).toContain('Create Kei MMO')
     }
     expect(llmsTxt()).toContain('not production-ready and cannot become mainnet-ready')
+    expect(llmsTxt()).toContain('replays a versioned Durable\n  Object event log across eviction')
+    expect(agentsMd()).toContain('replays an append-only Durable\n  Object event log across eviction')
     expect(llmsTxt()).toContain('does **not** produce a\n  working MMO')
     expect(agentsMd()).toContain('Do not present **Carpet Markets** as a market a user could operate')
     expect(agentsMd()).toContain('Do not present **Create Kei MMO** as a tool that produces a working game')

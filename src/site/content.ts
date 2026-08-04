@@ -337,7 +337,7 @@ await kei.items.ownedBy(address)    // [ item, ... ]`,
           items: [
             '**The market is published as `@keicoin/market@0.2.0`, reachable from a plain `bun add kei-transaction` since `0.6.0`, and the public testnet settles swaps.** Measured on 3 August 2026 over `https://testnet.keicoin.org/rpc`: an offer locks the units at the ledger, a second sale of the same units is refused, one accept moves both legs, and the gateway now forwards the two read actions (`swap_info`, `account_swaps`) a market needs. See [status](/status).',
             '**Nobody can show you the whole book.** An offer lives on its author\'s chain and Kei ships no indexer, so a front end has to keep the list of accounts to read. That is bookkeeping about where to look, not about who owns what — `carpet-markets`\' registry is the worked example.',
-            '**[Carpet Markets](/docs/examples/carpet-markets) shows the API, not a finished market.** It runs an in-memory mock chain, its front end is weaker than the pump-style launchpads it is modelled on, and it is not production-ready or mainnet-ready — it deliberately cannot be. Read `lib/market.ts` for the calls; do not copy the interface around them.',
+            '**[Carpet Markets](/docs/examples/carpet-markets) shows the API, not a finished market.** Its deployed no-value mock replays a storage-backed Durable Object event log across eviction, its front end is weaker than the pump-style launchpads it is modelled on, and it is not production-ready or mainnet-ready — it deliberately cannot be. Read `lib/market.ts` for the calls; do not copy the interface around them.',
             MOCK_CAVEAT,
             'A market only exists for tokens issued `transfer: "open"`. That is a decision you make once, at issuance, and cannot reverse.',
             'There is no order book or matching engine in the protocol, and there will not be. Offers are individual blocks; a front end aggregates them.',
@@ -594,7 +594,8 @@ export const PAGES: Page[] = [
         kind: 'limits',
         title: 'And it cannot become mainnet-ready',
         items: [
-          'It runs an **in-memory mock chain** inside a Durable Object. The ledger resets when that object is evicted, and every coin on it is worthless by construction.',
+          'It runs a **no-value mock chain** inside one Durable Object. Its versioned event log is authoritative: a fresh instance replays accepted ledger, launch, watch and reply mutations, so eviction or a routine deploy does not reset the demo. Deleting that object’s storage is the explicit reset.',
+          'That event log is append-only and grows with successful demo mutations. It is deliberately small-demo infrastructure, not an indexer or production ledger; compaction and storage bounds remain follow-up work.',
           'A launchpad is the **worst possible first thing** to put on a real network — it is the one demo whose entire subject is people losing money. It is defensible as satire precisely because the coins are worth nothing.',
           '**Mainnet is not a build task.** Nothing shipped in this demo moves validator distribution, reserve governance, or the legal conversation, and those are what gate it.',
           'So do not read any roadmap into this. It should refuse a real network outright, and the page should say so — which is what this one is doing.',

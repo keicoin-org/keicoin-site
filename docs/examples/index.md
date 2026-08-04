@@ -141,7 +141,7 @@ Three properties are deliberate in every one of them, and they are the propertie
 ## What none of them are
 
 ::: danger Nothing here holds value
-That is a design constraint rather than a disclaimer. There is no mainnet, and the hosted copies run against mock chains that reset when the process or the Durable Object holding them goes away. They are demos, not services.
+That is a design constraint rather than a disclaimer. There is no mainnet. The hosted World of Wonder loses its process-local mock on restart; Carpet Markets rebuilds its no-value mock from a Durable Object event log after eviction, but that append-only log is explicitly small-demo infrastructure rather than a production ledger or indexer. They are demos, not services.
 :::
 
 - Button counts its own presses, because in single-player nothing else can see them. That is a real trust hole with a ceiling on it, written down in the source rather than hidden.
