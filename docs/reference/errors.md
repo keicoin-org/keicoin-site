@@ -32,19 +32,39 @@ a signed write that may already have landed. A UI cache never overrules a fresh
 ledger read.
 
 Do not parse message text to choose control flow. Show it when safe and use the
-code for branching.
+code for branching — but read
+[where the code comes from](#where-the-code-comes-from-decides-whether-it-is-stable)
+first. Not every code you see under `Kei.mock()` exists on the public node.
 
 ## Recovery categories
 
 | Category | Examples | Action |
 | --- | --- | --- |
 | Retry | `node-unreachable` or `node-timeout` during a read | Retry with bounded backoff. |
-| Refresh | `offer-taken`, `offer-cancelled`, `offer-changed`, `already-claimed`, `root-closed` | Re-read authoritative state and update the UI/work queue. |
+| Refresh | `offer-taken`, `offer-cancelled`, `offer-changed`, and every `node-error` | Re-read authoritative state and update the UI/work queue. |
 | Permanent refusal | `no-memo-yet`, bad address/amount, immutable policy, insufficient balance | Change the request or obtain a new user decision; repeating it unchanged cannot help. |
 
 A transport error after a **signed write** belongs in refresh/reconciliation,
 not automatic retry. The node may have accepted the block before its reply was
 lost.
+
+## Where the code comes from decides whether it is stable
+
+This is the distinction that decides whether a branch you write will ever run,
+and it is measured rather than asserted — see the
+[public testnet proof](./testnet.md#the-one-thing-the-mock-gets-wrong).
+
+| Origin | Examples | Stable? |
+| --- | --- | --- |
+| Client-side, before a block reaches the wire | `no-memo-yet`, `insufficient-kei`, `not-in-commit`, bad address or amount | Yes. Identical under `Kei.mock()` and against the public node. |
+| Client-side, from a fresh read of ledger state | `offer-taken`, `offer-cancelled`, `offer-changed` | Yes, for the same reason: `@keicoin/market` derives them from what it read. |
+| Transport | `node-unreachable`, `node-timeout` | Yes. |
+| **A ledger write the node refused** | `already-claimed`, `root-closed`, `bad-proof`, `insufficient-balance`, `transfer-not-permitted` | **No.** These are the mock ledger's codes. The public node refuses the write as `node-error` and puts the reason in the message. |
+
+The bottom row is not a licence to parse messages for control flow. On a
+`node-error`, branch on a **fresh read of authoritative state** —
+`commitInfo(root)`, the account chain, the holding, the offer — not on the
+sentence. Show the sentence to the operator; decide from the ledger.
 
 ## Error state transitions
 
@@ -96,3 +116,7 @@ case executes `HttpNode` with a local throwing transport to prove the stable
 `node-unreachable` code without I/O. The example proves classification logic,
 not network recovery, database rollback behavior, or that every future code
 belongs in one of the listed sets. Unknown codes fail closed.
+
+It also cannot prove that the codes it classifies are the codes the public node
+sends, because it never speaks to one. For that, run the
+[public testnet proof](./testnet.md), which asserts the live codes directly.

@@ -67,6 +67,9 @@ export default defineConfig({
           { text: 'Loot tables', link: '/reference/drops' },
           { text: 'Player shop', link: '/reference/shop' },
           { text: 'Errors', link: '/reference/errors' },
+          // The only playground on the site that uses the network, and the
+          // only page that measures the mock's error codes against the node's.
+          { text: 'Public testnet proof', link: '/reference/testnet' },
         ],
       },
       {
