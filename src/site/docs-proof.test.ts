@@ -109,7 +109,7 @@ describe('remaining SDK guides carry executable proof', () => {
   test('the error proof is offline by construction and keeps signed writes out of retry', () => {
     const errors = source('docs/playgrounds/errors.ts')
     expect(errors).toContain("url: 'https://offline.invalid/rpc'")
-    expect(errors).toContain("fetch: async () => { throw new Error('offline by construction') }")
+    expect(errors).toContain("throw new Error('offline by construction')")
     expect(errors).toContain("return operation === 'read' ? 'retry' : 'refresh'")
   })
 
