@@ -14,7 +14,7 @@
  * admissions. Nothing is asserted in an empty column.
  */
 
-import { USE_CASES, ISSUER_SNIPPET, PLAYER_SNIPPET } from './content.js'
+import { TRACKS, USE_CASES, ISSUER_SNIPPET, PLAYER_SNIPPET } from './content.js'
 import { UPGRADES } from './clicker-state.js'
 import { COIN_ALT, SITE, escapeHtml, inline, shell } from './layout.js'
 
@@ -263,6 +263,35 @@ export function homePage(): string {
 
 <section><div class="wrap split">
   <div class="split-copy">
+    <p class="eyebrow">What is being built, right now</p>
+    <h2>Four tracks, and none of them is mainnet.</h2>
+    <p>
+      They run at once rather than in order, and each one is finished by a
+      condition somebody could check — not by a date. The milestone ladder is
+      retired: a page still quoting a number off it was describing a plan that
+      no longer exists.
+    </p>
+    <p>
+      <strong>Mainnet is deliberately not one of them.</strong> It is not a build
+      task: validator distribution, reserve governance and a legal conversation
+      gate it, and none of those are shipped their way through. Nothing here is
+      mainnet-ready.
+    </p>
+    ${jump('/status', 'What each track owes, and the commands that prove it')}
+  </div>
+
+  <div class="split-evidence">
+    <div class="panel">
+      ${panelHead(['Active tracks', 'Finished by a condition, not a date'])}
+      <ul class="tracks">
+        ${TRACKS.map((track) => `<li><b>${escapeHtml(track.name)}</b><span>${inline(track.where)}</span></li>`).join('\n        ')}
+      </ul>
+    </div>
+  </div>
+</div></section>
+
+<section><div class="wrap split">
+  <div class="split-copy">
     <p class="eyebrow">Read this before you commit to anything</p>
     <h2>Where this actually is.</h2>
     <p>
@@ -277,10 +306,11 @@ export function homePage(): string {
     <div class="limits">
       <h4>${escapeHtml(SITE.milestone)}</h4>
       <ul>
-        <li><strong>What you can install is SDK 0.4.0</strong>, and every SDK <code>@keicoin/*</code> package with it. Item stats and the roll-supply fix are included, and the market is <code>0.1.1</code>. The <code>create-kei-game@0.2.0</code> package on npm is the superseded legacy scaffolder, not the standalone harness now in development.</li>
+        <li><strong>What you can install is SDK 0.4.0</strong>, and every <code>@keicoin/*</code> package with it. Item stats and the roll-supply fix are included, and the market is <code>0.1.1</code>.</li>
         <li><strong><code>Kei.start()</code> defaults to the public testnet.</strong> It is one rate-limited, best-effort dev node with weak consensus, no uptime promise, and no monetary value; <code>Kei.mock()</code> remains available for tests.</li>
-        <li><strong>M4 claims and M5 swaps settle on that testnet</strong>, measured on 3 August 2026 rather than inferred from CI: a rooted claim lands, a double claim is refused, an offer locks its units, and one accept moves both legs — over the public URL.</li>
-        <li><strong>World of Wonder is live over HTTPS</strong> and its source is public. The hosted copy at <a href="https://mmo.keicoin.org">mmo.keicoin.org</a> still runs a process-local mock chain, so it is not a public network; the repository itself settles on the testnet by default, and its auction house now has Browse, Sell and Mine over atomic player-to-player settlement.</li>
+        <li><strong>Rooted claims and atomic swaps settle on that testnet</strong>, measured on 3 August 2026 rather than inferred from CI: a claim lands, a double claim is refused, an offer locks its units, and one accept moves both legs — over the public URL. Run it yourself with <code>bun run test:m3-live</code>.</li>
+        <li><strong>The demos are demos.</strong> <a href="/docs/examples/carpet-markets">Carpet Markets</a> and the hosted <a href="https://mmo.keicoin.org">World of Wonder</a> both run mock chains that reset. Carpet Markets in particular is weaker than the launchpads it is modelled on, and it is not production-ready or mainnet-ready — deliberately, because a launchpad is the worst possible first thing to put on a real network.</li>
+        <li><strong>Create Kei MMO does not produce a working game yet.</strong> It is an unpublished draft: it plans a project and runs one bounded pass at the first step of that plan. Of its eight written criteria, only the first partly holds — the result does not install, build, run, or put two players in a world together.</li>
         <li><strong>There is no token, no mainnet, and nothing holds value.</strong> Until the validator set is meaningfully distributed, nothing should.</li>
         <li><strong>Nobody can show you the whole order book.</strong> An offer lives on its author's chain and Kei ships no indexer, so every front end — including the standalone wallet's market panel, now wired to the chain — shows the offers of accounts it has heard of and says so.</li>
         <li><strong>There is no smart contract VM</strong>, deliberately. If your design needs one, Kei is the wrong tool, and this page would rather you found that out here.</li>

@@ -51,5 +51,5 @@ There is no migration that changes this later. Issue a replacement asset if the 
 Before delivering an asset, validate the confirmed payment's recipient, amount, send-block purchase identifier, and whether it has already been fulfilled. `pay()` returns the send hash; `onPayment.hash` is the receive hash, whose block `link` names that send. Persist orders and payments independently, reconcile after either arrives, and enforce a durable unique fulfillment record. Payment memos have no representation in the current wire contract.
 
 ::: warning Pre-release network
-The public testnet carries M4 claims and M5 swaps as of 3 August 2026, and it is still one rate-limited, best-effort dev node with weak consensus, no uptime promise, published dev keys, and no monetary value. One node accepting the blocks is a working API, not consensus. These rules describe the API and ledger model, not a production-ready network. Nothing on Kei holds value today.
+The public testnet has carried rooted claims and atomic swaps since 3 August 2026, and it is still one rate-limited, best-effort dev node with weak consensus, no uptime promise, published dev keys, and no monetary value. One node accepting the blocks is a working API, not consensus. These rules describe the API and ledger model, not a production-ready network. Nothing on Kei holds value today.
 :::

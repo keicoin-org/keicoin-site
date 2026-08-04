@@ -9,6 +9,14 @@ A coin launchpad in the pump.fun shape: anybody launches a coin in one click, wh
 
 **This is the worked demo of the market API.** There is no bonding curve and no house. Every trade is an offer one player wrote and another accepted — `swap_offer` and `swap_accept`, settled in one block by consensus. [Play it](https://keicoin.org/examples/carpet-markets), or read [the source](https://github.com/keicoin-org/carpet-markets).
 
+::: danger Read this before you copy anything here
+Two separate things are true, and the second one is usually left out.
+
+**The argument holds.** Every claim the interface makes about a coin is asserted at the ledger by a test, not in the client. `lib/market.ts` is a faithful reading of `@keicoin/market` and is the file to steal.
+
+**The interface around it does not.** Assessed against the pump-style launchpads it is modelled on, this front end is **materially weaker**, and its UX does not carry a first-time visitor through a trade. Seven of its [nine written criteria](https://keicoin.org/status) are unmet. It also runs an **in-memory mock chain that resets**, and it is **not production-ready and cannot become mainnet-ready** — mainnet is not a build task, and a launchpad is the worst possible first thing to put on a real network. Take the calls; leave the screen.
+:::
+
 | | |
 | --- | --- |
 | Client | Next.js 16, React 19, Tailwind 4 — shipped as a **static export**, no Node server behind it |
@@ -182,6 +190,34 @@ It is worth playing precisely because the coins are worthless. It is not worth c
 - **A creator selling their whole position is not an exploit.** It is the documented behaviour of `transfer: 'open'`. If you would like it to be impossible, that is the other radio button, and it is impossible at the ledger rather than in the app.
 - **The replies are not on the chain**, and they are the only thing here that is not. They go when the chain does.
 - The hosted copy runs an in-memory mock chain inside a Durable Object, so the ledger resets when that object is evicted. It does **not** run against the public testnet, even though the testnet has settled swaps since 3 August 2026 — this demo is a launchpad anybody can mint on, and that belongs on a chain nobody can mistake for one that matters.
+
+## What is still wrong with it, in order
+
+The argument is proven and the screen is not, so the gap is written down as
+criteria rather than left to taste. These are the nine it is closed against, and
+they are the same list carried on the [status page](https://keicoin.org/status).
+
+| | Criterion | Today |
+| --- | --- | --- |
+| 1 | A first-time visitor with no wallet completes one buy in five interactions or fewer | Not met |
+| 2 | Every state that can refuse a trade — an unsynced receivable, units locked in an open offer, spendable below the ask — is named on screen *before* the action, not surfaced as a failure after it | Not met |
+| 3 | A trade's result appears without a manual refresh, and pending stays visually distinct from confirmed | **Met** — `lib/balance.ts` carries all three numbers to the screen |
+| 4 | Price, volume and holder panels say "no trades yet" rather than showing a zero | **Met** for price; not elsewhere |
+| 5 | No horizontal scroll at a 360 px viewport, primary action reachable | Not met |
+| 6 | Launch → sell → buy → cancel completable by keyboard alone | Not met |
+| 7 | The transfer-policy badge is the loudest element on a card and links to the ledger fact behind it | Partly — it is the loudest; it does not link |
+| 8 | Every claim the interface makes is asserted at the ledger by a test | **Met**, for the claims that exist |
+| 9 | Each known hole — the account-bounded book, one open quote per address, off-chain replies — is stated on the screen where it bites, not only here | Not met |
+
+### And "mainnet-ready" is not on that list
+
+It is not an omission. **Mainnet is not a build task**: it is gated by validator
+distribution, reserve governance, and a legal conversation, and nothing shipped
+in this repository moves any of them. A launchpad is also the one demo whose
+entire subject is people losing money, which makes it the worst possible first
+thing to put on a real network — and exactly why it is defensible here, where the
+coins are worth nothing by construction. Reading a roadmap into this page is
+reading something that is not written on it.
 
 ## Continue
 

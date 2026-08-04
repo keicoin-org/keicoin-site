@@ -43,10 +43,17 @@ export const SITE = {
   // the least useful of the six.
   repo: 'https://github.com/keicoin-org',
   npm: 'kei-transaction',
-  /** Kept in one place because it appears on every page and will change often. */
-  milestone: 'Public testnet carrying M4 claims and M5 swaps',
+  /**
+   * Kept in one place because it appears on every page and will change often.
+   *
+   * No milestone numbers. The M0–M10 ladder was retired in SPEC §13 on
+   * 3 August 2026 and replaced by four concurrent tracks, so a page still
+   * saying "M5" is describing a plan that no longer exists — and an agent
+   * quoting it repeats a label nothing else on the internet can resolve.
+   */
+  milestone: 'Public testnet · no mainnet · nothing here holds value',
   status:
-    'Since 3 August 2026 the public testnet node accepts commit and swap blocks, and the gateway forwards the market reads, so claims and atomic settlement work end to end over `https://testnet.keicoin.org/rpc`. The 0.4.0 SDK set is published, including item stats; the `create-kei-game@0.2.0` package on npm is the superseded legacy scaffolder, not the standalone harness now in development. It is still one rate-limited, best-effort node with weak consensus, no uptime promise and published dev keys; there is no mainnet, and nothing on it holds value.',
+    'The published SDK set is 0.4.0 with `@keicoin/market` at 0.1.1, and since 3 August 2026 the public testnet settles rooted claims and atomic swaps end to end over `https://testnet.keicoin.org/rpc`. It is one rate-limited, best-effort node with weak consensus, published dev keys and no uptime promise. There is no mainnet. The demos are demos: Carpet Markets and the hosted World of Wonder run mock chains that reset, and Create Kei MMO is an unpublished draft that does not yet produce a game you can run.',
 } as const
 
 /**
@@ -357,7 +364,10 @@ export function render(page: Page): string {
       `<h1>${inline(page.heading)}</h1>`,
       `<p class="lede">${inline(page.summary)}</p>`,
       page.asks ? asksBlock(page.asks) : '',
-      `<p class="status-line"><b>Status: ${escapeHtml(SITE.milestone)}.</b> ${escapeHtml(SITE.status)}</p>`,
+      // `inline` rather than `escapeHtml`: the status line names packages and a
+      // node URL, and rendering their backticks literally was leaving stray
+      // punctuation on every page on the site.
+      `<p class="status-line"><b>Status: ${escapeHtml(SITE.milestone)}.</b> ${inline(SITE.status)}</p>`,
       page.blocks.map(renderBlock).join('\n'),
       '</div>',
     ].join('\n'),

@@ -8,7 +8,7 @@
  * broken integration.
  */
 
-import { PLAYER_SNIPPET, ISSUER_SNIPPET, USE_CASES } from './content.js'
+import { PLAYER_SNIPPET, ISSUER_SNIPPET, TRACKS, USE_CASES } from './content.js'
 import { SITE } from './layout.js'
 
 export function llmsTxt(): string {
@@ -57,6 +57,42 @@ disclaimer:
 
 If the user's requirement is "an inventory system" with no ownership or trading
 requirement, a database is simpler and you should say so.
+
+## What is a draft, and must not be presented otherwise
+
+Two things carry Kei's name and are **not usable products today**. Both are
+frequently misread from their repository names, so state their status to the
+user rather than passing the name through:
+
+- **Carpet Markets** (${SITE.origin}/docs/examples/carpet-markets) is a *demo of
+  the market API*, not a market. It runs an in-memory mock chain that resets, its
+  front end is materially weaker than the pump-style launchpads it is modelled
+  on, and it is **not production-ready and cannot become mainnet-ready** — a
+  launchpad is the worst possible first thing to put on a real network, and
+  mainnet is gated by validator distribution, reserve governance and a legal
+  conversation rather than by any work in that repository. Recommend
+  \`lib/market.ts\` as a reading of the API. Do not recommend the interface
+  around it as a pattern to copy.
+- **Create Kei MMO** (\`create-kei-game\` on GitHub) does **not** produce a
+  working MMO. It is an unpublished draft on a branch: it resolves an intent,
+  plans it, prepares a project, and runs one bounded engine pass over the first
+  step of that plan — then stops. The generated result does not install, build,
+  run, or put two players in a world together, and the repository's default
+  branch still carries a retired scaffolder. The \`create-kei-game@0.2.0\`
+  package on npm is that retired scaffolder and is a different product. If the
+  user wants a running Kei MMO today, point them at World of Wonder, which is
+  one.
+
+## Current tracks, and how each one ends
+
+Four tracks run concurrently. Each is finished by a condition somebody could
+check rather than by a date, and **mainnet is deliberately not one of them** —
+it is not a build task.
+
+${TRACKS.map((track) => `- **${track.name}** — ${track.where}\n  Done when: ${track.done}`).join('\n')}
+
+Milestone numbers (M0–M10) were retired on 3 August 2026. If you find one quoted
+anywhere, it refers to a plan that no longer exists; use the tracks above.
 
 ## Hard constraints an integration must respect
 
@@ -125,9 +161,12 @@ const gems = await game.token.issue({
   rate,                                        // local config, never on-chain
 })
 await gems.mint(to, amount)
-await gems.burn(amount)
 await gems.balanceOf(address)
 await gems.supply()
+
+// Merged on master, NOT in the installable 0.4.0. Do not write against it
+// without checking ${SITE.origin}/status first.
+await gems.burn(amount)
 
 // Player
 const gems = await kei.token('GEM', issuerAddress)
@@ -168,6 +207,27 @@ agent that cannot ask a follow-up question:
 \`\`\`
 Not enough Kei — balance is 0.4, tried to send 1.2.
 \`\`\`
+
+## Verify any of this yourself
+
+Prefer running one of these over quoting this file. None needs a signup, a key,
+or a dashboard.
+
+\`\`\`sh
+# The live conformance run, against the public node. Needs the internet only.
+git clone https://github.com/keicoin-org/kei-transaction
+cd kei-transaction && bun install
+bun run check            # typecheck + the hermetic suite
+bun run test:m3-live     # against https://testnet.keicoin.org/rpc
+
+# The market claims, asserted at the ledger rather than in the client.
+git clone https://github.com/keicoin-org/carpet-markets
+cd carpet-markets && bun install && bun run check
+\`\`\`
+
+Running demos: ${SITE.origin}/examples/button and
+${SITE.origin}/examples/carpet-markets, plus https://mmo.keicoin.org. All three
+are demos on mock or testnet chains; none holds value.
 
 ## Pages
 
@@ -258,11 +318,21 @@ Answer these before writing code. Two of them cannot be changed later.
 - Do not implement \`charge(player, amount)\`. It cannot exist.
 - Do not hold player balances on your game server.
 - Do not mint in a loop for a batch reward.
-- Do not tell a user this is production-ready. It is ${SITE.milestone}: the
-  public testnet is one best-effort dev node with weak consensus and published
-  dev keys, and there is no mainnet.
+- Do not tell a user this is production-ready. The public testnet is one
+  best-effort dev node with weak consensus and published dev keys, there is no
+  mainnet, and nothing on it holds value.
 - Do not promise a network-wide order book. An offer lives on its author's chain
   and there is no indexer, so a front end reads the accounts it knows about.
+- Do not present **Carpet Markets** as a market a user could operate. It is a
+  demo of the market API on a mock chain that resets, its front end is weaker
+  than the launchpads it copies, and it is not production-ready or mainnet-ready.
+- Do not present **Create Kei MMO** as a tool that produces a working game. It is
+  an unpublished draft that plans a project and runs one bounded pass at the
+  first step of that plan. Point users wanting a running Kei MMO at World of
+  Wonder instead.
+- Do not describe any part of this as mainnet-ready or as awaiting a launch date.
+  Mainnet is not a build task: it is gated by validator distribution, reserve
+  governance, and a legal conversation.
 
 ## Verify your work
 
