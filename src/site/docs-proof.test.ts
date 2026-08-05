@@ -230,17 +230,25 @@ describe('the playground set is closed', () => {
       const samples = source(page).match(/^# (\{.*\})$/gm) ?? []
       if (samples.length === 0) continue
 
-      const embedded = embedsOf(page)
-      expect(embedded.length, `${page} prints a sample report but embeds no single playground`).toBe(1)
+      const offline = embedsOf(page).filter((file) => !NETWORK_PLAYGROUNDS.has(file))
+      expect(
+        offline.length,
+        `${page} prints a sample report and embeds no offline playground that could produce it`,
+      ).toBeGreaterThan(0)
 
-      const file = embedded[0] as string
-      if (NETWORK_PLAYGROUNDS.has(file)) continue
-
+      const printed = offline.map(runPlayground)
       for (const sample of samples) {
-        expect(sample.slice(2), `${page} shows a report ${file} does not print`).toBe(
-          runPlayground(file),
+        expect(printed, `${page} shows a report none of ${offline.join(', ')} prints`).toContain(
+          sample.slice(2),
         )
       }
+    }
+  }, 180_000)
+
+  test('every offline playground has its real output printed beside a command', () => {
+    const printed = docPages().flatMap((page) => source(page).match(/^# (\{.*\})$/gm) ?? [])
+    for (const file of offlinePlaygrounds()) {
+      expect(printed, `no page prints what ${file} outputs`).toContain(`# ${runPlayground(file)}`)
     }
   }, 180_000)
 })
