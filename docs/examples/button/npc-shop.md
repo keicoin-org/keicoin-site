@@ -32,6 +32,8 @@ Start the game with `bun run dev` and press the button until you can afford the 
 
 *The left board and the shopkeeper are the UI a player clicks. Purchase authority is not in that board — it comes from the receipt-verification flow documented below.*
 
+<!--@include: @/evidence/button-gameplay.md-->
+
 | Step | Who signs | What it is |
 | --- | --- | --- |
 | **Quote and record** | Nobody | `POST /game/order` → the server checks the player's on-chain coin balance, records `address → {sku, price}` in memory, and answers with where to pay. |

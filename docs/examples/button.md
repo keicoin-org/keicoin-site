@@ -13,6 +13,8 @@ It is deliberately a clicker: the loop is legible in three seconds, and it exerc
 
 *Local Button app at localhost:7777. The center board exposes press rewards and clearing; the left board is the implemented shop.*
 
+<!--@include: @/evidence/button-gameplay.md-->
+
 For the money loop on its own — press, bank, commit, claim, as a script you can run — start with [Button fundamentals](./button/fundamentals.md).
 
 | | |

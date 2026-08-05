@@ -74,8 +74,8 @@ import type {
   PriceSummary,
   Series,
   Candle,
-  MarketChart,
-  MarketTicker,
+  Coverage,
+  Covered,
 } from '@keicoin/market'
 
 const market = createMarket(client, {
@@ -140,24 +140,38 @@ An offer reserved for your own address is refused before anything locks.
 
 ## Read and accept
 
+This is the whole of `MarketApi` in `@keicoin/market@0.4.0`. `Covered<T>` is a
+`T[]` with a non-enumerable `coverage` on it, so it destructures, maps and
+indexes like the array it is:
+
 ```ts
 get(hash: string): Promise<Offer | null>
-offers(options: ListOptions): Promise<Offer[]>         // includes non-enumerable coverage
-mine(options?: MineOptions): Promise<Offer[]>           // includes non-enumerable coverage
-accept(offer: string | Offer): Promise<Settlement>
+offers(options: ListOptions): Promise<Covered<Offer>>
+mine(options?: MineOptions): Promise<Covered<Offer>>
+accept(offer: string | Offer, options?: AcceptOptions): Promise<Settlement>
 cancel(offer: string | Offer): Promise<Cancellation>
 cancelExpired(): Promise<Cancellation[]>
-trades(options?: TradeOptions): Promise<Trade[]>         // includes non-enumerable coverage
-medianPrice(asset, options?): Promise<number | null>      // no coverage
-price(asset, options?): Promise<PriceSummary | null>      // summary + coverage
+trades(options?: TradeOptions): Promise<Covered<Trade>>
+medianPrice(asset, options?): Promise<number | null>   // a scalar; carries no coverage
+price(asset, options?): Promise<PriceSummary | null>   // the same numbers, with coverage
+prices(options?): Promise<PriceIndex>                  // every traded asset, out of one walk
 book(options: BookOptions): Promise<Book>
-series(options): Promise<Series>      // trade read with line coverage metadata
-history(options): Promise<Series>     // alias for series
-candles(options): Promise<Candle[]>   // trade read with coverage metadata
-ohlc(options): Promise<Candle[]>      // alias for candles
-ticker(options): Promise<MarketTicker> // returns headline metrics + coverage
-chart(options): Promise<MarketChart>   // line + candles + ticker + coverage
-``` 
+series(options): Promise<Series>                       // ordered points, ready to draw
+candles(options): Promise<Covered<Candle>>             // the same trades, in OHLCV buckets
+reconcile(snapshot, options?): Promise<Reconciliation> // what became of listings you cached
+lifeOf(offer: Offer): OfferLife                        // 'live' | 'reserved' | 'stale' | 'taken' | 'cancelled'
+close(): void
+```
+
+::: warning `history`, `ohlc`, `ticker` and `chart` are not published
+Compatibility wrappers under those names are on `kei-transaction`'s master
+branch and are in no released package. Publication is frozen behind
+[kei-transaction#107](https://github.com/keicoin-org/kei-transaction/issues/107),
+so calling one on an installed wallet is `TypeError: not a function`. Use
+`series()` and `candles()`, which is what those wrappers wrap. The
+[playground below](#read-a-chart) asserts their absence, so this page stops
+saying it the moment they ship.
+:::
 
 An offer's hash **is** its id — the `swap_offer` block's hash. Read it from `offers()` rather than typing one:
 
@@ -213,72 +227,92 @@ await alice.market.medianPrice(sword, { window: '7d' })
 
 A still-open listing is not a trade: `medianPrice()` on it is `null` and `trades()` is `[]`. `trades()` and `price()` default to **this wallet's own** trades — pass `{ from }` to summarise somebody else's, or a wallet that has never traded reads as a coin with no history.
 
-### Charting and compatibility names
+### Read a chart
 
-Use one trade read for both line and candle paths when you need a chart:
-
-```ts
-const series = await alice.market.series({
-  asset: sword,
-  from: [alice.address, bob.address],
-  range: { window: '30d' },
-})
-const historyAlias = await alice.market.history({
-  asset: sword,
-  from: [alice.address, bob.address],
-  range: { window: '30d' },
-})
-
-const candles = await alice.market.candles({
-  asset: sword,
-  from: [alice.address, bob.address],
-  interval: '1h',
-  range: { window: '30d' },
-})
-const ohlcAlias = await alice.market.ohlc({
-  asset: sword,
-  from: [alice.address, bob.address],
-  interval: '1h',
-  range: { window: '30d' },
-})
-
-const chart = await alice.market.chart({
-  asset: sword,
-  from: [alice.address, bob.address],
-  every: '1h',
-  range: { window: '30d' },
-})
-```
-
-`chart()` returns everything needed for a trading card in one read:
+One trade read feeds both the line and the candles. `series()` orders the
+settled trades and hands back the summary over exactly those points; `candles()`
+buckets the same trades. The wallets and the `ore` token below are the ones in
+the [runnable proof](#run-the-chart-proof) at the end of this section:
 
 ```ts
-chart.ticker       // headline metrics + coverage
-chart.line         // renderer-ready points, one row per timed point
-chart.candles      // raw OHLCV rows (node-local ms buckets)
-chart.unixCandles  // epoch-second OHLCV rows
-chart.time         // { timed, estimated, untimed } for line time quality
-chart.coverage     // walk scope coverage
-chart.series.ordering // ordering note and estimated row count
+const series = await buyer.market.series({
+  asset: ore,
+  from: [alice.address, bob.address],   // omit for this wallet's own trades
+  window: '30d',
+})
+
+series.points        // oldest first, each { index, price, units, paid, hash, seller, buyer, at, estimated }
+series.first         // the oldest price, or null
+series.last          // the newest
+series.change        // last - first
+series.changeRatio   // change / first
+series.summary       // { median, last, low, high, trades, volume, coverage }
+series.ordering      // { by: 'advisory-time', exact, estimated, note }
+series.coverage      // what the walk behind these trades read and missed
+
+const candles = await buyer.market.candles({ asset: ore, every: '1h' })
+candles[0]           // { at, every, open, high, low, close, volume, trades }
+candles.coverage     // the same walk, on the array
 ```
 
-Before you treat chart output as complete, check it explicitly:
+`every` is the bucket width — `'1h'`, `'15m'`, `'7d'`, or milliseconds. There is
+no `interval` alias in a published package. `fill: true` emits the empty buckets
+between trades and is bounded by `maxCandles` (10,000 by default, 1,000,000 at
+most), because a dense request is sized by two timestamps rather than by how
+many trades were read.
+
+For a board pricing many assets at once, `prices()` groups one walk instead of
+walking per asset:
 
 ```ts
-const verified = await alice.market.chart({ asset: sword, range: { window: '30d' } })
-console.log('coverage complete?', verified.coverage.complete)
-console.log('timed/estimated/untimed', verified.time.timed, verified.time.estimated, verified.time.untimed)
-console.log('ordering:', verified.series.ordering.by, 'exact?', verified.series.ordering.exact)
+const index = await buyer.market.prices()   // Map<AssetId, PriceSummary>, with coverage
+index.get(ore.id)?.median
 ```
 
-### Coverage and timing caveats
+### What a chart does not tell you
 
-- `trades()`, `price()`, `series()`, `candles()`, and `chart()` carry coverage for
-  the account walk they used. `coverage.complete: false` means a floor, not a full
-  market read.
-- `medianPrice()` is a compatibility scalar and cannot carry coverage.
-- Trade order and bucket assignment are advisory to the node-local clock. Missing settlement
-  timestamps become estimated rows (`verified.time.estimated`).
+Three things, and none of them is cosmetic.
+
+**Coverage is about the accounts you named, not about the market.** There is no
+global order book and no indexer: a walk reads the chains you asked for.
+`coverage.complete: true` means every account you named answered — it does not
+mean you asked about everybody. Reading one seller instead of two returns a
+complete walk and a strictly smaller history, and the playground below settles
+three trades and then demonstrates exactly that. `coverage.complete: false`
+means some chain did not answer, and the numbers are a floor over what did.
+`medianPrice()` is a scalar and cannot carry any of this; use `price().median`
+when completeness matters.
+
+**Ordering is advisory.** *That* a trade happened, between whom, in what assets
+and at what price is consensus, and every statistic derived from those numbers
+is recomputable. *When* is not: the block-lattice has no clock, so `settledAt`
+and `seenAt` are the node's own first-seen times. Two nodes disagree and a
+restarted node forgets. `series.ordering.exact` is false when any point fell
+back to `seenAt`, and `ordering.estimated` counts them. The values inside a
+candle are exact for the trades in it; which trades are in it is advisory.
+
+**Verify a trade against the block, not against a chart.** `get(hash)` re-reads
+the offer and `lifeOf(offer)` turns it into the state a view means — `live`,
+`reserved`, `stale`, `taken`, `cancelled`. `reconcile(snapshot)` does that for a
+whole cached list. Pass `accept(offer, { expect })` with the terms your screen
+rendered and the offer is checked field by field against the chain immediately
+before signing, which is what keeps any index a list of where to look rather
+than an authority (SPEC §9.4).
+
+### Run the chart proof
+
+```sh
+bun install --frozen-lockfile
+bun run docs/playgrounds/market-chart.ts
+# {"kind":"market-chart","points":3,"prices":[2,3,5],"median":3,"volume":30,"ordering":"advisory-time","candles":1,"coverageComplete":true,"narrowPoints":2,"unpublishedAliases":["history","ohlc","ticker","chart"]}
+```
+
+It settles three trades at three prices across two seller accounts, draws them,
+narrows the walk to one seller to show a complete read of a partial market, and
+asserts that `history`, `ohlc`, `ticker` and `chart` are absent from the
+installed package. The file below is the file that command runs.
+
+<<< ../../playgrounds/market-chart.ts
 
 ## State and errors
 

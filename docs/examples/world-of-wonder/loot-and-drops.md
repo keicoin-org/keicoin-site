@@ -30,6 +30,8 @@ This page separates three states that are easy to collapse into one claim:
 
 *This is the combat world where server-authored rewards originate. It is not proof that a reward reached a wallet.*
 
+<!--@include: @/evidence/world-of-wonder-gameplay.md-->
+
 The upstream loot table still decides what can drop. Enemy records carry a gold range and point at item rows such as:
 
 ```ts
