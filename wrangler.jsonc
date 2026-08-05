@@ -32,6 +32,18 @@
   // limit is nowhere near enough room for that to finish.
   "limits": { "cpu_ms": 30000 },
 
+  // ...which is also why that route is gated. Per client IP, because the caller
+  // is a browser page and `Kei.start({ workServer })` cannot send a header, so
+  // `workRpcHandler`'s bearer token would have to ship in the bundle. 20 in ten
+  // seconds is above anything the clicker's 150 ms press cooldown produces and
+  // far below a loop; over it, the visitor's own tab generates the work instead
+  // (`src/site/work-gate.ts`). This binding is namespaced to this Worker and
+  // needs no account-side resource — but if it ever goes missing, the gate
+  // refuses rather than serving ungated. Named environments do not inherit it.
+  "ratelimits": [
+    { "name": "WORK_RATE_LIMIT", "namespace_id": "1001", "simple": { "limit": 20, "period": 10 } }
+  ],
+
   "observability": {
     "enabled": true
   }
