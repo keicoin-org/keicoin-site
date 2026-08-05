@@ -45,9 +45,10 @@ const game = await startGame({
 })
 ```
 
-On startup the issuer funds itself if needed (issuance burns 1,000 Kei per asset, and
-this game issues one currency plus five upgrades), issues the coin with
-`transfer: 'open'` and `swap: 'one-way'`, and creates each upgrade as a native item.
+On startup the issuer funds itself if needed (the nth asset an account issues burns n
+Kei, and this game issues one currency plus five upgrades, so 21 Kei in total), issues
+the coin with `transfer: 'open'` and `swap: 'one-way'`, and creates each upgrade as a
+native item.
 
 `game.catalogue()` returns the issuer address, network, coin asset/symbol/decimals, the
 exchange terms, and the upgrade list with resolved asset ids. The player needs the coin

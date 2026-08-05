@@ -176,7 +176,7 @@ Everything on this page runs today against the in-memory mock. What changes on a
 | --- | --- | --- |
 | Chain | `MockNode` at `/rpc`, same process, dies with it | A real node; `/rpc` points at it and the two-signature shape is unchanged |
 | Issuer identity | Seed generated per run unless `KEI_GAME_SEED` is set — new asset ids each start | Must be a fixed, funded, backed-up seed. New asset ids would orphan every item players own. |
-| Funding | `kei.faucet(needed)` covers the `(5 + 1) × 1,000` Kei of issuance burn | No faucet on mainnet. Somebody funds the issuer address once, by hand. |
+| Funding | `kei.faucet(needed)` covers the issuance burn. The nth asset an account issues burns n Kei, so one currency plus five upgrades is `1+2+3+4+5+6` = 21 Kei. | No faucet on mainnet. Somebody funds the issuer address once, by hand. |
 | Order state | In-memory `Map`, lost on restart | Needs durable storage, or reconciliation from chain history, before a restart can be survivable |
 | Delivery failure | Silently dropped | Needs a retry with a record of what was paid for |
 | Supply-1 items | The Golden Button Cap can be sold once; on a fresh mock it is fresh again | Once, network-wide, forever. The second sale's mint fails — and today that failure is unobserved. |

@@ -243,15 +243,31 @@ describe('the published and installed graph matches', () => {
     expect(status).toContain('exact cross-multiplied raw ratios')
     expect(status).toContain('unitPrice and spread fields remain numbers')
     for (const release of [
-      'tokens at 0.5.2',
+      'tokens at 0.5.3',
       'claims at 0.5.1',
-      'wallet at 0.5.0',
+      'wallet at 0.5.1',
       'economy at 0.2.2',
       'market at 0.4.0',
       'player-economy at 0.1.2',
       'core at 0.5.0',
-      'work at 0.4.1',
+      'work at 0.4.2',
     ]) expect(status).toContain(release)
+  })
+
+  /**
+   * The claim that went stale without anybody editing it: the umbrella's caret
+   * ranges stopped reaching the newest of three packages the moment those
+   * published, and "resolves the same versions the registry shows" was true on
+   * the day it was written and false a day later. A `0.x` caret does not cross
+   * the minor, so this is not a bug to fix by reinstalling — it is a fact the
+   * page has to carry until the next umbrella moves the pins.
+   */
+  test('the status page does not claim a plain install reaches the newest of every package', () => {
+    expect(status).not.toContain('resolves the same versions the registry shows')
+    expect(status).toContain('a 0.x caret does not cross the minor')
+    for (const ahead of ['core@0.6.0', 'claims@0.6.0', 'market@0.5.0']) {
+      expect(status).toContain(ahead)
+    }
   })
 
   /**

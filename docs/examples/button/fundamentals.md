@@ -17,7 +17,7 @@ description: Open a player wallet, price presses on the server, commit a batch a
 | Runtime | Bun 1.3, or Node 20 or later. `Kei.server()` refuses to run in a browser. |
 | Chain | `MockNode` — in-memory, in this process, gone when it exits |
 | Seeds | Two. The issuer's, held by the server; the player's, held by the player. One key signs for one account and there is no `charge(someoneElse, …)`. |
-| Kei to spend | Issuing an asset burns 1,000 Kei. `faucet()` covers that off mainnet, where it throws. |
+| Kei to spend | Issuing an asset burns Kei, and the price escalates per issuing account: the nth asset burns n Kei. This page issues one, so it burns 1. `faucet()` covers that off mainnet, where it throws. |
 | Source this was read from | `server/game.ts`, `src/economy.ts` and `test/economy.test.ts` in [the Button repository](https://github.com/keicoin-org/button) |
 
 You do not need the game running, a browser, a port, or a node URL. Nothing on this page opens a socket.
@@ -47,8 +47,9 @@ const node = await MockNode.create()
 // ---------------------------------------------------------- the game server
 // Kei.server holds the issuer seed, which is why it refuses to run in a browser.
 const game = await Kei.server({ seed: randomSeed(), node, network: 'mock' })
-// Issuing an asset burns 1,000 Kei. On a real network somebody funds this once.
-if ((await game.balance()) < 1_100) await game.faucet(1_100)
+// The nth asset an account issues burns n Kei. This issues one, so it burns 1.
+// On a real network somebody funds this once.
+if ((await game.balance()) < 10) await game.faucet(10)
 
 const coins = await game.token.issue({
   name: 'Coins',

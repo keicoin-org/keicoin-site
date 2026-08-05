@@ -220,7 +220,7 @@ Price history is settled offers, nothing else:
 
 ```ts
 await alice.market.trades()                       // Trade[]; every state === 'accepted'
-await alice.market.medianPrice(sword)             // 4, or null if never sold
+await alice.market.medianPrice(sword)             // 5, or null if never sold
 await alice.market.price(sword)                   // { median, last, low, high, trades, volume }
 await alice.market.medianPrice(sword, { window: '7d' })
 ```
