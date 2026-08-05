@@ -62,7 +62,7 @@ await kei.balance()                // number, in Kei
 await kei.send(to, amount)         // { hash, amount, to }
 await kei.faucet()                 // testnet only; throws on mainnet
 kei.seed                           // export for backup; never log it
-await kei.wallet.summary()         // { address, kei, tokens, items, pending }
+await kei.wallet.summary()         // { address, kei, tokens, items, pending } // item summaries include image/description/stats metadata when present
 ```
 
 | Member | Purpose |
@@ -72,7 +72,7 @@ await kei.wallet.summary()         // { address, kei, tokens, items, pending }
 | `send(to, amount)` | Sign and send Kei from this account. |
 | `faucet()` | Request test funds where a faucet is available. |
 | `seed` | Export the wallet credential for backup. Treat it as a secret. |
-| `wallet.summary()` | Read the account's Kei, tokens, items, and pending state together. |
+| `wallet.summary()` | Read the account's Kei, tokens, items, and pending state together. Includes immutable item image/description/stats metadata in each row. |
 
 ## Receive events
 
@@ -124,3 +124,4 @@ orderings, and idempotent application reconciliation without a network, secret,
 or prompt. The maps deliberately stand in for durable tables: the mock does not
 prove database crash safety, public-network uptime, distributed consensus, or
 production value.
+
