@@ -28,14 +28,21 @@
  * headroom in practice, the fix is a dedicated long-running work server
  * (`kei-work-server`, `@keicoin/work/server`) with `workServer` pointed at it
  * instead — a one-line change here, not a rewrite.
+ *
+ * That cost is also why nothing reaches the work server without passing
+ * `gateWorkRequest` (`src/site/work-gate.ts`) first. A public origin that will
+ * search for anybody's nonce is a free compute faucet, and because this route
+ * shares its isolate with `env.ASSETS`, a loop pointed at it queues every page
+ * on the site behind a synchronous hash search. The gate refuses by default.
  */
 
 import { HttpNode } from 'kei-transaction'
 import { LocalWorkProvider, workRpcHandler } from '@keicoin/work'
 
 import { CLICK_NETWORK, CLICK_NODE_URL, CLICK_WORK_PATH } from '../src/site/clicker-network.js'
+import { gateWorkRequest, type WorkGateEnv } from '../src/site/work-gate.js'
 
-interface Env {
+interface Env extends WorkGateEnv {
   ASSETS: { fetch(request: Request): Promise<Response> }
   /** Overrides the node the work server reads proof-of-work thresholds from. */
   KEI_NODE_URL?: string
@@ -47,14 +54,27 @@ interface WorkerHandler {
 
 let handler: ((request: Request) => Promise<Response>) | undefined
 let handlerNodeUrl: string | undefined
+let handlerBuiltAt = 0
 
-/** Built once per isolate and reused across requests — thresholds rarely change. */
+/**
+ * `LocalWorkProvider` reads the node's tier thresholds once (`this.thresholds ??=`)
+ * and keeps them for its own lifetime, so pinning the provider in a module
+ * global pins the thresholds too. That is fine for a few minutes and wrong for
+ * the life of an isolate: if the testnet raises a tier, a stale provider returns
+ * nonces below the new threshold and every clicker press fails until the isolate
+ * happens to be recycled. Rebuilding on a TTL keeps the reuse and bounds how
+ * long a raised threshold can go unnoticed.
+ */
+const HANDLER_TTL_MS = 5 * 60_000
+
 function workHandler(env: Env): (request: Request) => Promise<Response> {
   const nodeUrl = env.KEI_NODE_URL ?? CLICK_NODE_URL
-  if (!handler || handlerNodeUrl !== nodeUrl) {
+  const now = Date.now()
+  if (!handler || handlerNodeUrl !== nodeUrl || now - handlerBuiltAt > HANDLER_TTL_MS) {
     const node = new HttpNode({ url: nodeUrl, network: CLICK_NETWORK })
     handler = workRpcHandler({ provider: new LocalWorkProvider(node) })
     handlerNodeUrl = nodeUrl
+    handlerBuiltAt = now
   }
   return handler
 }
@@ -89,7 +109,10 @@ export const MOVED = new Map([
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url)
-    if (url.pathname === CLICK_WORK_PATH) return workHandler(env)(request)
+    if (url.pathname === CLICK_WORK_PATH) {
+      const gate = await gateWorkRequest(request, env)
+      return gate.ok ? workHandler(env)(gate.request) : gate.response
+    }
     const moved = MOVED.get(url.pathname)
     if (moved) return Response.redirect(new URL(moved, url).toString(), 301)
     return env.ASSETS.fetch(request)
