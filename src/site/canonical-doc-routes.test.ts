@@ -36,6 +36,16 @@ function assetEnv(onFetch?: (request: Request) => void) {
         return new Response('asset response', { status: 207 })
       },
     },
+    // Every path in this file is an editorial one, so none of them may open a
+    // work object. Throwing is the assertion (keicoin-site#45).
+    WORK_MINT: {
+      idFromName(name: string): string {
+        throw new Error(`a page request opened the work mint: ${name}`)
+      },
+      get(): never {
+        throw new Error('a page request opened the work mint')
+      },
+    },
   }
 }
 

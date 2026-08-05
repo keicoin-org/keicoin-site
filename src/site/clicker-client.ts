@@ -1,4 +1,4 @@
-import {
+﻿import {
   UPGRADES,
   creditConfirmedPress,
   creditReadout,
@@ -8,7 +8,14 @@ import {
   sanitizeClickerState,
   type ClickerState,
 } from './clicker-state.js'
-import { CLICK_FUND_AMOUNT, CLICK_SEND_AMOUNT, CLICK_SINK_ADDRESS, CLICK_WORK_PATH } from './clicker-network.js'
+import {
+  CLICK_FUND_AMOUNT,
+  CLICK_GRANT_PATH,
+  CLICK_SEND_AMOUNT,
+  CLICK_SINK_ADDRESS,
+  CLICK_WORK_PATH,
+} from './clicker-network.js'
+import { openWorkGrant, renewDelayMs } from './work-challenge.js'
 
 const STORAGE_KEY = 'kei-home-clicker-v1'
 
@@ -35,10 +42,60 @@ const creditStatus = byId<HTMLElement>('press-credit-status')
 const networkStatus = byId<HTMLElement>('press-network-status')
 const localStatus = byId<HTMLElement>('press-local-status')
 const shop = byId<HTMLElement>('press-shop')
+const challenge = byId<HTMLElement>('press-challenge')
+
+/**
+ * Cloudflare's widget, loaded from `challenges.cloudflare.com`. Deliberately
+ * `any`-shaped: the alternative is restating Cloudflare's API in a `.d.ts` this
+ * repo would then own and have to keep true.
+ */
+interface Turnstile {
+  render(
+    container: HTMLElement,
+    options: {
+      sitekey: string
+      appearance?: string
+      callback(token: string): void
+      'error-callback'?(): void
+      'expired-callback'?(): void
+    },
+  ): string
+  reset(widget: string): void
+  remove(widget: string): void
+}
+
+declare global {
+  interface Window {
+    turnstile?: Turnstile
+  }
+}
+
+const TURNSTILE_SCRIPT = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'
+
+let turnstileScript: Promise<Turnstile> | undefined
+
+/**
+ * Fetched on the first press, not on page load. The site is text and it should
+ * cost a reader nothing to read it; only somebody who has asked the work
+ * server for something pays for this.
+ */
+function loadTurnstile(): Promise<Turnstile> {
+  turnstileScript ??= new Promise<Turnstile>((resolve, reject) => {
+    if (window.turnstile) return resolve(window.turnstile)
+    const script = document.createElement('script')
+    script.src = TURNSTILE_SCRIPT
+    script.async = true
+    script.onload = () =>
+      window.turnstile ? resolve(window.turnstile) : reject(new Error('Turnstile loaded without an API.'))
+    script.onerror = () => reject(new Error('Turnstile could not be loaded.'))
+    document.head.appendChild(script)
+  })
+  return turnstileScript
+}
 
 if (
   cap && rig && image && count && countUnit && available && pendingOut && split &&
-  creditStatus && networkStatus && localStatus && shop
+  creditStatus && networkStatus && localStatus && shop && challenge
 ) {
   let state = loadState()
   let client: NetworkClient | undefined
@@ -86,13 +143,13 @@ if (
       if (!button) continue
       const owned = state.owned.includes(upgrade.id)
       button.disabled = owned || state.credits < upgrade.cost
-      button.textContent = owned ? 'Installed' : `Buy · ${upgrade.cost}`
+      button.textContent = owned ? 'Installed' : `Buy Â· ${upgrade.cost}`
       button.setAttribute(
         'aria-label',
         owned ? `${upgrade.name} installed` : `Buy ${upgrade.name} for ${upgrade.cost} click credits`,
       )
     }
-    // No pending count here — the split above says it, and repeating it in a
+    // No pending count here â€” the split above says it, and repeating it in a
     // second place is what makes a readout read as noise.
     localStatus.textContent = `Manual press value: ${value}. Only available credits can be spent in the workshop; pending ones are still with the testnet.`
     revealShop()
@@ -100,7 +157,7 @@ if (
 
   /**
    * A discrete `img.src` swap tied 1:1 to raw pointer timing means a fast
-   * click — pointerdown and pointerup landing in the same frame — never gets
+   * click â€” pointerdown and pointerup landing in the same frame â€” never gets
    * the pressed frame scheduled for paint at all. Fixing that takes two
    * things, matching the pattern button/src/world.ts already uses for its 3D
    * cap (`pressedFor`, decremented every frame rather than tied to the
@@ -111,7 +168,7 @@ if (
    *      state change is compositor-only.
    *   2. A guaranteed minimum dwell, decoupled from how long the pointer was
    *      actually down: on press, `.down` goes on immediately; on release,
-   *      it only comes off immediately if the minimum has already elapsed —
+   *      it only comes off immediately if the minimum has already elapsed â€”
    *      otherwise the removal is deferred to when it will have.
    */
   const PRESS_MIN_DWELL_MS = 100
@@ -149,29 +206,94 @@ if (
     window.setTimeout(() => pop.remove(), 760)
   }
 
+  let widget: string | undefined
+  let renewTimer: ReturnType<typeof setTimeout> | undefined
+
+  /**
+   * Draws the challenge and resolves with a solved token. In
+   * `interaction-only` mode the widget stays invisible unless Cloudflare
+   * decides this visitor has to do something, so the common case adds nothing
+   * to the page.
+   */
+  // Held outside the promise because the widget is rendered once and reset for
+  // each renewal, so its callbacks outlive the promise that created them and
+  // must settle whichever one is currently waiting.
+  let pendingChallenge: { resolve(token: string): void; reject(reason: Error): void } | undefined
+
+  const solveChallenge = async (sitekey: string): Promise<string> => {
+    const turnstile = await loadTurnstile()
+    return new Promise<string>((resolve, reject) => {
+      pendingChallenge = { resolve, reject }
+      if (widget !== undefined) {
+        // `render` into a container that already holds a widget leaves two.
+        turnstile.reset(widget)
+        return
+      }
+      widget = turnstile.render(challenge, {
+        sitekey,
+        appearance: 'interaction-only',
+        callback: (token) => pendingChallenge?.resolve(token),
+        'error-callback': () => pendingChallenge?.reject(new Error('The challenge could not be completed.')),
+        'expired-callback': () => pendingChallenge?.reject(new Error('The challenge expired.')),
+      })
+    })
+  }
+
+  /**
+   * A grant lasts 15 minutes; this renews it a minute early so a long session
+   * never discovers the expiry as a failed press. A renewal that fails is not
+   * reported â€” the SDK falls back to generating work in the tab, which is
+   * slower and still correct.
+   */
+  const scheduleRenewal = (expiresAt: number): void => {
+    if (renewTimer !== undefined) clearTimeout(renewTimer)
+    renewTimer = setTimeout(() => {
+      void openWorkGrant(CLICK_GRANT_PATH, { fetch: window.fetch.bind(window), solve: solveChallenge }).then(
+        (renewed) => {
+          if (renewed.ok) scheduleRenewal(renewed.expiresAt)
+        },
+      )
+    }, renewDelayMs(expiresAt, Date.now()))
+  }
+
   const connect = async (): Promise<NetworkClient> => {
     if (client) return client
     // Presses no longer wait on each other (see `press` below), so two of
-    // them can both find no client yet — without memoizing the in-flight
+    // them can both find no client yet â€” without memoizing the in-flight
     // promise here, that races two `Kei.start()` calls into two different
     // wallets.
     connecting ??= (async () => {
-      networkStatus.textContent = 'Connecting a persisted browser wallet to the public Kei testnet…'
+      // Without a work server, `Kei.start()` runs blake2b proof-of-work
+      // synchronously on this tab's main thread â€” a visible freeze per press
+      // for a `send` block (SPEC Â§5.5, @keicoin/core's work.ts). The site
+      // runs one, but it does not run it for strangers: since
+      // keicoin-org/keicoin-site#45 the endpoint wants a Turnstile solve
+      // first (`worker/work-gate.ts` says why it is that and not an IP or a
+      // bundled token).
+      networkStatus.textContent = 'Asking the work server for a grantâ€¦'
+      const grant = await openWorkGrant(CLICK_GRANT_PATH, {
+        fetch: window.fetch.bind(window),
+        solve: solveChallenge,
+      })
+      if (grant.ok) scheduleRenewal(grant.expiresAt)
+
+      networkStatus.textContent = grant.ok
+        ? 'Connecting a persisted browser wallet to the public Kei testnetâ€¦'
+        : 'Connecting a persisted browser wallet. Work will be generated in this tab, so presses will be slower.'
+
       // Keep the ~750 KB wallet/signing SDK off the initial page load. It is
       // fetched only when somebody actually presses the network button.
       const { Kei } = await import('kei-transaction')
       const kei = await Kei.start({
-        // Without a work server, `Kei.start()` runs blake2b proof-of-work
-        // synchronously on this tab's main thread — a multi-second freeze per
-        // press for a `send` block (SPEC §5.5, @keicoin/core's work.ts).
-        // `worker/index.ts` answers this path. `createWorkProvider` already
-        // falls back to local generation if that Worker is unreachable, so
-        // this is safe to point at even if it is not deployed yet.
-        workServer: `${location.origin}${CLICK_WORK_PATH}`,
+        // Only pointed at the work server when there is a grant to spend
+        // there. `createWorkProvider` would fall back to local generation on
+        // its own, but it would pay a rejected round trip per press to find
+        // that out every time.
+        ...(grant.ok ? { workServer: `${location.origin}${CLICK_WORK_PATH}` } : {}),
       })
       const balance = await kei.balance()
       if (balance < Number(CLICK_SEND_AMOUNT)) {
-        networkStatus.textContent = 'Funding this testnet-only wallet from the public faucet…'
+        networkStatus.textContent = 'Funding this testnet-only wallet from the public faucetâ€¦'
         await kei.faucet(CLICK_FUND_AMOUNT)
       }
       client = kei
@@ -200,7 +322,7 @@ if (
     cooldownUntil = now + PRESS_COOLDOWN_MS
 
     // The reward joins `pendingCredits`, not `state.credits`. The big number
-    // moves now — a press that changes nothing on screen feels broken — but it
+    // moves now â€” a press that changes nothing on screen feels broken â€” but it
     // moves by adding to the *pending* half of the split, which is labelled as
     // still being with the testnet. Nothing spendable is granted here, because
     // a granted credit cannot be unwound honestly once the workshop has spent
@@ -216,7 +338,7 @@ if (
   const submit = async (reward: number): Promise<void> => {
     try {
       const kei = await connect()
-      networkStatus.textContent = 'Generating work and sending testnet-only Kei to the null account…'
+      networkStatus.textContent = 'Generating work and sending testnet-only Kei to the null accountâ€¦'
       const receipt = await kei.send(CLICK_SINK_ADDRESS, CLICK_SEND_AMOUNT)
       // The block is on the chain, so the credit is earned. Exactly this
       // press's reward moves from pending to confirmed in one step, so the
@@ -288,5 +410,5 @@ function loadState(): ClickerState {
 }
 
 function shortHash(hash: string): string {
-  return hash.length > 16 ? `${hash.slice(0, 8)}…${hash.slice(-6)}` : hash
+  return hash.length > 16 ? `${hash.slice(0, 8)}â€¦${hash.slice(-6)}` : hash
 }
