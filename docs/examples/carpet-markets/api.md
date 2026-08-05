@@ -66,7 +66,17 @@ If you are wiring a client yourself, the package's own entry point is:
 
 ```ts
 import { createMarket } from '@keicoin/market'
-import type { MarketApi, Offer, Settlement, Trade, PriceSummary } from '@keicoin/market'
+import type {
+  MarketApi,
+  Offer,
+  Settlement,
+  Trade,
+  PriceSummary,
+  Series,
+  Candle,
+  MarketChart,
+  MarketTicker,
+} from '@keicoin/market'
 
 const market = createMarket(client, {
   autoCancelExpired: true,   // default
@@ -132,16 +142,22 @@ An offer reserved for your own address is refused before anything locks.
 
 ```ts
 get(hash: string): Promise<Offer | null>
-offers(options: ListOptions): Promise<Offer[]>
-mine(options?: MineOptions): Promise<Offer[]>
+offers(options: ListOptions): Promise<Offer[]>         // includes non-enumerable coverage
+mine(options?: MineOptions): Promise<Offer[]>           // includes non-enumerable coverage
 accept(offer: string | Offer): Promise<Settlement>
 cancel(offer: string | Offer): Promise<Cancellation>
 cancelExpired(): Promise<Cancellation[]>
-trades(options?: TradeOptions): Promise<Trade[]>
-medianPrice(asset, options?): Promise<number | null>
-price(asset, options?): Promise<PriceSummary | null>
+trades(options?: TradeOptions): Promise<Trade[]>         // includes non-enumerable coverage
+medianPrice(asset, options?): Promise<number | null>      // no coverage
+price(asset, options?): Promise<PriceSummary | null>      // summary + coverage
 book(options: BookOptions): Promise<Book>
-```
+series(options): Promise<Series>      // trade read with line coverage metadata
+history(options): Promise<Series>     // alias for series
+candles(options): Promise<Candle[]>   // trade read with coverage metadata
+ohlc(options): Promise<Candle[]>      // alias for candles
+ticker(options): Promise<MarketTicker> // returns headline metrics + coverage
+chart(options): Promise<MarketChart>   // line + candles + ticker + coverage
+``` 
 
 An offer's hash **is** its id — the `swap_offer` block's hash. Read it from `offers()` rather than typing one:
 
@@ -196,6 +212,73 @@ await alice.market.medianPrice(sword, { window: '7d' })
 ```
 
 A still-open listing is not a trade: `medianPrice()` on it is `null` and `trades()` is `[]`. `trades()` and `price()` default to **this wallet's own** trades — pass `{ from }` to summarise somebody else's, or a wallet that has never traded reads as a coin with no history.
+
+### Charting and compatibility names
+
+Use one trade read for both line and candle paths when you need a chart:
+
+```ts
+const series = await alice.market.series({
+  asset: sword,
+  from: [alice.address, bob.address],
+  range: { window: '30d' },
+})
+const historyAlias = await alice.market.history({
+  asset: sword,
+  from: [alice.address, bob.address],
+  range: { window: '30d' },
+})
+
+const candles = await alice.market.candles({
+  asset: sword,
+  from: [alice.address, bob.address],
+  interval: '1h',
+  range: { window: '30d' },
+})
+const ohlcAlias = await alice.market.ohlc({
+  asset: sword,
+  from: [alice.address, bob.address],
+  interval: '1h',
+  range: { window: '30d' },
+})
+
+const chart = await alice.market.chart({
+  asset: sword,
+  from: [alice.address, bob.address],
+  every: '1h',
+  range: { window: '30d' },
+})
+```
+
+`chart()` returns everything needed for a trading card in one read:
+
+```ts
+chart.ticker       // headline metrics + coverage
+chart.line         // renderer-ready points, one row per timed point
+chart.candles      // raw OHLCV rows (node-local ms buckets)
+chart.unixCandles  // epoch-second OHLCV rows
+chart.time         // { timed, estimated, untimed } for line time quality
+chart.coverage     // walk scope coverage
+chart.series.ordering // ordering note and estimated row count
+```
+
+Before you treat chart output as complete, check it explicitly:
+
+```ts
+const verified = await alice.market.chart({ asset: sword, range: { window: '30d' } })
+console.log('coverage complete?', verified.coverage.complete)
+console.log('timed/estimated/untimed', verified.time.timed, verified.time.estimated, verified.time.untimed)
+console.log('ordering:', verified.series.ordering.by, 'exact?', verified.series.ordering.exact)
+```
+
+### Coverage and timing caveats
+
+- `trades()`, `price()`, `series()`, `candles()`, and `chart()` carry coverage for
+  the account walk they used. `coverage.complete: false` means a floor, not a full
+  market read.
+- `medianPrice()` is a compatibility scalar and cannot carry coverage.
+- Trade order and bucket assignment are advisory to the node-local clock. Missing settlement
+  timestamps become estimated rows (`verified.time.estimated`).
 
 ## State and errors
 
