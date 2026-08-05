@@ -114,10 +114,22 @@ mock returns for the same attempt are not sent over the wire.
 
 No screenshot is included in this slice. Hash linkage, signer authority, refusal
 codes, and idempotency are not visible UI states, so a capture would be
-decorative rather than evidence. A future runtime capture must record repository
+decorative rather than evidence. A runtime capture must record repository
 revision, command or URL, network/mock mode, viewport, scenario state, alt text,
 review date, and the owner responsible for noticing stale proof. Do not replace
 those fields with an illustrative mockup.
+
+The rule applies to the captures already on this site. Every image under
+`/img/docs/` carries a provenance record beside it, written once in
+`docs/evidence/` and rendered wherever the image appears. A capture whose
+revision or scenario is **Not recorded** cannot be re-created, so it is labelled
+an illustration and no page may lean on it. The two gameplay captures — on the
+[Button](/examples/button) and [World of Wonder](/examples/world-of-wonder)
+pages — are both in that state today, and replacing them means capturing again
+from a pinned revision rather than editing the record. `docs-proof.test.ts`
+fails when an image appears without its record, when a record is missing a
+contract field, or when a record drops the illustration label while a field is
+still unrecorded.
 
 ## What `Kei.mock()` proves
 

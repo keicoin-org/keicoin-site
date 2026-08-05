@@ -11,6 +11,8 @@ description: How Button turns presses and mob drops into recipient-bound claims 
 
 *The button and the targets are gameplay inputs, and the board is UI. The claims behind those numbers are signed through the protocol below.*
 
+<!--@include: @/evidence/button-gameplay.md-->
+
 The issuer decides what a reward is worth; the player writes it to their own chain.
 
 `game.bank()` and `game.loot()` both return a `ClaimBundle` — a proof against a root the

@@ -109,10 +109,19 @@ describe('the public testnet proof', () => {
     ).toContain("fail('not-in-commit'")
   })
 
-  test('the offline playground set stays offline — the live one is not in it', () => {
+  test('the offline playground set stays offline — the live one is declared out of it', () => {
+    expect(read('src', 'site', 'docs-playgrounds.test.ts')).not.toContain('testnet-live')
+
+    // `docs-proof.test.ts` derives the offline set from the directory, so the
+    // live one has to be named there — as the exclusion, and only as that. If a
+    // later edit runs it alongside the rest, the clean-clone-on-a-plane claim
+    // stops being true and this is what catches it.
     const offline = read('src', 'site', 'docs-proof.test.ts')
-    const playgrounds = read('src', 'site', 'docs-playgrounds.test.ts')
-    for (const suite of [offline, playgrounds]) expect(suite).not.toContain('testnet-live')
+    expect(offline).toContain("const NETWORK_PLAYGROUNDS = new Set(['testnet-live.ts'])")
+    expect(offline).toContain(
+      'playgroundFiles().filter((name) => !NETWORK_PLAYGROUNDS.has(name))',
+    )
+    expect(offline.match(/testnet-live/g)).toHaveLength(1)
 
     // And the live page says so itself, rather than leaving a reader to find out
     // by running it on a plane.

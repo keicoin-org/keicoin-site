@@ -15,6 +15,8 @@ It is a fork of [`orion3dgames/t5c`](https://github.com/orion3dgames/t5c) — a 
 
 *Gameplay screenshot from the maintained World of Wonder repository. It shows the world and HUD, not the Auction House.*
 
+<!--@include: @/evidence/world-of-wonder-gameplay.md-->
+
 ## One task, end to end
 
 This page is the tour. If you came for one piece of it:

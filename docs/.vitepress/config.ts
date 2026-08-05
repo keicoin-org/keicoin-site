@@ -8,6 +8,11 @@ export default defineConfig({
   base: '/docs/',
   outDir: '../dist/docs',
   cleanUrls: true,
+  // `docs/evidence/` holds the capture-provenance records that pages pull in
+  // with `<!--@include: @/evidence/…-->`. They are partials, not pages: one
+  // record renders beside the same image everywhere it appears, so provenance
+  // cannot say one thing on one page and something else on the next.
+  srcExclude: ['evidence/**'],
   // Dark first, like keicoin.org, rather than whatever the OS prefers: the
   // visual system is built around an olive black, and the toggle stays for
   // anyone who wants paper.
