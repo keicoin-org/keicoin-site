@@ -253,6 +253,26 @@ describe('the validator refuses', () => {
     )
   })
 
+  test('a shipped entry whose only evidence is a branch or merge state (keicoin-site#50)', () => {
+    expect(
+      broken('- "Verified: one shipped."', '- "Verified: one is on repo-a\'s default branch."'),
+    ).toContain('names a branch or merge state as its evidence')
+    expect(broken('- "Verified: one shipped."', '- "Verified: one is merged."')).toContain(
+      'names a branch or merge state as its evidence',
+    )
+    expect(broken('- "Verified: one shipped."', '- "Verified: one merged into repo-a."')).toContain(
+      'names a branch or merge state as its evidence',
+    )
+    // Naming a command elsewhere in the same line does not launder the
+    // branch-state claim — the fix is to remove it, not to pad the line.
+    expect(
+      broken(
+        '- "Verified: one shipped."',
+        '- "Verified: bun test passes, and it is also merged into repo-a\'s default branch."',
+      ),
+    ).toContain('names a branch or merge state as its evidence')
+  })
+
   test('a planned entry with no "Closes when: " acceptance line', () => {
     expect(broken('- "Closes when: beta one closes."', '- "Verified: prematurely."')).toContain(
       'a planned entry needs at least one "Closes when: " acceptance line',

@@ -61,6 +61,7 @@ schema:
     - "dependencies lists inputs and ordering; it may be empty. blocked_by names what must exist or resolve before the blocked entry can move; it must be non-empty when present."
     - "Every acceptance entry is a string beginning with either the prefix 'Verified: ' (evidence already recorded in a source document) or 'Closes when: ' (a measurable condition, checkable by a named command, URL, test, or document criterion)."
     - "A shipped entry has at least one 'Verified: ' acceptance line. A planned, in-progress, or blocked entry has at least one 'Closes when: ' acceptance line."
+    - "A shipped entry's 'Verified: ' line must not rest solely on a branch or merge state ('is on <repo>'s default branch', 'is merged', 'merged into <repo>'). A merge is a property of a git history and stays true forever regardless of what the code later does; for a repository-shaped deliverable, name a URL, a published registry version, or a runnable command instead."
     - "owner is either the name of one of the entry's repositories or the literal 'project'; owners name repositories, never individuals, and this sheet makes no staffing promises."
     - "No acceptance line, summary, or risk may contain a scheduled or promised future date, a completion percentage, a deployment claim, or a publication claim that is not recorded in a source document. Past measurement dates recorded in the sources may be repeated verbatim."
     - "All string scalars are double-quoted; lists use block style; indentation is two spaces; there are no anchors, aliases, or tags."
@@ -578,15 +579,15 @@ milestones:
         acceptance:
           - "Verified: @keicoin/wallet is published at 0.5.1 and ships in kei-transaction@0.8.0, per the npm registry."
       - id: "dl-wallet-standalone"
-        title: "The standalone wallet (kei-wallet), merged"
+        title: "The standalone wallet (kei-wallet), building and merged"
         status: "shipped"
         repositories:
           - "kei-wallet"
-        summary: "The BananoVault fork that makes players-own-their-items true rather than rhetorical — the exit door. Its market panel is wired to kei.market and shows that wallet's own offers, cancellable, and its settled trades; the network's book stays unshowable because an offer lives on its author's chain and Kei ships no indexer, and the panel says that rather than presenting a handful of offers as the market."
+        summary: "The BananoVault fork that makes players-own-their-items true rather than rhetorical — the exit door. Its market panel is wired to kei.market and shows that wallet's own offers, cancellable, and its settled trades; the network's book stays unshowable because an offer lives on its author's chain and Kei ships no indexer, and the panel says that rather than presenting a handful of offers as the market. keicoin-site#50: this entry was previously marked shipped on the strength of a merge alone while the default branch did not build (kei-transaction#188's dependency floor left ItemHolding.stats untyped); kei-wallet@6eefae3 fixed the floor. The lesson kept is the acceptance line below, not the historical breakage."
         dependencies:
           - "dl-node-swap-settlement"
         acceptance:
-          - "Verified: the standalone wallet is on kei-wallet's default branch with its market panel wired to kei.market, per the site's /status record."
+          - "Verified: npm ci && npm test && npm run build succeed on a clean clone of kei-wallet (npm test typechecks before running vitest; npm run build typechecks again before vite build), confirmed at kei-wallet@2b16d32."
       - id: "dl-wallet-standalone-items"
         title: "The wallet shows items from a game that is not running"
         status: "in-progress"
