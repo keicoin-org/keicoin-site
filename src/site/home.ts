@@ -376,6 +376,13 @@ export function homePage(): string {
 /**
  * The pressable button, in its own instrument panel. Every id in here is a
  * contract with clicker-client.ts.
+ *
+ * `press-challenge` is where the work server's Turnstile challenge is drawn if
+ * one is needed. It stays empty — and, by `.press-challenge:empty`, takes no
+ * layout — until the first press, because the widget is only rendered once
+ * somebody actually asks the site to generate proof-of-work for them, and in
+ * `interaction-only` mode it stays invisible unless Cloudflare decides this
+ * visitor has to do something. `worker/work-gate.ts` says why the endpoint asks.
  */
 function pressPanel(): string {
   return `<div class="press">
@@ -403,6 +410,7 @@ function pressPanel(): string {
       </div>
       <p class="press-announce" id="press-credit-status" role="status" aria-live="polite">0 click credits, 0 available.</p>
       <p id="press-network-status" class="press-network-status" role="status" aria-live="polite">Press to connect to the public testnet.</p>
+      <div class="press-challenge" id="press-challenge" aria-live="polite"></div>
       <div class="press-stage">
         <div class="press-rig" id="press-rig">
           <button class="press-cap" id="press-cap" type="button" aria-label="Write one click to the Kei public testnet" aria-describedby="press-network-status press-local-status">

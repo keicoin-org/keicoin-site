@@ -27,10 +27,30 @@
     "not_found_handling": "404-page"
   },
 
-  // The work server's proof-of-work search is a real, synchronous CPU cost —
-  // tier B (a `send` block) is ~8.4M expected blake2b hashes. The default
-  // limit is nowhere near enough room for that to finish.
-  "limits": { "cpu_ms": 30000 },
+  // The work server's search runs here, in its own object per grant, so a
+  // non-yielding `generateWork` cannot hold the isolate that serves the pages
+  // (keicoin-org/keicoin-site#45, and `worker/index.ts` for why).
+  "durable_objects": {
+    "bindings": [{ "name": "WORK_MINT", "class_name": "WorkMint" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["WorkMint"] }],
+
+  // The public half of the Turnstile widget the work endpoint gates on. The
+  // secret half is `TURNSTILE_SECRET`, which is a secret, not a var:
+  //   wrangler secret put TURNSTILE_SECRET
+  // With neither set, `/kei/work` answers 503 and the clicker falls back to
+  // generating work in the tab — slower, and the only safe default.
+  "vars": {
+    "TURNSTILE_SITEKEY": ""
+  },
+
+  // The proof-of-work search is a real, synchronous CPU cost — tier B (a
+  // `send` block) is ~8.4M expected blake2b hashes. It was 30000 when tier A
+  // was reachable; tier A is now refused (`worker/work-gate.ts`), so the
+  // ceiling is one tier-B search, and `generateWork` gives up after 50M
+  // attempts regardless. 10s leaves room for the tail of an exponential
+  // search without leaving room for anything else.
+  "limits": { "cpu_ms": 10000 },
 
   // ...which is also why that route is gated. Per client IP, because the caller
   // is a browser page and `Kei.start({ workServer })` cannot send a header, so
