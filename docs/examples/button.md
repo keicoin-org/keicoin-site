@@ -78,9 +78,13 @@ for (const [address] of batch) {
 
 ```ts
 // src/economy.ts — the player. From here the game is not involved.
-const body = await fetch(at('/game/bank'), { /* address, presses */ }).then(r => r.json())
+// A session (below) already proved the address; every press already told the
+// server it happened via /game/press. Banking asks for the payout, not a count.
+const body = await post('/game/bank', { session, batch: batchId })
 await kei.claims.add(body.bundle)
 ```
+
+The address is never in that body. A session proves who is asking once — sign a challenge from `POST /game/session/challenge`, redeem it at `POST /game/session` — and every following call, including this one, carries the session id and nothing else. See [Player rewards](./button/player-rewards.md) for the full session and observation protocol.
 
 The batcher merges per address on purpose: a root commits to at most one entitlement per account, so two banks inside one window are one leaf, not two.
 
@@ -92,7 +96,7 @@ The game cannot sign for a player's wallet, so a purchase is always the player s
 
 ```ts
 // src/economy.ts
-const order = await fetch(at('/game/order'), { /* address, sku */ }).then(r => r.json())
+const order = await post('/game/order', { session, sku })
 await coins.transfer(order.to, order.price)
 // The shop signs the delivery. There is no third arrangement in which one of
 // them signs for the other.
@@ -163,11 +167,8 @@ bun test
 
 ## Known limits
 
-::: warning The client counts its own presses
-In single-player nothing else can see them. There is a rate ceiling, so the hole is worth a few coins rather than the supply — that is all it is, and it is written down in the source rather than hidden. Presses become observed once there is a server watching them.
-:::
-
 - The chain underneath is a mock. It dies when you stop the server, and nothing on it is worth anything. `test/m4-native.test.ts` is what connects this to a real node; the game itself does not.
+- Everything in-memory on the server — sessions, the observation ceiling, batches, faucet grants, orders, receipts — is gone on a restart, along with the mock chain itself. See [Player rewards](./button/player-rewards.md#state-and-errors) for the full list and each one's lifetime.
 - The issuer seed is generated per run unless `KEI_GAME_SEED` is set.
 - The pending figure is the client's own arithmetic until a bundle confirms it. It is shown as what is owed, never as what is held, and nothing in the game will let a player spend it.
 
