@@ -146,7 +146,7 @@ Button itself puts a wire between the two halves without changing any of the fou
 | | This page | Button |
 | --- | --- | --- |
 | Node | A `MockNode` object passed in directly | `mockRpcHandler({ node })` served at `/rpc`; the browser calls `Kei.start({ node: '…/rpc', network: 'mock' })` |
-| Banking | A local `bank()` function | `POST /game/bank` with `{ address, presses }`, answering `{ bundle }` or `{ error }` |
+| Banking | A local `bank()` function | A signed session (`POST /game/session/challenge` then `/game/session`) proves the address once; the server counts presses itself off `POST /game/press`; `POST /game/bank` with `{ session, batch }` answers `{ bundle, amount }` or `{ error }` — see [Player rewards](./player-rewards.md) |
 | The bundle | Handed over as an object | The same JSON, over the wire |
 | Claiming | `player.claims.add(bundle)` | `kei.claims.add(bundle)` — identical, and the game is not involved |
 
