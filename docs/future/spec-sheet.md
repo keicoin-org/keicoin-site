@@ -576,17 +576,17 @@ The embeddable panel a game mounts inside itself — balance, inventory, pending
 
 - Verified: @keicoin/wallet is published at 0.5.1 and ships in kei-transaction@0.8.0, per the npm registry.
 
-### The standalone wallet (kei-wallet), merged {#dl-wallet-standalone}
+### The standalone wallet (kei-wallet), building and merged {#dl-wallet-standalone}
 
 <Badge type="tip" text="shipped" /> · repositories `kei-wallet`
 
-The BananoVault fork that makes players-own-their-items true rather than rhetorical — the exit door. Its market panel is wired to kei.market and shows that wallet's own offers, cancellable, and its settled trades; the network's book stays unshowable because an offer lives on its author's chain and Kei ships no indexer, and the panel says that rather than presenting a handful of offers as the market.
+The BananoVault fork that makes players-own-their-items true rather than rhetorical — the exit door. Its market panel is wired to kei.market and shows that wallet's own offers, cancellable, and its settled trades; the network's book stays unshowable because an offer lives on its author's chain and Kei ships no indexer, and the panel says that rather than presenting a handful of offers as the market. keicoin-site#50: this entry was previously marked shipped on the strength of a merge alone while the default branch did not build (kei-transaction#188's dependency floor left ItemHolding.stats untyped); kei-wallet@6eefae3 fixed the floor. The lesson kept is the acceptance line below, not the historical breakage.
 
 **Depends on:** [`dl-node-swap-settlement`](#dl-node-swap-settlement).
 
 **Acceptance**
 
-- Verified: the standalone wallet is on kei-wallet's default branch with its market panel wired to kei.market, per the site's /status record.
+- Verified: npm ci && npm test && npm run build succeed on a clean clone of kei-wallet (npm test typechecks before running vitest; npm run build typechecks again before vite build), confirmed at kei-wallet@2b16d32.
 
 ### The wallet shows items from a game that is not running {#dl-wallet-standalone-items}
 

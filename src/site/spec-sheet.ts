@@ -23,6 +23,22 @@ const HORIZON_VOCABULARY = ['near-term', 'post-v1', 'v1'] as const
 /** `non-goal` is a status only entries in `non_goals` may carry. */
 const ENTRY_STATUSES = STATUS_VOCABULARY.filter((status) => status !== 'non-goal')
 
+/**
+ * A branch or merge state, offered as if it were evidence.
+ *
+ * keicoin-site#50: `dl-wallet-standalone`'s acceptance read "is on kei-wallet's
+ * default branch" while the wallet did not build. The defect was not the stale
+ * badge — it was that the acceptance line named something that stays true
+ * forever regardless of what the code later does. A merge is a property of a
+ * git history; it is not a property of software. This is deliberately a
+ * deny-list rather than an allow-list on "checkable" phrasing (unlike, say,
+ * button/server/rpc.ts's `PUBLIC_RPC_ACTIONS`): the vocabulary a reviewer uses
+ * to describe checkable evidence — a URL, a version, a command, a hosted
+ * record — is too open to enumerate, but the specific failure mode namely
+ * "it merged" is narrow enough to name outright.
+ */
+const BRANCH_STATE_ONLY_PATTERN = /\b(?:on|onto)\s+[\w.-]+'s\s+default\s+branch\b|\b(?:is|was|has been)\s+merged\b|\bmerged\s+into\b/i
+
 const TOP_LEVEL_KEYS = ['schema', 'project', 'milestones', 'non_goals'] as const
 const MILESTONE_FIELDS = [
   'id',
@@ -254,6 +270,15 @@ function checkEntry(
     })
     if (status === 'shipped' && !raw.acceptance.some((line) => line.startsWith('Verified: '))) {
       errors.push(`${label}: a shipped entry needs at least one "Verified: " acceptance line`)
+    }
+    if (status === 'shipped') {
+      raw.acceptance.forEach((line, index) => {
+        if (line.startsWith('Verified: ') && BRANCH_STATE_ONLY_PATTERN.test(line)) {
+          errors.push(
+            `${label}: acceptance line ${index + 1} names a branch or merge state as its evidence ("${line}") — that stays true forever regardless of what the code later does. Name a URL, a published registry version, or a runnable command instead.`,
+          )
+        }
+      })
     }
     if (
       (status === 'planned' || status === 'in-progress' || status === 'blocked') &&
