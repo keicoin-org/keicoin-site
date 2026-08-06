@@ -41,7 +41,7 @@
   // With neither set, `/kei/work` answers 503 and the clicker falls back to
   // generating work in the tab — slower, and the only safe default.
   "vars": {
-    "TURNSTILE_SITEKEY": ""
+    "TURNSTILE_SITEKEY": "0x4AAAAAAEIOJPcHfCPeF9r9"
   },
 
   // The proof-of-work search is a real, synchronous CPU cost — tier B (a
